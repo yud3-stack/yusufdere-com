@@ -100,3 +100,13 @@ Hero should stack cleanly:
 - sections below
 
 Navigation should stay minimal.
+
+## Visual Reference
+
+The homepage design direction is based on:
+
+docs/references/homepage-design-reference.png
+
+Use this image as a layout and mood reference only.
+Do not copy it blindly.
+Adapt it into YusufDere.com’s own premium personal brand system.
