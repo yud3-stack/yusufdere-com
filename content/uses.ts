@@ -3,12 +3,14 @@ import type { IconKey } from "@/lib/icons";
 export type UsesCategory =
   | "Hardware"
   | "Software"
+  | "Desk"
   | "Apps"
   | "Everyday Carry";
 
 export type UsesPageItem = {
   title: string;
   category: UsesCategory;
+  categoryLabel?: string;
   description: string;
   icon: IconKey;
 };

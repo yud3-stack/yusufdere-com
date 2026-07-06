@@ -70,6 +70,10 @@ export type GalleryPageItem = GalleryItem & {
   description?: string;
 };
 
+export type LocalizedUsesPageItem = UsesPageItem & {
+  categoryLabel: string;
+};
+
 export async function getAboutPage(
   locale: Locale = "en",
 ): Promise<AboutPageContent> {
@@ -142,42 +146,47 @@ export async function getJournalPostBySlug(
   return null;
 }
 
-export async function getAllGalleryImages(): Promise<GalleryPageItem[]> {
+export async function getAllGalleryImages(
+  locale: Locale = "en",
+): Promise<GalleryPageItem[]> {
   const images = await fetchOrFallback<GalleryImage[]>(allGalleryImagesQuery, [], [
     "galleryImage",
   ]);
-  const mapped = images
-    .filter((image) => Boolean(image.title))
-    .map(mapGalleryItem);
+  const mapped = images.map((image) => mapGalleryItem(image, locale));
 
   return mapped;
 }
 
-export async function getAllUsesItems(): Promise<UsesPageItem[]> {
+export async function getAllUsesItems(
+  locale: Locale = "en",
+): Promise<LocalizedUsesPageItem[]> {
   const items = await fetchOrFallback<SanityUsesItem[]>(allUsesItemsQuery, [], [
     "usesItem",
   ]);
-  const mapped = items
-    .filter((item) => Boolean(item.title))
-    .map((item) => ({
-      title: item.title || "Tool",
-      category: normalizeUsesCategory(item.category),
-      description: item.description || "A tool from the YusufDere.com setup.",
-      icon: normalizeIconKey(item.icon),
-    }));
+  const mapped = items.map((item) => mapUsesItem(item, locale));
 
   return mapped;
 }
 
-export async function getAllNowItems(): Promise<FocusItem[]> {
+export async function getAllNowItems(locale: Locale = "en"): Promise<FocusItem[]> {
   const items = await fetchOrFallback<SanityNowItem[]>(allNowItemsQuery, [], [
     "nowItem",
   ]);
   const mapped = items
-    .filter((item) => item.active !== false && Boolean(item.title))
+    .filter((item) => item.active !== false)
     .map((item) => ({
-      title: item.title || "Current focus",
-      description: item.description || "A current focus item from Sanity.",
+      title: localizedText(locale, {
+        en: item.titleEn,
+        tr: item.titleTr,
+        legacy: item.title,
+        fallback: "Current focus",
+      }),
+      description: localizedText(locale, {
+        en: item.descriptionEn,
+        tr: item.descriptionTr,
+        legacy: item.description,
+        fallback: "A current focus item from Sanity.",
+      }),
       status: item.active === false ? "Paused" : "Active",
       icon: normalizeIconKey(item.icon),
     }));
@@ -498,13 +507,61 @@ function mapJournalDetail(
   };
 }
 
-function mapGalleryItem(image: GalleryImage): GalleryPageItem {
+export function mapGalleryItem(
+  image: GalleryImage,
+  locale: Locale = "en",
+): GalleryPageItem {
   return {
-    title: image.title || "Gallery image",
+    title: localizedText(locale, {
+      en: image.titleEn,
+      tr: image.titleTr,
+      legacy: image.title,
+      fallback: "Gallery image",
+    }),
     category: normalizeGalleryCategory(image.category),
-    location: image.location || image.category || "Gallery",
-    description: image.description || undefined,
+    location: localizedText(locale, {
+      en: image.locationEn,
+      tr: image.locationTr,
+      legacy: image.location,
+      fallback: image.category || "Gallery",
+    }),
+    description: localizedText(locale, {
+      en: image.descriptionEn,
+      tr: image.descriptionTr,
+      legacy: image.description,
+      fallback: "",
+    }) || undefined,
     imageUrl: image.image ? safeImageUrl(image.image) : undefined,
+  };
+}
+
+export function mapUsesItem(
+  item: SanityUsesItem,
+  locale: Locale = "en",
+): LocalizedUsesPageItem {
+  const category = normalizeUsesCategory(item.category);
+
+  return {
+    title: localizedText(locale, {
+      en: item.titleEn,
+      tr: item.titleTr,
+      legacy: item.title,
+      fallback: "Tool",
+    }),
+    category,
+    categoryLabel: localizedText(locale, {
+      en: item.categoryLabelEn,
+      tr: item.categoryLabelTr,
+      legacy: item.category,
+      fallback: category,
+    }),
+    description: localizedText(locale, {
+      en: item.descriptionEn,
+      tr: item.descriptionTr,
+      legacy: item.description,
+      fallback: "A tool from the YusufDere.com setup.",
+    }),
+    icon: normalizeIconKey(item.icon),
   };
 }
 
@@ -600,6 +657,7 @@ function normalizeUsesCategory(
   if (
     category === "Hardware" ||
     category === "Software" ||
+    category === "Desk" ||
     category === "Apps" ||
     category === "Everyday Carry"
   ) {

@@ -16,7 +16,7 @@ export function generateMetadata() {
 }
 
 export default async function NowPage() {
-  const focusItems = await getAllNowItems();
+  const focusItems = await getAllNowItems("en");
 
   return (
     <InteriorPage>

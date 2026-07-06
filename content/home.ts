@@ -32,6 +32,7 @@ export type GalleryPreview = {
 export type UsesItem = {
   title: string;
   category: string;
+  categoryLabel?: string;
   icon: IconKey;
 };
 

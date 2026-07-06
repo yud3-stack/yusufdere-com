@@ -102,7 +102,7 @@ export function GalleryUsesSection({
                         {item.title}
                       </h3>
                       <p className="mt-1 text-xs text-muted-foreground">
-                        {item.category}
+                        {item.categoryLabel || item.category}
                       </p>
                     </article>
                   );

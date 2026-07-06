@@ -112,7 +112,11 @@ export type JournalPost = {
 export type NowItem = {
   _id: string;
   title?: string | null;
+  titleEn?: string | null;
+  titleTr?: string | null;
   description?: string | null;
+  descriptionEn?: string | null;
+  descriptionTr?: string | null;
   icon?: string | null;
   active?: boolean | null;
   order?: number | null;
@@ -121,8 +125,14 @@ export type NowItem = {
 export type UsesItem = {
   _id: string;
   title?: string | null;
+  titleEn?: string | null;
+  titleTr?: string | null;
   category?: string | null;
+  categoryLabelEn?: string | null;
+  categoryLabelTr?: string | null;
   description?: string | null;
+  descriptionEn?: string | null;
+  descriptionTr?: string | null;
   icon?: string | null;
   url?: string | null;
   order?: number | null;
@@ -133,10 +143,16 @@ export type GalleryImage = {
   _id: string;
   image?: SanityImage | null;
   title?: string | null;
+  titleEn?: string | null;
+  titleTr?: string | null;
   category?: string | null;
   location?: string | null;
+  locationEn?: string | null;
+  locationTr?: string | null;
   date?: string | null;
   description?: string | null;
+  descriptionEn?: string | null;
+  descriptionTr?: string | null;
   featured?: boolean | null;
   order?: number | null;
 };

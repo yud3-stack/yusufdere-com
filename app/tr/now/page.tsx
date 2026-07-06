@@ -19,7 +19,7 @@ export function generateMetadata() {
 }
 
 export default async function TurkishNowPage() {
-  const focusItems = await getAllNowItems();
+  const focusItems = await getAllNowItems(locale);
 
   return (
     <InteriorPage locale={locale} dictionary={dictionary}>

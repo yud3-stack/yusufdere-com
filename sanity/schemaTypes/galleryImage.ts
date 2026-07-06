@@ -4,12 +4,36 @@ export const galleryImage = defineType({
   name: 'galleryImage',
   title: 'Gallery Image',
   type: 'document',
+  fieldsets: [
+    {
+      name: 'english',
+      title: 'English localized content',
+      options: {columns: 2},
+    },
+    {
+      name: 'turkish',
+      title: 'Turkish localized content',
+      options: {columns: 2},
+    },
+  ],
   fields: [
     defineField({
       name: 'title',
-      title: 'Title',
+      title: 'Title (legacy fallback)',
       type: 'string',
       validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: 'titleEn',
+      title: 'Title EN',
+      type: 'string',
+      fieldset: 'english',
+    }),
+    defineField({
+      name: 'titleTr',
+      title: 'Title TR',
+      type: 'string',
+      fieldset: 'turkish',
     }),
     defineField({
       name: 'image',
@@ -38,8 +62,20 @@ export const galleryImage = defineType({
     }),
     defineField({
       name: 'location',
-      title: 'Location',
+      title: 'Location (legacy fallback)',
       type: 'string',
+    }),
+    defineField({
+      name: 'locationEn',
+      title: 'Location EN',
+      type: 'string',
+      fieldset: 'english',
+    }),
+    defineField({
+      name: 'locationTr',
+      title: 'Location TR',
+      type: 'string',
+      fieldset: 'turkish',
     }),
     defineField({
       name: 'date',
@@ -48,9 +84,23 @@ export const galleryImage = defineType({
     }),
     defineField({
       name: 'description',
-      title: 'Description',
+      title: 'Description (legacy fallback)',
       type: 'text',
       rows: 3,
+    }),
+    defineField({
+      name: 'descriptionEn',
+      title: 'Description EN',
+      type: 'text',
+      rows: 3,
+      fieldset: 'english',
+    }),
+    defineField({
+      name: 'descriptionTr',
+      title: 'Description TR',
+      type: 'text',
+      rows: 3,
+      fieldset: 'turkish',
     }),
     defineField({
       name: 'featured',
@@ -68,8 +118,17 @@ export const galleryImage = defineType({
   preview: {
     select: {
       title: 'title',
+      titleEn: 'titleEn',
+      titleTr: 'titleTr',
       subtitle: 'category',
       media: 'image',
+    },
+    prepare({title, titleEn, titleTr, subtitle, media}) {
+      return {
+        title: titleEn || titleTr || title || 'Gallery Image',
+        subtitle,
+        media,
+      }
     },
   },
 })

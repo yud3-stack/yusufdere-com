@@ -9,8 +9,11 @@ import { sanityFetch } from "@/lib/sanity/client";
 import {
   getAboutPage,
   getSiteSettings,
+  localizedText,
+  mapGalleryItem,
   mapJournalEntry,
   mapProjectPreview,
+  mapUsesItem,
   type AboutPageContent,
 } from "@/lib/sanity/data";
 import type {
@@ -69,9 +72,9 @@ export async function getHomepageData(locale: Locale = "en"): Promise<HomePageDa
     aboutPage,
     projects: mapProjects(projects, locale),
     journalPosts: mapJournalPosts(journalPosts, locale),
-    nowItems: mapNowItems(activeNowItems),
-    usesItems: mapUsesItems(featuredUsesItems),
-    galleryItems: mapGalleryImages(featuredGalleryImages),
+    nowItems: mapNowItems(activeNowItems, locale),
+    usesItems: mapUsesItems(featuredUsesItems, locale),
+    galleryItems: mapGalleryImages(featuredGalleryImages, locale),
   };
 }
 
@@ -107,37 +110,55 @@ function mapJournalPosts(
   return mapped;
 }
 
-function mapNowItems(items: SanityNowItem[]): NowItem[] {
+function mapNowItems(items: SanityNowItem[], locale: Locale): NowItem[] {
   const mapped = items
-    .filter((item) => Boolean(item.title))
+    .filter((item) => item.active !== false)
     .map((item) => ({
-      title: item.title || "Current focus",
-      description: item.description || "A current focus item from the CMS.",
+      title: localizedText(locale, {
+        en: item.titleEn,
+        tr: item.titleTr,
+        legacy: item.title,
+        fallback: "Current focus",
+      }),
+      description: localizedText(locale, {
+        en: item.descriptionEn,
+        tr: item.descriptionTr,
+        legacy: item.description,
+        fallback: "A current focus item from the CMS.",
+      }),
       icon: normalizeIconKey(item.icon),
     }));
 
   return mapped;
 }
 
-function mapUsesItems(items: SanityUsesItem[]): UsesItem[] {
-  const mapped = items
-    .filter((item) => Boolean(item.title))
-    .map((item) => ({
-      title: item.title || "Tool",
-      category: item.category || "Setup",
-      icon: normalizeIconKey(item.icon),
-    }));
+function mapUsesItems(items: SanityUsesItem[], locale: Locale): UsesItem[] {
+  const mapped = items.map((item) => {
+    const mappedItem = mapUsesItem(item, locale);
+
+    return {
+      title: mappedItem.title,
+      category: mappedItem.category,
+      categoryLabel: mappedItem.categoryLabel,
+      icon: mappedItem.icon,
+    };
+  });
 
   return mapped;
 }
 
-function mapGalleryImages(images: GalleryImage[]): GalleryPreview[] {
-  const mapped = images
-    .filter((image) => Boolean(image.title))
-    .map((image) => ({
-      title: image.title || "Gallery image",
-      location: image.location || image.category || "Gallery",
-    }));
+function mapGalleryImages(
+  images: GalleryImage[],
+  locale: Locale,
+): GalleryPreview[] {
+  const mapped = images.map((image) => {
+    const mappedImage = mapGalleryItem(image, locale);
+
+    return {
+      title: mappedImage.title,
+      location: mappedImage.location,
+    };
+  });
 
   return mapped;
 }

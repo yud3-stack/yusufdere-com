@@ -14,6 +14,7 @@ const dictionary = getDictionary(locale);
 const categories: UsesCategory[] = [
   "Hardware",
   "Software",
+  "Desk",
   "Apps",
   "Everyday Carry",
 ];
@@ -27,7 +28,7 @@ export function generateMetadata() {
 }
 
 export default async function TurkishUsesPage() {
-  const usesItems = await getAllUsesItems();
+  const usesItems = await getAllUsesItems(locale);
 
   return (
     <InteriorPage locale={locale} dictionary={dictionary}>
@@ -50,7 +51,7 @@ export default async function TurkishUsesPage() {
                 return (
                   <section key={category} className="border-t border-border pt-8">
                     <h2 className="text-sm font-medium uppercase tracking-[0.24em] text-foreground">
-                      {category}
+                      {items[0]?.categoryLabel || category}
                     </h2>
                     <div className="mt-6 grid gap-4 md:grid-cols-2">
                       {items.map((item) => {

@@ -21,12 +21,13 @@ export function generateMetadata() {
 const categories: UsesCategory[] = [
   "Hardware",
   "Software",
+  "Desk",
   "Apps",
   "Everyday Carry",
 ];
 
 export default async function UsesPage() {
-  const usesItems = await getAllUsesItems();
+  const usesItems = await getAllUsesItems("en");
 
   return (
     <InteriorPage>
@@ -49,7 +50,7 @@ export default async function UsesPage() {
                 return (
                   <section key={category} className="border-t border-border pt-8">
                     <h2 className="text-sm font-medium uppercase tracking-[0.24em] text-foreground">
-                      {category}
+                      {items[0]?.categoryLabel || category}
                     </h2>
                     <div className="mt-6 grid gap-4 md:grid-cols-2">
                       {items.map((item) => {

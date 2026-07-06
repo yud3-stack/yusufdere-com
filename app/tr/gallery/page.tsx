@@ -20,7 +20,7 @@ export function generateMetadata() {
 }
 
 export default async function TurkishGalleryPage() {
-  const galleryItems = await getAllGalleryImages();
+  const galleryItems = await getAllGalleryImages(locale);
 
   return (
     <InteriorPage locale={locale} dictionary={dictionary}>

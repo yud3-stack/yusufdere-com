@@ -17,7 +17,7 @@ export function generateMetadata() {
 }
 
 export default async function GalleryPage() {
-  const galleryItems = await getAllGalleryImages();
+  const galleryItems = await getAllGalleryImages("en");
 
   return (
     <InteriorPage>
