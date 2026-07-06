@@ -33,6 +33,19 @@ export type SiteSettings = {
   ogImage?: SanityImage | null;
 };
 
+export type AboutPage = {
+  _id?: string;
+  title?: string | null;
+  eyebrow?: string | null;
+  intro?: string | null;
+  body?: PortableTextBlock[] | null;
+  location?: string | null;
+  focusAreas?: string[] | null;
+  currentFocus?: string | null;
+  image?: SanityImage | null;
+  updatedAt?: string | null;
+};
+
 export type Project = {
   _id: string;
   title?: string | null;

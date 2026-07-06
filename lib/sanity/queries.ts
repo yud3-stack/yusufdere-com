@@ -16,6 +16,21 @@ export const siteSettingsQuery = defineQuery(/* groq */ `
   }
 `);
 
+export const aboutPageQuery = defineQuery(/* groq */ `
+  *[_id == "aboutPage" || _type == "aboutPage"][0] {
+    _id,
+    title,
+    eyebrow,
+    intro,
+    body,
+    location,
+    focusAreas,
+    currentFocus,
+    image,
+    updatedAt
+  }
+`);
+
 export const featuredProjectsQuery = defineQuery(/* groq */ `
   *[_type == "project" && featured == true]
   | order(order asc, _createdAt desc) [0...3] {

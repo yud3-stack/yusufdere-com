@@ -23,14 +23,16 @@ export default defineConfig({
     newDocumentOptions: (previousOptions, {creationContext}) => {
       if (creationContext.type === 'global') {
         return previousOptions.filter(
-          (templateItem) => templateItem.templateId !== 'siteSettings',
+          (templateItem) =>
+            templateItem.templateId !== 'siteSettings' &&
+            templateItem.templateId !== 'aboutPage',
         )
       }
 
       return previousOptions
     },
     actions: (previousActions, {schemaType}) => {
-      if (schemaType === 'siteSettings') {
+      if (schemaType === 'siteSettings' || schemaType === 'aboutPage') {
         return previousActions.filter(
           ({action}) => action !== 'delete' && action !== 'duplicate',
         )

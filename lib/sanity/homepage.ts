@@ -7,6 +7,7 @@ import {
   siteSettingsQuery,
 } from "@/lib/sanity/queries";
 import { sanityFetch } from "@/lib/sanity/client";
+import { getAboutPage, type AboutPageContent } from "@/lib/sanity/data";
 import type {
   GalleryImage,
   JournalPost,
@@ -27,6 +28,7 @@ import { normalizeIconKey } from "@/lib/icons";
 
 type HomePageData = {
   siteSettings: SiteSettings;
+  aboutPage: AboutPageContent;
   projects: ProjectPreview[];
   journalPosts: JournalPreview[];
   nowItems: NowItem[];
@@ -39,6 +41,7 @@ const projectAccents: ProjectPreview["accent"][] = ["violet", "stone", "slate"];
 export async function getHomepageData(): Promise<HomePageData> {
   const [
     siteSettings,
+    aboutPage,
     projects,
     journalPosts,
     activeNowItems,
@@ -48,6 +51,7 @@ export async function getHomepageData(): Promise<HomePageData> {
     fetchOrFallback<SiteSettings | null>(siteSettingsQuery, null, [
       "siteSettings",
     ]),
+    getAboutPage(),
     fetchOrFallback<Project[]>(featuredProjectsQuery, [], ["project"]),
     fetchOrFallback<JournalPost[]>(featuredJournalPostsQuery, [], [
       "journalPost",
@@ -61,6 +65,7 @@ export async function getHomepageData(): Promise<HomePageData> {
 
   return {
     siteSettings: withSiteSettingsFallback(siteSettings),
+    aboutPage,
     projects: mapProjects(projects),
     journalPosts: mapJournalPosts(journalPosts),
     nowItems: mapNowItems(activeNowItems),

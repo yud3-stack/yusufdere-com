@@ -1,4 +1,5 @@
 import {
+  aboutPageQuery,
   allGalleryImagesQuery,
   allJournalPostsQuery,
   allNowItemsQuery,
@@ -14,6 +15,7 @@ import type {
   GalleryImage,
   JournalPost,
   NowItem as SanityNowItem,
+  AboutPage as SanityAboutPage,
   PortableTextBlock,
   Project,
   SiteSettings,
@@ -24,6 +26,7 @@ import { type FocusItem } from "@/content/now";
 import { type GalleryItem } from "@/content/gallery";
 import { type UsesCategory, type UsesPageItem } from "@/content/uses";
 import { siteConfig } from "@/content/site";
+import { aboutPage as aboutFallback } from "@/content/about";
 import type { ProjectPreview } from "@/content/home";
 import { normalizeIconKey } from "@/lib/icons";
 
@@ -40,6 +43,18 @@ export type ProjectDetail = {
   body: string[];
 };
 
+export type AboutPageContent = {
+  title: string;
+  eyebrow: string;
+  intro: string;
+  body: string[];
+  location: string;
+  focusAreas: string[];
+  currentFocus: string;
+  imageUrl?: string;
+  updatedAt?: string;
+};
+
 export type JournalDetail = {
   title: string;
   slug: string;
@@ -53,6 +68,16 @@ export type GalleryPageItem = GalleryItem & {
   imageUrl?: string;
   description?: string;
 };
+
+export async function getAboutPage(): Promise<AboutPageContent> {
+  const aboutPage = await fetchOrFallback<SanityAboutPage | null>(
+    aboutPageQuery,
+    null,
+    ["aboutPage"],
+  );
+
+  return mapAboutPage(aboutPage);
+}
 
 export async function getAllProjects(): Promise<ProjectPreview[]> {
   const projects = await fetchOrFallback<Project[]>(allProjectsQuery, [], [
@@ -189,6 +214,30 @@ async function fetchOrFallback<T>(
   } catch {
     return fallback;
   }
+}
+
+function mapAboutPage(page: SanityAboutPage | null): AboutPageContent {
+  const fallbackBody = aboutFallback.sections.map((section) => section.body);
+  const body = portableTextToParagraphs(page?.body);
+  const focusAreas =
+    page?.focusAreas?.map((area) => area.trim()).filter(Boolean) || [];
+
+  return {
+    title: page?.title || aboutFallback.title,
+    eyebrow: page?.eyebrow || aboutFallback.eyebrow,
+    intro: page?.intro || aboutFallback.description,
+    body: body.length > 0 ? body : fallbackBody,
+    location: page?.location || aboutFallback.stats[0]?.value || siteConfig.location,
+    focusAreas:
+      focusAreas.length > 0
+        ? focusAreas
+        : aboutFallback.stats.map((stat) => stat.value),
+    currentFocus:
+      page?.currentFocus ||
+      "Connecting software, product work, journal notes, photography, and the current season of focus.",
+    imageUrl: page?.image ? safeImageUrl(page.image) : undefined,
+    updatedAt: page?.updatedAt || undefined,
+  };
 }
 
 function mapProjectPreview(project: Project, index: number): ProjectPreview {

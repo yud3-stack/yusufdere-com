@@ -25,7 +25,7 @@ export default async function Home() {
   return (
     <main className="min-h-screen overflow-hidden">
       <HeroSection siteSettings={homepageData.siteSettings} />
-      <AboutPreviewSection />
+      <AboutPreviewSection aboutPage={homepageData.aboutPage} />
       <ProjectsPreviewSection projects={homepageData.projects} />
       <NowJournalSection
         nowItems={homepageData.nowItems}
