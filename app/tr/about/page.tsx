@@ -12,10 +12,10 @@ const locale = "tr";
 const dictionary = getDictionary(locale);
 
 export async function generateMetadata() {
-  const aboutPage = await getAboutPage();
+  const aboutPage = await getAboutPage(locale);
 
   return createMetadata({
-    title: dictionary.nav.about,
+    title: aboutPage.title || dictionary.nav.about,
     description: aboutPage.intro,
     path: "/tr/about",
   });
@@ -23,8 +23,8 @@ export async function generateMetadata() {
 
 export default async function TurkishAboutPage() {
   const [aboutPage, siteSettings] = await Promise.all([
-    getAboutPage(),
-    getSiteSettings(),
+    getAboutPage(locale),
+    getSiteSettings(locale),
   ]);
   const name = siteSettings.name || "Yusuf Dere";
   const location =

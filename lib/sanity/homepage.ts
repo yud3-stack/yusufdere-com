@@ -4,10 +4,13 @@ import {
   featuredProjectsQuery,
   featuredUsesItemsQuery,
   activeNowItemsQuery,
-  siteSettingsQuery,
 } from "@/lib/sanity/queries";
 import { sanityFetch } from "@/lib/sanity/client";
-import { getAboutPage, type AboutPageContent } from "@/lib/sanity/data";
+import {
+  getAboutPage,
+  getSiteSettings,
+  type AboutPageContent,
+} from "@/lib/sanity/data";
 import type {
   GalleryImage,
   JournalPost,
@@ -23,8 +26,8 @@ import {
   type ProjectPreview,
   type UsesItem,
 } from "@/content/home";
-import { siteConfig } from "@/content/site";
 import { normalizeIconKey } from "@/lib/icons";
+import type { Locale } from "@/lib/locale";
 
 type HomePageData = {
   siteSettings: SiteSettings;
@@ -38,7 +41,7 @@ type HomePageData = {
 
 const projectAccents: ProjectPreview["accent"][] = ["violet", "stone", "slate"];
 
-export async function getHomepageData(): Promise<HomePageData> {
+export async function getHomepageData(locale: Locale = "en"): Promise<HomePageData> {
   const [
     siteSettings,
     aboutPage,
@@ -48,10 +51,8 @@ export async function getHomepageData(): Promise<HomePageData> {
     featuredUsesItems,
     featuredGalleryImages,
   ] = await Promise.all([
-    fetchOrFallback<SiteSettings | null>(siteSettingsQuery, null, [
-      "siteSettings",
-    ]),
-    getAboutPage(),
+    getSiteSettings(locale),
+    getAboutPage(locale),
     fetchOrFallback<Project[]>(featuredProjectsQuery, [], ["project"]),
     fetchOrFallback<JournalPost[]>(featuredJournalPostsQuery, [], [
       "journalPost",
@@ -64,7 +65,7 @@ export async function getHomepageData(): Promise<HomePageData> {
   ]);
 
   return {
-    siteSettings: withSiteSettingsFallback(siteSettings),
+    siteSettings,
     aboutPage,
     projects: mapProjects(projects),
     journalPosts: mapJournalPosts(journalPosts),
@@ -87,21 +88,6 @@ async function fetchOrFallback<T>(
   } catch {
     return fallback;
   }
-}
-
-function withSiteSettingsFallback(settings: SiteSettings | null): SiteSettings {
-  return {
-    name: settings?.name || siteConfig.name,
-    bio: settings?.bio || siteConfig.tagline,
-    location: settings?.location || siteConfig.location,
-    email: settings?.email || siteConfig.email,
-    instagramUrl: settings?.instagramUrl || siteConfig.instagramUrl,
-    githubUrl: settings?.githubUrl || null,
-    linkedinUrl: settings?.linkedinUrl || null,
-    seoTitle: settings?.seoTitle || siteConfig.name,
-    seoDescription: settings?.seoDescription || siteConfig.description,
-    ogImage: settings?.ogImage || null,
-  };
 }
 
 function mapProjects(projects: Project[]): ProjectPreview[] {

@@ -8,10 +8,10 @@ import { getAboutPage, getSiteSettings } from "@/lib/sanity/data";
 import { createMetadata } from "@/lib/seo";
 
 export async function generateMetadata() {
-  const aboutPage = await getAboutPage();
+  const aboutPage = await getAboutPage("en");
 
   return createMetadata({
-    title: "About",
+    title: aboutPage.title || "About",
     description: aboutPage.intro,
     path: "/about",
   });
@@ -19,8 +19,8 @@ export async function generateMetadata() {
 
 export default async function AboutPage() {
   const [aboutPage, siteSettings] = await Promise.all([
-    getAboutPage(),
-    getSiteSettings(),
+    getAboutPage("en"),
+    getSiteSettings("en"),
   ]);
   const name = siteSettings.name || "Yusuf Dere";
   const location = aboutPage.location || siteSettings.location || "Samsun, Turkiye";

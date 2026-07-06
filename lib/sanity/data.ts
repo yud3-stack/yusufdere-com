@@ -29,6 +29,7 @@ import { siteConfig } from "@/content/site";
 import { aboutPage as aboutFallback } from "@/content/about";
 import type { ProjectPreview } from "@/content/home";
 import { normalizeIconKey } from "@/lib/icons";
+import type { Locale } from "@/lib/locale";
 
 export type ProjectDetail = {
   title: string;
@@ -69,14 +70,16 @@ export type GalleryPageItem = GalleryItem & {
   description?: string;
 };
 
-export async function getAboutPage(): Promise<AboutPageContent> {
+export async function getAboutPage(
+  locale: Locale = "en",
+): Promise<AboutPageContent> {
   const aboutPage = await fetchOrFallback<SanityAboutPage | null>(
     aboutPageQuery,
     null,
     ["aboutPage"],
   );
 
-  return mapAboutPage(aboutPage);
+  return mapAboutPage(aboutPage, locale);
 }
 
 export async function getAllProjects(): Promise<ProjectPreview[]> {
@@ -178,7 +181,7 @@ export async function getAllNowItems(): Promise<FocusItem[]> {
   return mapped;
 }
 
-export async function getSiteSettings(): Promise<SiteSettings> {
+export async function getSiteSettings(locale: Locale = "en"): Promise<SiteSettings> {
   const settings = await fetchOrFallback<SiteSettings | null>(
     siteSettingsQuery,
     null,
@@ -187,14 +190,34 @@ export async function getSiteSettings(): Promise<SiteSettings> {
 
   return {
     name: settings?.name || siteConfig.name,
-    bio: settings?.bio || siteConfig.tagline,
-    location: settings?.location || siteConfig.location,
+    bio: localizedText(locale, {
+      en: settings?.bioEn,
+      tr: settings?.bioTr,
+      legacy: settings?.bio,
+      fallback: siteConfig.tagline,
+    }),
+    location: localizedText(locale, {
+      en: settings?.locationEn,
+      tr: settings?.locationTr,
+      legacy: settings?.location,
+      fallback: siteConfig.location,
+    }),
     email: settings?.email || siteConfig.email,
     instagramUrl: settings?.instagramUrl || siteConfig.instagramUrl,
     githubUrl: settings?.githubUrl || null,
     linkedinUrl: settings?.linkedinUrl || null,
-    seoTitle: settings?.seoTitle || siteConfig.name,
-    seoDescription: settings?.seoDescription || siteConfig.description,
+    seoTitle: localizedText(locale, {
+      en: settings?.seoTitleEn,
+      tr: settings?.seoTitleTr,
+      legacy: settings?.seoTitle,
+      fallback: siteConfig.name,
+    }),
+    seoDescription: localizedText(locale, {
+      en: settings?.seoDescriptionEn,
+      tr: settings?.seoDescriptionTr,
+      legacy: settings?.seoDescription,
+      fallback: siteConfig.description,
+    }),
     ogImage: settings?.ogImage || null,
   };
 }
@@ -216,16 +239,41 @@ async function fetchOrFallback<T>(
   }
 }
 
-function mapAboutPage(page: SanityAboutPage | null): AboutPageContent {
+function mapAboutPage(
+  page: SanityAboutPage | null,
+  locale: Locale,
+): AboutPageContent {
   const fallbackBody = aboutFallback.sections.map((section) => section.body);
-  const body = portableTextToParagraphs(page?.body);
-  const focusAreas =
-    page?.focusAreas?.map((area) => area.trim()).filter(Boolean) || [];
+  const body = localizedPortableText(locale, {
+    en: page?.bodyEn,
+    tr: page?.bodyTr,
+    legacy: page?.body,
+  });
+  const focusAreas = localizedStringArray(locale, {
+    en: page?.focusAreasEn,
+    tr: page?.focusAreasTr,
+    legacy: page?.focusAreas,
+  });
 
   return {
-    title: page?.title || aboutFallback.title,
-    eyebrow: page?.eyebrow || aboutFallback.eyebrow,
-    intro: page?.intro || aboutFallback.description,
+    title: localizedText(locale, {
+      en: page?.titleEn,
+      tr: page?.titleTr,
+      legacy: page?.title,
+      fallback: aboutFallback.title,
+    }),
+    eyebrow: localizedText(locale, {
+      en: page?.eyebrowEn,
+      tr: page?.eyebrowTr,
+      legacy: page?.eyebrow,
+      fallback: aboutFallback.eyebrow,
+    }),
+    intro: localizedText(locale, {
+      en: page?.introEn,
+      tr: page?.introTr,
+      legacy: page?.intro,
+      fallback: aboutFallback.description,
+    }),
     body: body.length > 0 ? body : fallbackBody,
     location: page?.location || aboutFallback.stats[0]?.value || siteConfig.location,
     focusAreas:
@@ -233,11 +281,89 @@ function mapAboutPage(page: SanityAboutPage | null): AboutPageContent {
         ? focusAreas
         : aboutFallback.stats.map((stat) => stat.value),
     currentFocus:
-      page?.currentFocus ||
-      "Connecting software, product work, journal notes, photography, and the current season of focus.",
+      localizedText(locale, {
+        en: page?.currentFocusEn,
+        tr: page?.currentFocusTr,
+        legacy: page?.currentFocus,
+        fallback:
+          "Connecting software, product work, journal notes, photography, and the current season of focus.",
+      }),
     imageUrl: page?.image ? safeImageUrl(page.image) : undefined,
     updatedAt: page?.updatedAt || undefined,
   };
+}
+
+function localizedText(
+  locale: Locale,
+  values: {
+    en?: string | null;
+    tr?: string | null;
+    legacy?: string | null;
+    fallback: string;
+  },
+) {
+  const preferred =
+    locale === "tr"
+      ? [values.tr, values.legacy, values.en, values.fallback]
+      : [values.en, values.legacy, values.fallback];
+
+  return preferred.map(cleanText).find(Boolean) || values.fallback;
+}
+
+function localizedPortableText(
+  locale: Locale,
+  values: {
+    en?: PortableTextBlock[] | null;
+    tr?: PortableTextBlock[] | null;
+    legacy?: PortableTextBlock[] | null;
+  },
+) {
+  const preferred =
+    locale === "tr"
+      ? [values.tr, values.legacy, values.en]
+      : [values.en, values.legacy];
+
+  for (const blocks of preferred) {
+    const paragraphs = portableTextToParagraphs(blocks);
+
+    if (paragraphs.length > 0) {
+      return paragraphs;
+    }
+  }
+
+  return [];
+}
+
+function localizedStringArray(
+  locale: Locale,
+  values: {
+    en?: string[] | null;
+    tr?: string[] | null;
+    legacy?: string[] | null;
+  },
+) {
+  const preferred =
+    locale === "tr"
+      ? [values.tr, values.legacy, values.en]
+      : [values.en, values.legacy];
+
+  for (const array of preferred) {
+    const cleaned = cleanStringArray(array);
+
+    if (cleaned.length > 0) {
+      return cleaned;
+    }
+  }
+
+  return [];
+}
+
+function cleanText(value: string | null | undefined) {
+  return value?.trim() || "";
+}
+
+function cleanStringArray(values: string[] | null | undefined) {
+  return values?.map((value) => value.trim()).filter(Boolean) || [];
 }
 
 function mapProjectPreview(project: Project, index: number): ProjectPreview {

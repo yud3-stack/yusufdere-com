@@ -4,6 +4,18 @@ export const siteSettings = defineType({
   name: 'siteSettings',
   title: 'Site Settings',
   type: 'document',
+  fieldsets: [
+    {
+      name: 'english',
+      title: 'English localized fields',
+      options: {columns: 2},
+    },
+    {
+      name: 'turkish',
+      title: 'Turkish localized fields',
+      options: {columns: 2},
+    },
+  ],
   fields: [
     defineField({
       name: 'name',
@@ -13,13 +25,39 @@ export const siteSettings = defineType({
     }),
     defineField({
       name: 'bio',
-      title: 'Bio',
+      title: 'Bio (legacy fallback)',
       type: 'string',
+      description: 'Kept for existing content. Prefer Bio EN / Bio TR for localized copy.',
+    }),
+    defineField({
+      name: 'bioEn',
+      title: 'Bio EN',
+      type: 'string',
+      fieldset: 'english',
+    }),
+    defineField({
+      name: 'bioTr',
+      title: 'Bio TR',
+      type: 'string',
+      fieldset: 'turkish',
     }),
     defineField({
       name: 'location',
-      title: 'Location',
+      title: 'Location (legacy fallback)',
       type: 'string',
+      description: 'Kept for existing content. Prefer Location EN / Location TR for localized copy.',
+    }),
+    defineField({
+      name: 'locationEn',
+      title: 'Location EN',
+      type: 'string',
+      fieldset: 'english',
+    }),
+    defineField({
+      name: 'locationTr',
+      title: 'Location TR',
+      type: 'string',
+      fieldset: 'turkish',
     }),
     defineField({
       name: 'email',
@@ -47,14 +85,46 @@ export const siteSettings = defineType({
     }),
     defineField({
       name: 'seoTitle',
-      title: 'SEO Title',
+      title: 'SEO Title (legacy fallback)',
       type: 'string',
+      description: 'Kept for existing content. Prefer SEO Title EN / SEO Title TR.',
+    }),
+    defineField({
+      name: 'seoTitleEn',
+      title: 'SEO Title EN',
+      type: 'string',
+      fieldset: 'english',
+    }),
+    defineField({
+      name: 'seoTitleTr',
+      title: 'SEO Title TR',
+      type: 'string',
+      fieldset: 'turkish',
     }),
     defineField({
       name: 'seoDescription',
-      title: 'SEO Description',
+      title: 'SEO Description (legacy fallback)',
       type: 'text',
       rows: 3,
+      description: 'Kept for existing content. Prefer SEO Description EN / SEO Description TR.',
+      validation: (rule) =>
+        rule.max(160).warning('Keep SEO descriptions under 160 characters when possible.'),
+    }),
+    defineField({
+      name: 'seoDescriptionEn',
+      title: 'SEO Description EN',
+      type: 'text',
+      rows: 3,
+      fieldset: 'english',
+      validation: (rule) =>
+        rule.max(160).warning('Keep SEO descriptions under 160 characters when possible.'),
+    }),
+    defineField({
+      name: 'seoDescriptionTr',
+      title: 'SEO Description TR',
+      type: 'text',
+      rows: 3,
+      fieldset: 'turkish',
       validation: (rule) =>
         rule.max(160).warning('Keep SEO descriptions under 160 characters when possible.'),
     }),
@@ -71,12 +141,14 @@ export const siteSettings = defineType({
     select: {
       title: 'name',
       subtitle: 'bio',
+      subtitleEn: 'bioEn',
+      subtitleTr: 'bioTr',
       media: 'ogImage',
     },
-    prepare({title, subtitle, media}) {
+    prepare({title, subtitle, subtitleEn, subtitleTr, media}) {
       return {
         title: title || 'Site Settings',
-        subtitle,
+        subtitle: subtitleEn || subtitleTr || subtitle,
         media,
       }
     },

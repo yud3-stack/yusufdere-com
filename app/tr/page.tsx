@@ -13,7 +13,7 @@ const locale = "tr";
 const dictionary = getDictionary(locale);
 
 export async function generateMetadata() {
-  const siteSettings = await getSiteSettings();
+  const siteSettings = await getSiteSettings(locale);
 
   return createMetadata({
     title: siteSettings.seoTitle || siteSettings.name || undefined,
@@ -24,7 +24,7 @@ export async function generateMetadata() {
 }
 
 export default async function TurkishHome() {
-  const homepageData = await getHomepageData();
+  const homepageData = await getHomepageData(locale);
 
   return (
     <main className="min-h-screen overflow-hidden">

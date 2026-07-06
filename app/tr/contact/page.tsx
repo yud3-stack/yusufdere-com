@@ -21,7 +21,7 @@ export function generateMetadata() {
 }
 
 export default async function TurkishContactPage() {
-  const siteSettings = await getSiteSettings();
+  const siteSettings = await getSiteSettings(locale);
   const instagramUrl = siteSettings.instagramUrl || siteConfig.instagramUrl;
   const email = siteSettings.email || siteConfig.email;
 
