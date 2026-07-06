@@ -7,6 +7,7 @@ import { InteriorPage } from "@/components/layout/interior-page";
 import { PageIntro } from "@/components/layout/page-intro";
 import { Container } from "@/components/ui/container";
 import { getJournalPostBySlug } from "@/lib/sanity/data";
+import { createMetadata } from "@/lib/seo";
 
 type JournalDetailPageProps = {
   params: Promise<{ slug: string }>;
@@ -19,15 +20,23 @@ export async function generateMetadata({
   const post = await getJournalPostBySlug(slug);
 
   if (!post) {
-    return {
+    return createMetadata({
       title: "Journal",
-    };
+      description: "Notes and development logs from Yusuf Dere.",
+      path: `/journal/${slug}`,
+      robots: {
+        index: false,
+        follow: false,
+      },
+    });
   }
 
-  return {
+  return createMetadata({
     title: post.title,
     description: post.excerpt,
-  };
+    path: `/journal/${post.slug || slug}`,
+    type: "article",
+  });
 }
 
 export default async function JournalDetailPage({

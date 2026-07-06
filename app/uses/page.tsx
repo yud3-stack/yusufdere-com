@@ -1,5 +1,3 @@
-import type { Metadata } from "next";
-
 import { InteriorPage } from "@/components/layout/interior-page";
 import { PageIntro } from "@/components/layout/page-intro";
 import { Container } from "@/components/ui/container";
@@ -9,11 +7,15 @@ import {
   type UsesCategory,
 } from "@/content/uses";
 import { getAllUsesItems } from "@/lib/sanity/data";
+import { createMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export function generateMetadata() {
+  return createMetadata({
   title: "Uses",
   description: usesPage.description,
-};
+    path: "/uses",
+  });
+}
 
 const categories: UsesCategory[] = [
   "Hardware",

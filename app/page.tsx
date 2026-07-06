@@ -4,7 +4,20 @@ import { GalleryUsesSection } from "@/components/sections/gallery-uses-section";
 import { HeroSection } from "@/components/sections/hero-section";
 import { NowJournalSection } from "@/components/sections/now-journal-section";
 import { ProjectsPreviewSection } from "@/components/sections/projects-preview-section";
+import { getSiteSettings } from "@/lib/sanity/data";
 import { getHomepageData } from "@/lib/sanity/homepage";
+import { createMetadata } from "@/lib/seo";
+
+export async function generateMetadata() {
+  const siteSettings = await getSiteSettings();
+
+  return createMetadata({
+    title: siteSettings.seoTitle || siteSettings.name || undefined,
+    description: siteSettings.seoDescription || undefined,
+    path: "/",
+    absoluteTitle: true,
+  });
+}
 
 export default async function Home() {
   const homepageData = await getHomepageData();

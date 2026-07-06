@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight, AtSign, Mail } from "lucide-react";
 
@@ -7,12 +6,16 @@ import { PageIntro } from "@/components/layout/page-intro";
 import { Container } from "@/components/ui/container";
 import { siteConfig } from "@/content/site";
 import { getSiteSettings } from "@/lib/sanity/data";
+import { createMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export function generateMetadata() {
+  return createMetadata({
   title: "Contact",
   description:
     "Contact Yusuf Dere through Instagram or email for projects, ideas, and collaborations.",
-};
+    path: "/contact",
+  });
+}
 
 export default async function ContactPage() {
   const siteSettings = await getSiteSettings();

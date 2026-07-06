@@ -8,6 +8,7 @@ import { PageIntro } from "@/components/layout/page-intro";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { getProjectBySlug } from "@/lib/sanity/data";
+import { createMetadata } from "@/lib/seo";
 
 type ProjectDetailPageProps = {
   params: Promise<{ slug: string }>;
@@ -20,15 +21,23 @@ export async function generateMetadata({
   const project = await getProjectBySlug(slug);
 
   if (!project) {
-    return {
+    return createMetadata({
       title: "Project",
-    };
+      description: "A project from Yusuf Dere.",
+      path: `/projects/${slug}`,
+      robots: {
+        index: false,
+        follow: false,
+      },
+    });
   }
 
-  return {
+  return createMetadata({
     title: project.title,
     description: project.shortDescription,
-  };
+    path: `/projects/${project.slug || slug}`,
+    type: "article",
+  });
 }
 
 export default async function ProjectDetailPage({

@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Image from "next/image";
 
 import { InteriorPage } from "@/components/layout/interior-page";
@@ -7,11 +6,15 @@ import { Container } from "@/components/ui/container";
 import { EmptyState } from "@/components/ui/empty-state";
 import { galleryPage } from "@/content/gallery";
 import { getAllGalleryImages } from "@/lib/sanity/data";
+import { createMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export function generateMetadata() {
+  return createMetadata({
   title: "Gallery",
   description: galleryPage.description,
-};
+    path: "/gallery",
+  });
+}
 
 export default async function GalleryPage() {
   const galleryItems = await getAllGalleryImages();

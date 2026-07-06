@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
@@ -8,11 +7,15 @@ import { Container } from "@/components/ui/container";
 import { EmptyState } from "@/components/ui/empty-state";
 import { journalPage } from "@/content/journal";
 import { getAllJournalPosts } from "@/lib/sanity/data";
+import { createMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export function generateMetadata() {
+  return createMetadata({
   title: "Journal",
   description: journalPage.description,
-};
+    path: "/journal",
+  });
+}
 
 export default async function JournalPage() {
   const journalEntries = await getAllJournalPosts();
