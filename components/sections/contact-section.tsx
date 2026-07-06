@@ -3,8 +3,16 @@ import { ArrowUpRight, AtSign, Mail } from "lucide-react";
 
 import { Container } from "@/components/ui/container";
 import { siteConfig } from "@/content/site";
+import type { SiteSettings } from "@/lib/sanity/types";
 
-export function ContactSection() {
+type ContactSectionProps = {
+  siteSettings?: SiteSettings;
+};
+
+export function ContactSection({ siteSettings }: ContactSectionProps) {
+  const instagramUrl = siteSettings?.instagramUrl || siteConfig.instagramUrl;
+  const email = siteSettings?.email || siteConfig.email;
+
   return (
     <section className="py-20 sm:py-24">
       <Container>
@@ -24,7 +32,7 @@ export function ContactSection() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <Link
-              href={siteConfig.instagramUrl}
+              href={instagramUrl}
               target="_blank"
               rel="noreferrer"
               className="group rounded-lg border border-border bg-surface p-5 transition-colors duration-200 hover:border-white/20"
@@ -39,13 +47,13 @@ export function ContactSection() {
               </p>
             </Link>
             <Link
-              href={`mailto:${siteConfig.email}`}
+              href={`mailto:${email}`}
               className="group rounded-lg border border-border bg-surface p-5 transition-colors duration-200 hover:border-white/20"
             >
               <Mail className="size-5 text-muted-foreground" />
               <p className="mt-5 text-sm font-medium text-foreground">Email</p>
               <p className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
-                {siteConfig.email}
+                {email}
                 <ArrowUpRight className="size-4 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
               </p>
             </Link>

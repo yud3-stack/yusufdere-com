@@ -12,8 +12,9 @@ import {
 
 import { Container } from "@/components/ui/container";
 import {
-  galleryPreviews,
-  usesItems,
+  galleryPreviews as fallbackGalleryPreviews,
+  usesItems as fallbackUsesItems,
+  type GalleryPreview,
   type UsesItem,
 } from "@/content/home";
 
@@ -27,7 +28,15 @@ const usesIcons: Record<UsesItem["icon"], ComponentType<{ className?: string }>>
     phone: Smartphone,
   };
 
-export function GalleryUsesSection() {
+type GalleryUsesSectionProps = {
+  galleryItems?: GalleryPreview[];
+  usesItems?: UsesItem[];
+};
+
+export function GalleryUsesSection({
+  galleryItems = fallbackGalleryPreviews,
+  usesItems = fallbackUsesItems,
+}: GalleryUsesSectionProps) {
   return (
     <section className="border-b border-border py-20 sm:py-24">
       <Container>
@@ -46,7 +55,7 @@ export function GalleryUsesSection() {
               </Link>
             </div>
             <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
-              {galleryPreviews.map((item, index) => (
+              {galleryItems.map((item, index) => (
                 <article
                   key={item.title}
                   className="group overflow-hidden rounded-lg border border-border bg-surface"

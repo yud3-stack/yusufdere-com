@@ -3,7 +3,12 @@ import Link from "next/link";
 import { ArrowRight, BookOpen, Code2, Sparkles } from "lucide-react";
 
 import { Container } from "@/components/ui/container";
-import { journalPreviews, nowItems, type NowItem } from "@/content/home";
+import {
+  journalPreviews,
+  nowItems as fallbackNowItems,
+  type JournalPreview,
+  type NowItem,
+} from "@/content/home";
 
 const nowIcons: Record<NowItem["icon"], ComponentType<{ className?: string }>> =
   {
@@ -12,7 +17,15 @@ const nowIcons: Record<NowItem["icon"], ComponentType<{ className?: string }>> =
     spark: Sparkles,
   };
 
-export function NowJournalSection() {
+type NowJournalSectionProps = {
+  nowItems?: NowItem[];
+  journalPosts?: JournalPreview[];
+};
+
+export function NowJournalSection({
+  nowItems = fallbackNowItems,
+  journalPosts = journalPreviews,
+}: NowJournalSectionProps) {
   return (
     <section className="border-b border-border py-20 sm:py-24">
       <Container>
@@ -67,7 +80,7 @@ export function NowJournalSection() {
               </Link>
             </div>
             <div className="mt-6 divide-y divide-border">
-              {journalPreviews.map((post) => (
+              {journalPosts.map((post) => (
                 <Link
                   key={post.title}
                   href={post.href}

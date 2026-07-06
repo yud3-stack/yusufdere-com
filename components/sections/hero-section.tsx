@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { siteConfig } from "@/content/site";
+import type { SiteSettings } from "@/lib/sanity/types";
 
 const navItems = [
   { label: "About", href: "/about" },
@@ -17,7 +18,15 @@ const navItems = [
   { label: "Contact", href: "/contact" },
 ] as const;
 
-export function HeroSection() {
+type HeroSectionProps = {
+  siteSettings?: SiteSettings;
+};
+
+export function HeroSection({ siteSettings }: HeroSectionProps) {
+  const name = siteSettings?.name || siteConfig.name;
+  const tagline = siteSettings?.bio || siteConfig.tagline;
+  const location = siteSettings?.location || siteConfig.location;
+
   return (
     <section className="border-b border-border">
       <Container className="grid min-h-[90svh] lg:grid-cols-[0.9fr_1.45fr]">
@@ -41,14 +50,14 @@ export function HeroSection() {
                 {siteConfig.initials}
               </div>
               <h1 className="text-5xl font-semibold tracking-tight text-foreground sm:text-6xl xl:text-7xl">
-                {siteConfig.name}
+                {name}
               </h1>
               <p className="mt-5 text-xl leading-8 text-foreground sm:text-2xl">
-                {siteConfig.tagline}
+                {tagline}
               </p>
               <p className="mt-5 flex items-center gap-2 text-sm text-muted-foreground">
                 <MapPin className="size-4" />
-                {siteConfig.location}
+                {location}
               </p>
               <p className="mt-8 max-w-md text-base leading-7 text-muted-foreground">
                 A quiet digital home for projects, notes, photography, tools,
@@ -62,7 +71,6 @@ export function HeroSection() {
               </div>
             </div>
           </div>
-
         </div>
 
         <div className="relative flex min-h-[520px] flex-col overflow-hidden lg:min-h-[90svh] lg:pl-10">

@@ -2,6 +2,7 @@ import { defineQuery } from "next-sanity";
 
 export const siteSettingsQuery = defineQuery(/* groq */ `
   *[_type == "siteSettings"][0] {
+    _id,
     name,
     bio,
     location,
@@ -17,7 +18,7 @@ export const siteSettingsQuery = defineQuery(/* groq */ `
 
 export const featuredProjectsQuery = defineQuery(/* groq */ `
   *[_type == "project" && featured == true]
-  | order(order asc, _createdAt desc) [0...4] {
+  | order(order asc, _createdAt desc) [0...3] {
     _id,
     title,
     "slug": slug.current,
@@ -27,12 +28,14 @@ export const featuredProjectsQuery = defineQuery(/* groq */ `
     category,
     techStack,
     liveUrl,
-    githubUrl
+    githubUrl,
+    featured,
+    order
   }
 `);
 
-export const latestJournalPostsQuery = defineQuery(/* groq */ `
-  *[_type == "journalPost" && published == true]
+export const featuredJournalPostsQuery = defineQuery(/* groq */ `
+  *[_type == "journalPost" && published == true && featured == true]
   | order(date desc, _createdAt desc) [0...3] {
     _id,
     title,
@@ -40,41 +43,49 @@ export const latestJournalPostsQuery = defineQuery(/* groq */ `
     excerpt,
     coverImage,
     date,
-    category
+    category,
+    published,
+    featured
   }
 `);
 
 export const activeNowItemsQuery = defineQuery(/* groq */ `
   *[_type == "nowItem" && active == true]
-  | order(order asc, _createdAt desc) {
+  | order(order asc, _createdAt desc) [0...4] {
     _id,
     title,
     description,
-    icon
+    icon,
+    active,
+    order
+  }
+`);
+
+export const featuredUsesItemsQuery = defineQuery(/* groq */ `
+  *[_type == "usesItem" && featured == true]
+  | order(order asc, _createdAt desc) [0...6] {
+    _id,
+    title,
+    category,
+    description,
+    icon,
+    url,
+    order,
+    featured
   }
 `);
 
 export const featuredGalleryImagesQuery = defineQuery(/* groq */ `
   *[_type == "galleryImage" && featured == true]
-  | order(date desc, _createdAt desc) [0...6] {
+  | order(order asc, date desc, _createdAt desc) [0...4] {
     _id,
     image,
     title,
     category,
     location,
     date,
-    description
-  }
-`);
-
-export const usesItemsQuery = defineQuery(/* groq */ `
-  *[_type == "usesItem"]
-  | order(order asc, _createdAt desc) {
-    _id,
-    title,
-    category,
     description,
-    icon,
-    url
+    featured,
+    order
   }
 `);

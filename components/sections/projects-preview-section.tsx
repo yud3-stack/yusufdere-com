@@ -4,9 +4,15 @@ import { ArrowRight } from "lucide-react";
 import { ProjectCard } from "@/components/cards/project-card";
 import { Container } from "@/components/ui/container";
 import { SectionHeader } from "@/components/ui/section-header";
-import { featuredProjects } from "@/content/home";
+import { featuredProjects, type ProjectPreview } from "@/content/home";
 
-export function ProjectsPreviewSection() {
+type ProjectsPreviewSectionProps = {
+  projects?: ProjectPreview[];
+};
+
+export function ProjectsPreviewSection({
+  projects = featuredProjects,
+}: ProjectsPreviewSectionProps) {
   return (
     <section className="border-b border-border py-20 sm:py-24">
       <Container>
@@ -25,7 +31,7 @@ export function ProjectsPreviewSection() {
           }
         />
         <div className="mt-10 grid gap-5 md:grid-cols-3">
-          {featuredProjects.map((project) => (
+          {projects.map((project) => (
             <ProjectCard key={project.title} project={project} />
           ))}
         </div>
