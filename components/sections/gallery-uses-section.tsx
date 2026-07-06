@@ -1,14 +1,5 @@
-import type { ComponentType } from "react";
 import Link from "next/link";
-import {
-  AppWindow,
-  ArrowRight,
-  Camera,
-  Code2,
-  Headphones,
-  Laptop,
-  Smartphone,
-} from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 import { Container } from "@/components/ui/container";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -16,16 +7,7 @@ import {
   type GalleryPreview,
   type UsesItem,
 } from "@/content/home";
-
-const usesIcons: Record<UsesItem["icon"], ComponentType<{ className?: string }>> =
-  {
-    app: AppWindow,
-    camera: Camera,
-    code: Code2,
-    headphones: Headphones,
-    laptop: Laptop,
-    phone: Smartphone,
-  };
+import { resolveIcon } from "@/lib/icons";
 
 type GalleryUsesSectionProps = {
   galleryItems?: GalleryPreview[];
@@ -104,7 +86,7 @@ export function GalleryUsesSection({
             {usesItems.length > 0 ? (
               <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3">
                 {usesItems.map((item) => {
-                  const Icon = usesIcons[item.icon];
+                  const Icon = resolveIcon(item.icon);
 
                   return (
                     <article key={item.title}>

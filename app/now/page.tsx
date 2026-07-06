@@ -5,6 +5,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { nowPage } from "@/content/now";
 import { getAllNowItems } from "@/lib/sanity/data";
 import { createMetadata } from "@/lib/seo";
+import { resolveIcon } from "@/lib/icons";
 
 export function generateMetadata() {
   return createMetadata({
@@ -37,22 +38,29 @@ export default async function NowPage() {
                 </p>
               </aside>
               <div className="grid gap-4 md:grid-cols-2">
-                {focusItems.map((item) => (
-                  <article
-                    key={item.title}
-                    className="rounded-lg border border-border bg-surface p-6"
-                  >
-                    <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                      {item.status}
-                    </p>
-                    <h2 className="mt-5 text-xl font-medium tracking-tight text-foreground">
-                      {item.title}
-                    </h2>
-                    <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                      {item.description}
-                    </p>
-                  </article>
-                ))}
+                {focusItems.map((item) => {
+                  const Icon = resolveIcon(item.icon);
+
+                  return (
+                    <article
+                      key={item.title}
+                      className="rounded-lg border border-border bg-surface p-6"
+                    >
+                      <div className="flex items-center gap-3">
+                        <Icon className="size-5 text-muted-foreground" />
+                        <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                          {item.status}
+                        </p>
+                      </div>
+                      <h2 className="mt-5 text-xl font-medium tracking-tight text-foreground">
+                        {item.title}
+                      </h2>
+                      <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                        {item.description}
+                      </p>
+                    </article>
+                  );
+                })}
               </div>
             </div>
           ) : (

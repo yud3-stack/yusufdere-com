@@ -1,6 +1,5 @@
-import type { ComponentType } from "react";
 import Link from "next/link";
-import { ArrowRight, BookOpen, Code2, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 import { Container } from "@/components/ui/container";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -8,13 +7,7 @@ import {
   type JournalPreview,
   type NowItem,
 } from "@/content/home";
-
-const nowIcons: Record<NowItem["icon"], ComponentType<{ className?: string }>> =
-  {
-    book: BookOpen,
-    code: Code2,
-    spark: Sparkles,
-  };
+import { resolveIcon } from "@/lib/icons";
 
 type NowJournalSectionProps = {
   nowItems?: NowItem[];
@@ -45,7 +38,7 @@ export function NowJournalSection({
             {nowItems.length > 0 ? (
               <div className="mt-8 space-y-6">
                 {nowItems.map((item) => {
-                  const Icon = nowIcons[item.icon];
+                  const Icon = resolveIcon(item.icon);
 
                   return (
                     <article key={item.title} className="flex gap-4">

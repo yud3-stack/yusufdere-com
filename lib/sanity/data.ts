@@ -25,6 +25,7 @@ import { type GalleryItem } from "@/content/gallery";
 import { type UsesCategory, type UsesPageItem } from "@/content/uses";
 import { siteConfig } from "@/content/site";
 import type { ProjectPreview } from "@/content/home";
+import { normalizeIconKey } from "@/lib/icons";
 
 export type ProjectDetail = {
   title: string;
@@ -33,6 +34,7 @@ export type ProjectDetail = {
   status: string;
   category: string;
   techStack: string[];
+  featured: boolean;
   liveUrl?: string;
   githubUrl?: string;
   body: string[];
@@ -129,6 +131,7 @@ export async function getAllUsesItems(): Promise<UsesPageItem[]> {
       title: item.title || "Tool",
       category: normalizeUsesCategory(item.category),
       description: item.description || "A tool from the YusufDere.com setup.",
+      icon: normalizeIconKey(item.icon),
     }));
 
   return mapped;
@@ -144,6 +147,7 @@ export async function getAllNowItems(): Promise<FocusItem[]> {
       title: item.title || "Current focus",
       description: item.description || "A current focus item from Sanity.",
       status: item.active === false ? "Paused" : "Active",
+      icon: normalizeIconKey(item.icon),
     }));
 
   return mapped;
@@ -181,7 +185,6 @@ async function fetchOrFallback<T>(
       query,
       params,
       tags,
-      revalidate: 60,
     })) as T;
   } catch {
     return fallback;
@@ -198,6 +201,9 @@ function mapProjectPreview(project: Project, index: number): ProjectPreview {
       project.category ||
       "A project from the YusufDere.com CMS.",
     status: toTitleCase(project.status || "Featured"),
+    category: project.category || "Project",
+    techStack: project.techStack || [],
+    featured: project.featured === true,
     href: project.slug ? `/projects/${project.slug}` : "/projects",
     accent: accents[index % accents.length],
   };
@@ -214,12 +220,10 @@ function mapProjectDetail(project: Project): ProjectDetail {
     status: toTitleCase(project.status || "Featured"),
     category: project.category || "Project",
     techStack: project.techStack || [],
+    featured: project.featured === true,
     liveUrl: project.liveUrl || undefined,
     githubUrl: project.githubUrl || undefined,
-    body:
-      body.length > 0
-        ? body
-        : [project.shortDescription || "More details will be added soon."],
+    body,
   };
 }
 

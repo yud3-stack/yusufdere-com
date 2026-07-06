@@ -8,6 +8,7 @@ import {
 } from "@/content/uses";
 import { getAllUsesItems } from "@/lib/sanity/data";
 import { createMetadata } from "@/lib/seo";
+import { resolveIcon } from "@/lib/icons";
 
 export function generateMetadata() {
   return createMetadata({
@@ -51,19 +52,24 @@ export default async function UsesPage() {
                       {category}
                     </h2>
                     <div className="mt-6 grid gap-4 md:grid-cols-2">
-                      {items.map((item) => (
-                        <article
-                          key={item.title}
-                          className="rounded-lg border border-border bg-surface p-6"
-                        >
-                          <h3 className="text-lg font-medium text-foreground">
-                            {item.title}
-                          </h3>
-                          <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                            {item.description}
-                          </p>
-                        </article>
-                      ))}
+                      {items.map((item) => {
+                        const Icon = resolveIcon(item.icon);
+
+                        return (
+                          <article
+                            key={item.title}
+                            className="rounded-lg border border-border bg-surface p-6"
+                          >
+                            <Icon className="size-5 text-muted-foreground" />
+                            <h3 className="mt-5 text-lg font-medium text-foreground">
+                              {item.title}
+                            </h3>
+                            <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                              {item.description}
+                            </p>
+                          </article>
+                        );
+                      })}
                     </div>
                   </section>
                 );

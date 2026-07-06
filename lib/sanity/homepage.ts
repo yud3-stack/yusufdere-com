@@ -23,6 +23,7 @@ import {
   type UsesItem,
 } from "@/content/home";
 import { siteConfig } from "@/content/site";
+import { normalizeIconKey } from "@/lib/icons";
 
 type HomePageData = {
   siteSettings: SiteSettings;
@@ -34,15 +35,6 @@ type HomePageData = {
 };
 
 const projectAccents: ProjectPreview["accent"][] = ["violet", "stone", "slate"];
-const nowIconFallbacks: NowItem["icon"][] = ["code", "spark", "book"];
-const usesIconFallbacks: UsesItem["icon"][] = [
-  "laptop",
-  "phone",
-  "camera",
-  "headphones",
-  "code",
-  "app",
-];
 
 export async function getHomepageData(): Promise<HomePageData> {
   const [
@@ -86,7 +78,6 @@ async function fetchOrFallback<T>(
     return (await sanityFetch({
       query,
       tags,
-      revalidate: 60,
     })) as T;
   } catch {
     return fallback;
@@ -118,6 +109,9 @@ function mapProjects(projects: Project[]): ProjectPreview[] {
         project.category ||
         "A project from the YusufDere.com CMS.",
       status: toTitleCase(project.status || "Featured"),
+      category: project.category || "Project",
+      techStack: project.techStack || [],
+      featured: project.featured === true,
       href: project.slug ? `/projects/${project.slug}` : project.liveUrl || "/projects",
       accent: projectAccents[index % projectAccents.length],
     }));
@@ -141,10 +135,10 @@ function mapJournalPosts(posts: JournalPost[]): JournalPreview[] {
 function mapNowItems(items: SanityNowItem[]): NowItem[] {
   const mapped = items
     .filter((item) => Boolean(item.title))
-    .map((item, index) => ({
+    .map((item) => ({
       title: item.title || "Current focus",
       description: item.description || "A current focus item from the CMS.",
-      icon: normalizeNowIcon(item.icon, index),
+      icon: normalizeIconKey(item.icon),
     }));
 
   return mapped;
@@ -153,10 +147,10 @@ function mapNowItems(items: SanityNowItem[]): NowItem[] {
 function mapUsesItems(items: SanityUsesItem[]): UsesItem[] {
   const mapped = items
     .filter((item) => Boolean(item.title))
-    .map((item, index) => ({
+    .map((item) => ({
       title: item.title || "Tool",
       category: item.category || "Setup",
-      icon: normalizeUsesIcon(item.icon, index),
+      icon: normalizeIconKey(item.icon),
     }));
 
   return mapped;
@@ -171,29 +165,6 @@ function mapGalleryImages(images: GalleryImage[]): GalleryPreview[] {
     }));
 
   return mapped;
-}
-
-function normalizeNowIcon(icon: string | null | undefined, index: number) {
-  if (icon === "code" || icon === "spark" || icon === "book") {
-    return icon;
-  }
-
-  return nowIconFallbacks[index % nowIconFallbacks.length];
-}
-
-function normalizeUsesIcon(icon: string | null | undefined, index: number) {
-  if (
-    icon === "laptop" ||
-    icon === "phone" ||
-    icon === "camera" ||
-    icon === "headphones" ||
-    icon === "code" ||
-    icon === "app"
-  ) {
-    return icon;
-  }
-
-  return usesIconFallbacks[index % usesIconFallbacks.length];
 }
 
 function toTitleCase(value: string) {

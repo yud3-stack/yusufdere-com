@@ -13,17 +13,19 @@ export const projectId = assertValue(
   "Missing environment variable: NEXT_PUBLIC_SANITY_PROJECT_ID",
 );
 
+export const sanityRevalidateSeconds = 60;
+
 export const client = createClient({
   projectId,
   dataset,
   apiVersion,
-  useCdn: true,
+  useCdn: process.env.NODE_ENV === "production",
 });
 
 export async function sanityFetch<const QueryString extends string>({
   query,
   params = {},
-  revalidate = 60,
+  revalidate = sanityRevalidateSeconds,
   tags = [],
 }: {
   query: QueryString;
@@ -31,9 +33,13 @@ export async function sanityFetch<const QueryString extends string>({
   revalidate?: number | false;
   tags?: string[];
 }) {
+  const effectiveRevalidate =
+    process.env.NODE_ENV === "production" ? revalidate : 0;
+
+  // Code changes still require a deploy. CMS content changes do not; Sanity data revalidates every 60 seconds in production.
   return client.fetch(query, params, {
     next: {
-      revalidate: tags.length ? false : revalidate,
+      revalidate: effectiveRevalidate,
       tags,
     },
   });

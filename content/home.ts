@@ -1,7 +1,12 @@
+import type { IconKey } from "@/lib/icons";
+
 export type ProjectPreview = {
   title: string;
   description: string;
   status: string;
+  category?: string;
+  techStack: string[];
+  featured: boolean;
   href: string;
   accent: "violet" | "stone" | "slate";
 };
@@ -9,7 +14,7 @@ export type ProjectPreview = {
 export type NowItem = {
   title: string;
   description: string;
-  icon: "code" | "spark" | "book";
+  icon: IconKey;
 };
 
 export type JournalPreview = {
@@ -27,7 +32,7 @@ export type GalleryPreview = {
 export type UsesItem = {
   title: string;
   category: string;
-  icon: "laptop" | "phone" | "camera" | "headphones" | "code" | "app";
+  icon: IconKey;
 };
 
 export const homeIntro = {
@@ -45,6 +50,9 @@ export const featuredProjects: ProjectPreview[] = [
     description:
       "An AI assistant for creators and developers, shaped around speed, clarity, and daily workflow.",
     status: "Building",
+    category: "AI",
+    techStack: ["AI", "Product", "Automation"],
+    featured: true,
     href: "/projects/pixelbuddy-ai",
     accent: "violet",
   },
@@ -53,6 +61,9 @@ export const featuredProjects: ProjectPreview[] = [
     description:
       "A modern travel planning concept for discovering routes, tickets, and memorable places.",
     status: "Experiment",
+    category: "Web",
+    techStack: ["Next.js", "Product", "Travel"],
+    featured: false,
     href: "/projects/travel-ticket",
     accent: "stone",
   },
@@ -61,6 +72,9 @@ export const featuredProjects: ProjectPreview[] = [
     description:
       "A quiet pipeline of software ideas, small bets, and systems for future products.",
     status: "Idea",
+    category: "SaaS",
+    techStack: ["Systems", "Research", "Product"],
+    featured: false,
     href: "/projects/new-saas-projects",
     accent: "slate",
   },
@@ -75,7 +89,7 @@ export const nowItems: NowItem[] = [
   {
     title: "Learning Swift",
     description: "Exploring iOS development with a long-term product lens.",
-    icon: "spark",
+    icon: "sparkles",
   },
   {
     title: "Reading and resetting",
