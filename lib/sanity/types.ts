@@ -7,6 +7,18 @@ export type SanityImage = {
   [key: string]: unknown;
 };
 
+export type PortableTextSpan = {
+  _type?: "span";
+  text?: string;
+};
+
+export type PortableTextBlock = {
+  _key?: string;
+  _type?: "block";
+  style?: string;
+  children?: PortableTextSpan[];
+};
+
 export type SiteSettings = {
   _id?: string;
   name?: string | null;
@@ -26,6 +38,7 @@ export type Project = {
   title?: string | null;
   slug?: string | null;
   shortDescription?: string | null;
+  description?: PortableTextBlock[] | null;
   coverImage?: SanityImage | null;
   status?: string | null;
   category?: string | null;
@@ -41,6 +54,7 @@ export type JournalPost = {
   title?: string | null;
   slug?: string | null;
   excerpt?: string | null;
+  content?: PortableTextBlock[] | null;
   coverImage?: SanityImage | null;
   date?: string | null;
   category?: string | null;

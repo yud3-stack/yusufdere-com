@@ -5,14 +5,17 @@ import { ArrowUpRight } from "lucide-react";
 import { InteriorPage } from "@/components/layout/interior-page";
 import { PageIntro } from "@/components/layout/page-intro";
 import { Container } from "@/components/ui/container";
-import { journalEntries, journalPage } from "@/content/journal";
+import { journalPage } from "@/content/journal";
+import { getAllJournalPosts } from "@/lib/sanity/data";
 
 export const metadata: Metadata = {
   title: "Journal",
   description: journalPage.description,
 };
 
-export default function JournalPage() {
+export default async function JournalPage() {
+  const journalEntries = await getAllJournalPosts();
+
   return (
     <InteriorPage>
       <PageIntro

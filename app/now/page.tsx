@@ -3,14 +3,17 @@ import type { Metadata } from "next";
 import { InteriorPage } from "@/components/layout/interior-page";
 import { PageIntro } from "@/components/layout/page-intro";
 import { Container } from "@/components/ui/container";
-import { focusItems, nowPage } from "@/content/now";
+import { nowPage } from "@/content/now";
+import { getAllNowItems } from "@/lib/sanity/data";
 
 export const metadata: Metadata = {
   title: "Now",
   description: nowPage.description,
 };
 
-export default function NowPage() {
+export default async function NowPage() {
+  const focusItems = await getAllNowItems();
+
   return (
     <InteriorPage>
       <PageIntro

@@ -37,7 +37,7 @@ export const projectItems: ProjectPreview[] = [
     description:
       "A public trail of code, learning, prototypes, and technical experiments as the ecosystem grows.",
     status: "Open Source",
-    href: "https://github.com/heyyud3",
+    href: "/projects/github",
     accent: "stone",
   },
 ];

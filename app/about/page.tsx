@@ -4,13 +4,18 @@ import { InteriorPage } from "@/components/layout/interior-page";
 import { PageIntro } from "@/components/layout/page-intro";
 import { Container } from "@/components/ui/container";
 import { aboutPage } from "@/content/about";
+import { getSiteSettings } from "@/lib/sanity/data";
 
 export const metadata: Metadata = {
   title: "About",
   description: aboutPage.description,
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const siteSettings = await getSiteSettings();
+  const name = siteSettings.name || "Yusuf Dere";
+  const location = siteSettings.location || "Samsun, Türkiye";
+
   return (
     <InteriorPage>
       <PageIntro
@@ -31,7 +36,11 @@ export default function AboutPage() {
                     {stat.label}
                   </p>
                   <p className="mt-3 text-xl font-medium text-foreground">
-                    {stat.value}
+                    {stat.label === "Base"
+                      ? location.replace(", Türkiye", "")
+                      : stat.label === "Mode"
+                        ? "Building"
+                        : stat.value}
                   </p>
                 </div>
               ))}
@@ -53,6 +62,11 @@ export default function AboutPage() {
               ))}
             </div>
           </div>
+          <p className="mt-14 max-w-3xl border-t border-border pt-8 text-base leading-8 text-muted-foreground">
+            This is the home of {name}: a personal brand system for connecting
+            product work, journal notes, photography, current focus, and the
+            future experiments that start in {location}.
+          </p>
         </Container>
       </section>
     </InteriorPage>

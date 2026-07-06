@@ -89,3 +89,110 @@ export const featuredGalleryImagesQuery = defineQuery(/* groq */ `
     order
   }
 `);
+
+export const allProjectsQuery = defineQuery(/* groq */ `
+  *[_type == "project" && defined(slug.current)]
+  | order(order asc, _createdAt desc) {
+    _id,
+    title,
+    "slug": slug.current,
+    shortDescription,
+    coverImage,
+    status,
+    category,
+    techStack,
+    liveUrl,
+    githubUrl,
+    featured,
+    order
+  }
+`);
+
+export const projectBySlugQuery = defineQuery(/* groq */ `
+  *[_type == "project" && slug.current == $slug][0] {
+    _id,
+    title,
+    "slug": slug.current,
+    shortDescription,
+    description,
+    coverImage,
+    status,
+    category,
+    techStack,
+    liveUrl,
+    githubUrl,
+    featured,
+    order
+  }
+`);
+
+export const allJournalPostsQuery = defineQuery(/* groq */ `
+  *[_type == "journalPost" && published == true && defined(slug.current)]
+  | order(date desc, _createdAt desc) {
+    _id,
+    title,
+    "slug": slug.current,
+    excerpt,
+    coverImage,
+    date,
+    category,
+    published,
+    featured
+  }
+`);
+
+export const journalPostBySlugQuery = defineQuery(/* groq */ `
+  *[_type == "journalPost" && slug.current == $slug && published == true][0] {
+    _id,
+    title,
+    "slug": slug.current,
+    excerpt,
+    content,
+    coverImage,
+    date,
+    category,
+    published,
+    featured
+  }
+`);
+
+export const allGalleryImagesQuery = defineQuery(/* groq */ `
+  *[_type == "galleryImage"]
+  | order(order asc, date desc, _createdAt desc) {
+    _id,
+    image,
+    title,
+    category,
+    location,
+    date,
+    description,
+    featured,
+    order
+  }
+`);
+
+export const allUsesItemsQuery = defineQuery(/* groq */ `
+  *[_type == "usesItem"]
+  | order(order asc, _createdAt desc) {
+    _id,
+    title,
+    category,
+    description,
+    icon,
+    url,
+    order,
+    featured
+  }
+`);
+
+export const allNowItemsQuery = defineQuery(/* groq */ `
+  *[_type == "nowItem"]
+  | order(active desc, order asc, _createdAt desc) {
+    _id,
+    title,
+    description,
+    icon,
+    active,
+    order
+  }
+`);

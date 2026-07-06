@@ -1,16 +1,20 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 
 import { InteriorPage } from "@/components/layout/interior-page";
 import { PageIntro } from "@/components/layout/page-intro";
 import { Container } from "@/components/ui/container";
-import { galleryItems, galleryPage } from "@/content/gallery";
+import { galleryPage } from "@/content/gallery";
+import { getAllGalleryImages } from "@/lib/sanity/data";
 
 export const metadata: Metadata = {
   title: "Gallery",
   description: galleryPage.description,
 };
 
-export default function GalleryPage() {
+export default async function GalleryPage() {
+  const galleryItems = await getAllGalleryImages();
+
   return (
     <InteriorPage>
       <PageIntro
@@ -26,13 +30,26 @@ export default function GalleryPage() {
                 key={`${item.title}-${item.location}`}
                 className="overflow-hidden rounded-lg border border-border bg-surface"
               >
-                <div className="aspect-[4/5] bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0)_30%),linear-gradient(140deg,#1b1b1d,#080808)]">
-                  <div className="flex h-full items-end p-5">
-                    <div
-                      className="h-px flex-1 bg-white/15"
-                      style={{ marginBottom: `${12 + index * 5}%` }}
-                    />
-                  </div>
+                <div className="relative aspect-[4/5] bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0)_30%),linear-gradient(140deg,#1b1b1d,#080808)]">
+                  {"imageUrl" in item && item.imageUrl ? (
+                    <>
+                      <Image
+                        src={item.imageUrl}
+                        alt={item.title}
+                        fill
+                        sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+                        className="object-cover"
+                      />
+                      <div className="absolute inset-0 bg-black/20" />
+                    </>
+                  ) : (
+                    <div className="flex h-full items-end p-5">
+                      <div
+                        className="h-px flex-1 bg-white/15"
+                        style={{ marginBottom: `${12 + index * 5}%` }}
+                      />
+                    </div>
+                  )}
                 </div>
                 <div className="p-5">
                   <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">

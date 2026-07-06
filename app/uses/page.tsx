@@ -4,10 +4,10 @@ import { InteriorPage } from "@/components/layout/interior-page";
 import { PageIntro } from "@/components/layout/page-intro";
 import { Container } from "@/components/ui/container";
 import {
-  usesItems,
   usesPage,
   type UsesCategory,
 } from "@/content/uses";
+import { getAllUsesItems } from "@/lib/sanity/data";
 
 export const metadata: Metadata = {
   title: "Uses",
@@ -21,7 +21,9 @@ const categories: UsesCategory[] = [
   "Everyday Carry",
 ];
 
-export default function UsesPage() {
+export default async function UsesPage() {
+  const usesItems = await getAllUsesItems();
+
   return (
     <InteriorPage>
       <PageIntro
