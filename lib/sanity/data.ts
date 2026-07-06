@@ -19,11 +19,10 @@ import type {
   SiteSettings,
   UsesItem as SanityUsesItem,
 } from "@/lib/sanity/types";
-import { journalEntries, type JournalEntry } from "@/content/journal";
-import { focusItems, type FocusItem } from "@/content/now";
-import { projectItems } from "@/content/projects";
-import { galleryItems, type GalleryItem } from "@/content/gallery";
-import { usesItems, type UsesCategory, type UsesPageItem } from "@/content/uses";
+import { type JournalEntry } from "@/content/journal";
+import { type FocusItem } from "@/content/now";
+import { type GalleryItem } from "@/content/gallery";
+import { type UsesCategory, type UsesPageItem } from "@/content/uses";
 import { siteConfig } from "@/content/site";
 import type { ProjectPreview } from "@/content/home";
 
@@ -61,7 +60,7 @@ export async function getAllProjects(): Promise<ProjectPreview[]> {
     .filter((project) => Boolean(project.title))
     .map((project, index) => mapProjectPreview(project, index));
 
-  return mapped.length > 0 ? mapped : projectItems;
+  return mapped;
 }
 
 export async function getProjectBySlug(
@@ -78,26 +77,7 @@ export async function getProjectBySlug(
     return mapProjectDetail(project);
   }
 
-  const fallback = projectItems.find((item) => slugFromHref(item.href) === slug);
-
-  if (!fallback) {
-    return null;
-  }
-
-  return {
-    title: fallback.title,
-    slug,
-    shortDescription: fallback.description,
-    status: fallback.status,
-    category: fallback.status === "Open Source" ? "Open Source" : "Product",
-    techStack: fallback.title === "GitHub" ? ["Code", "Experiments"] : ["Next.js", "TypeScript", "Sanity"],
-    liveUrl: undefined,
-    githubUrl: fallback.title === "GitHub" ? "https://github.com/heyyud3" : undefined,
-    body: [
-      fallback.description,
-      "This placeholder detail page is ready to be replaced by Sanity content once the project entry is published.",
-    ],
-  };
+  return null;
 }
 
 export async function getAllJournalPosts(): Promise<JournalEntry[]> {
@@ -108,7 +88,7 @@ export async function getAllJournalPosts(): Promise<JournalEntry[]> {
     .filter((post) => Boolean(post.title))
     .map(mapJournalEntry);
 
-  return mapped.length > 0 ? mapped : journalEntries;
+  return mapped;
 }
 
 export async function getJournalPostBySlug(
@@ -125,23 +105,7 @@ export async function getJournalPostBySlug(
     return mapJournalDetail(post);
   }
 
-  const fallback = journalEntries.find((entry) => slugFromHref(entry.href) === slug);
-
-  if (!fallback) {
-    return null;
-  }
-
-  return {
-    title: fallback.title,
-    slug,
-    excerpt: fallback.excerpt,
-    category: fallback.category,
-    date: fallback.date,
-    body: [
-      fallback.excerpt,
-      "This placeholder note keeps the route available until the full journal entry is written in Sanity.",
-    ],
-  };
+  return null;
 }
 
 export async function getAllGalleryImages(): Promise<GalleryPageItem[]> {
@@ -152,7 +116,7 @@ export async function getAllGalleryImages(): Promise<GalleryPageItem[]> {
     .filter((image) => Boolean(image.title))
     .map(mapGalleryItem);
 
-  return mapped.length > 0 ? mapped : galleryItems;
+  return mapped;
 }
 
 export async function getAllUsesItems(): Promise<UsesPageItem[]> {
@@ -167,7 +131,7 @@ export async function getAllUsesItems(): Promise<UsesPageItem[]> {
       description: item.description || "A tool from the YusufDere.com setup.",
     }));
 
-  return mapped.length > 0 ? mapped : usesItems;
+  return mapped;
 }
 
 export async function getAllNowItems(): Promise<FocusItem[]> {
@@ -175,14 +139,14 @@ export async function getAllNowItems(): Promise<FocusItem[]> {
     "nowItem",
   ]);
   const mapped = items
-    .filter((item) => Boolean(item.title))
+    .filter((item) => item.active !== false && Boolean(item.title))
     .map((item) => ({
       title: item.title || "Current focus",
       description: item.description || "A current focus item from Sanity.",
       status: item.active === false ? "Paused" : "Active",
     }));
 
-  return mapped.length > 0 ? mapped : focusItems;
+  return mapped;
 }
 
 export async function getSiteSettings(): Promise<SiteSettings> {
@@ -240,6 +204,8 @@ function mapProjectPreview(project: Project, index: number): ProjectPreview {
 }
 
 function mapProjectDetail(project: Project): ProjectDetail {
+  const body = portableTextToParagraphs(project.description);
+
   return {
     title: project.title || "Untitled project",
     slug: project.slug || "",
@@ -250,9 +216,10 @@ function mapProjectDetail(project: Project): ProjectDetail {
     techStack: project.techStack || [],
     liveUrl: project.liveUrl || undefined,
     githubUrl: project.githubUrl || undefined,
-    body: portableTextToParagraphs(project.description).concat(
-      project.shortDescription ? [] : ["More details will be added soon."],
-    ),
+    body:
+      body.length > 0
+        ? body
+        : [project.shortDescription || "More details will be added soon."],
   };
 }
 
@@ -267,15 +234,16 @@ function mapJournalEntry(post: JournalPost): JournalEntry {
 }
 
 function mapJournalDetail(post: JournalPost): JournalDetail {
+  const body = portableTextToParagraphs(post.content);
+
   return {
     title: post.title || "Untitled note",
     slug: post.slug || "",
     excerpt: post.excerpt || "A short note from the journal.",
     category: post.category || "Thought",
     date: formatDate(post.date),
-    body: portableTextToParagraphs(post.content).concat(
-      post.excerpt ? [] : ["More details will be added soon."],
-    ),
+    body:
+      body.length > 0 ? body : [post.excerpt || "More details will be added soon."],
   };
 }
 
@@ -314,10 +282,6 @@ function safeImageUrl(image: GalleryImage["image"]) {
   } catch {
     return undefined;
   }
-}
-
-function slugFromHref(href: string) {
-  return href.split("/").filter(Boolean).at(-1);
 }
 
 function toTitleCase(value: string) {

@@ -16,11 +16,6 @@ import type {
   UsesItem as SanityUsesItem,
 } from "@/lib/sanity/types";
 import {
-  featuredProjects,
-  galleryPreviews,
-  journalPreviews,
-  nowItems,
-  usesItems,
   type GalleryPreview,
   type JournalPreview,
   type NowItem,
@@ -127,7 +122,7 @@ function mapProjects(projects: Project[]): ProjectPreview[] {
       accent: projectAccents[index % projectAccents.length],
     }));
 
-  return mapped.length > 0 ? mapped : featuredProjects;
+  return mapped;
 }
 
 function mapJournalPosts(posts: JournalPost[]): JournalPreview[] {
@@ -140,7 +135,7 @@ function mapJournalPosts(posts: JournalPost[]): JournalPreview[] {
       href: post.slug ? `/journal/${post.slug}` : "/journal",
     }));
 
-  return mapped.length > 0 ? mapped : journalPreviews;
+  return mapped;
 }
 
 function mapNowItems(items: SanityNowItem[]): NowItem[] {
@@ -152,7 +147,7 @@ function mapNowItems(items: SanityNowItem[]): NowItem[] {
       icon: normalizeNowIcon(item.icon, index),
     }));
 
-  return mapped.length > 0 ? mapped : nowItems;
+  return mapped;
 }
 
 function mapUsesItems(items: SanityUsesItem[]): UsesItem[] {
@@ -164,7 +159,7 @@ function mapUsesItems(items: SanityUsesItem[]): UsesItem[] {
       icon: normalizeUsesIcon(item.icon, index),
     }));
 
-  return mapped.length > 0 ? mapped : usesItems;
+  return mapped;
 }
 
 function mapGalleryImages(images: GalleryImage[]): GalleryPreview[] {
@@ -175,7 +170,7 @@ function mapGalleryImages(images: GalleryImage[]): GalleryPreview[] {
       location: image.location || image.category || "Gallery",
     }));
 
-  return mapped.length > 0 ? mapped : galleryPreviews;
+  return mapped;
 }
 
 function normalizeNowIcon(icon: string | null | undefined, index: number) {

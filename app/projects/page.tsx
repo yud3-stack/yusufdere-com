@@ -4,6 +4,7 @@ import { ProjectCard } from "@/components/cards/project-card";
 import { InteriorPage } from "@/components/layout/interior-page";
 import { PageIntro } from "@/components/layout/page-intro";
 import { Container } from "@/components/ui/container";
+import { EmptyState } from "@/components/ui/empty-state";
 import { projectsPage } from "@/content/projects";
 import { getAllProjects } from "@/lib/sanity/data";
 
@@ -24,11 +25,18 @@ export default async function ProjectsPage() {
       />
       <section className="py-20 sm:py-24">
         <Container>
-          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-            {projects.map((project) => (
-              <ProjectCard key={project.title} project={project} />
-            ))}
-          </div>
+          {projects.length > 0 ? (
+            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+              {projects.map((project) => (
+                <ProjectCard key={project.title} project={project} />
+              ))}
+            </div>
+          ) : (
+            <EmptyState
+              title="Projects are being prepared."
+              description="New products, experiments and build logs will appear here soon."
+            />
+          )}
         </Container>
       </section>
     </InteriorPage>

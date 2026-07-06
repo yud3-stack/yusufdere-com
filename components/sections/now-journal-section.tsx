@@ -3,9 +3,8 @@ import Link from "next/link";
 import { ArrowRight, BookOpen, Code2, Sparkles } from "lucide-react";
 
 import { Container } from "@/components/ui/container";
+import { EmptyState } from "@/components/ui/empty-state";
 import {
-  journalPreviews,
-  nowItems as fallbackNowItems,
   type JournalPreview,
   type NowItem,
 } from "@/content/home";
@@ -23,8 +22,8 @@ type NowJournalSectionProps = {
 };
 
 export function NowJournalSection({
-  nowItems = fallbackNowItems,
-  journalPosts = journalPreviews,
+  nowItems = [],
+  journalPosts = [],
 }: NowJournalSectionProps) {
   return (
     <section className="border-b border-border py-20 sm:py-24">
@@ -43,27 +42,35 @@ export function NowJournalSection({
                 <ArrowRight className="size-4" />
               </Link>
             </div>
-            <div className="mt-8 space-y-6">
-              {nowItems.map((item) => {
-                const Icon = nowIcons[item.icon];
+            {nowItems.length > 0 ? (
+              <div className="mt-8 space-y-6">
+                {nowItems.map((item) => {
+                  const Icon = nowIcons[item.icon];
 
-                return (
-                  <article key={item.title} className="flex gap-4">
-                    <div className="flex size-10 shrink-0 items-center justify-center rounded-md border border-border bg-surface text-muted-foreground">
-                      <Icon className="size-4" />
-                    </div>
-                    <div>
-                      <h3 className="text-base font-medium text-foreground">
-                        {item.title}
-                      </h3>
-                      <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                        {item.description}
-                      </p>
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
+                  return (
+                    <article key={item.title} className="flex gap-4">
+                      <div className="flex size-10 shrink-0 items-center justify-center rounded-md border border-border bg-surface text-muted-foreground">
+                        <Icon className="size-4" />
+                      </div>
+                      <div>
+                        <h3 className="text-base font-medium text-foreground">
+                          {item.title}
+                        </h3>
+                        <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                          {item.description}
+                        </p>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            ) : (
+              <EmptyState
+                className="mt-8 py-10 text-left"
+                title="Now page will be updated soon."
+                description="Current focus, projects and priorities will be shared here."
+              />
+            )}
           </div>
 
           <div className="lg:pl-12">
@@ -79,27 +86,35 @@ export function NowJournalSection({
                 <ArrowRight className="size-4" />
               </Link>
             </div>
-            <div className="mt-6 divide-y divide-border">
-              {journalPosts.map((post) => (
-                <Link
-                  key={post.title}
-                  href={post.href}
-                  className="grid gap-4 py-6 transition-opacity duration-200 hover:opacity-70 sm:grid-cols-[1fr_auto]"
-                >
-                  <div>
-                    <h3 className="text-base font-medium text-foreground">
-                      {post.title}
-                    </h3>
-                    <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                      {post.excerpt}
-                    </p>
-                  </div>
-                  <time className="text-sm text-muted-foreground">
-                    {post.date}
-                  </time>
-                </Link>
-              ))}
-            </div>
+            {journalPosts.length > 0 ? (
+              <div className="mt-6 divide-y divide-border">
+                {journalPosts.map((post) => (
+                  <Link
+                    key={post.title}
+                    href={post.href}
+                    className="grid gap-4 py-6 transition-opacity duration-200 hover:opacity-70 sm:grid-cols-[1fr_auto]"
+                  >
+                    <div>
+                      <h3 className="text-base font-medium text-foreground">
+                        {post.title}
+                      </h3>
+                      <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                        {post.excerpt}
+                      </p>
+                    </div>
+                    <time className="text-sm text-muted-foreground">
+                      {post.date}
+                    </time>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <EmptyState
+                className="mt-8 py-10 text-left"
+                title="Notes will be published soon."
+                description="Short thoughts, development logs and behind-the-scenes notes will live here."
+              />
+            )}
           </div>
         </div>
       </Container>
