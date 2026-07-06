@@ -69,12 +69,20 @@ export type AboutPage = {
 export type Project = {
   _id: string;
   title?: string | null;
+  titleEn?: string | null;
+  titleTr?: string | null;
   slug?: string | null;
   shortDescription?: string | null;
+  shortDescriptionEn?: string | null;
+  shortDescriptionTr?: string | null;
   description?: PortableTextBlock[] | null;
+  descriptionEn?: PortableTextBlock[] | null;
+  descriptionTr?: PortableTextBlock[] | null;
   coverImage?: SanityImage | null;
   status?: string | null;
   category?: string | null;
+  categoryLabelEn?: string | null;
+  categoryLabelTr?: string | null;
   techStack?: string[] | null;
   liveUrl?: string | null;
   githubUrl?: string | null;
@@ -85,9 +93,15 @@ export type Project = {
 export type JournalPost = {
   _id: string;
   title?: string | null;
+  titleEn?: string | null;
+  titleTr?: string | null;
   slug?: string | null;
   excerpt?: string | null;
+  excerptEn?: string | null;
+  excerptTr?: string | null;
   content?: PortableTextBlock[] | null;
+  contentEn?: PortableTextBlock[] | null;
+  contentTr?: PortableTextBlock[] | null;
   coverImage?: SanityImage | null;
   date?: string | null;
   category?: string | null;

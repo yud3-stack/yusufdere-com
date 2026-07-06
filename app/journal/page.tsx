@@ -18,7 +18,7 @@ export function generateMetadata() {
 }
 
 export default async function JournalPage() {
-  const journalEntries = await getAllJournalPosts();
+  const journalEntries = await getAllJournalPosts("en");
 
   return (
     <InteriorPage>

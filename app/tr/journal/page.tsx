@@ -22,7 +22,7 @@ export function generateMetadata() {
 }
 
 export default async function TurkishJournalPage() {
-  const journalEntries = await getAllJournalPosts();
+  const journalEntries = await getAllJournalPosts(locale);
 
   return (
     <InteriorPage locale={locale} dictionary={dictionary}>

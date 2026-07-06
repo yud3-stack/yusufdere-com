@@ -82,19 +82,22 @@ export async function getAboutPage(
   return mapAboutPage(aboutPage, locale);
 }
 
-export async function getAllProjects(): Promise<ProjectPreview[]> {
+export async function getAllProjects(
+  locale: Locale = "en",
+): Promise<ProjectPreview[]> {
   const projects = await fetchOrFallback<Project[]>(allProjectsQuery, [], [
     "project",
   ]);
-  const mapped = projects
-    .filter((project) => Boolean(project.title))
-    .map((project, index) => mapProjectPreview(project, index));
+  const mapped = projects.map((project, index) =>
+    mapProjectPreview(project, index, locale),
+  );
 
   return mapped;
 }
 
 export async function getProjectBySlug(
   slug: string,
+  locale: Locale = "en",
 ): Promise<ProjectDetail | null> {
   const project = await fetchOrFallback<Project | null>(
     projectBySlugQuery,
@@ -103,26 +106,27 @@ export async function getProjectBySlug(
     { slug },
   );
 
-  if (project?.title) {
-    return mapProjectDetail(project);
+  if (project) {
+    return mapProjectDetail(project, locale);
   }
 
   return null;
 }
 
-export async function getAllJournalPosts(): Promise<JournalEntry[]> {
+export async function getAllJournalPosts(
+  locale: Locale = "en",
+): Promise<JournalEntry[]> {
   const posts = await fetchOrFallback<JournalPost[]>(allJournalPostsQuery, [], [
     "journalPost",
   ]);
-  const mapped = posts
-    .filter((post) => Boolean(post.title))
-    .map(mapJournalEntry);
+  const mapped = posts.map((post) => mapJournalEntry(post, locale));
 
   return mapped;
 }
 
 export async function getJournalPostBySlug(
   slug: string,
+  locale: Locale = "en",
 ): Promise<JournalDetail | null> {
   const post = await fetchOrFallback<JournalPost | null>(
     journalPostBySlugQuery,
@@ -131,8 +135,8 @@ export async function getJournalPostBySlug(
     { slug },
   );
 
-  if (post?.title) {
-    return mapJournalDetail(post);
+  if (post) {
+    return mapJournalDetail(post, locale);
   }
 
   return null;
@@ -293,7 +297,7 @@ function mapAboutPage(
   };
 }
 
-function localizedText(
+export function localizedText(
   locale: Locale,
   values: {
     en?: string | null;
@@ -310,7 +314,7 @@ function localizedText(
   return preferred.map(cleanText).find(Boolean) || values.fallback;
 }
 
-function localizedPortableText(
+export function localizedPortableText(
   locale: Locale,
   values: {
     en?: PortableTextBlock[] | null;
@@ -366,17 +370,33 @@ function cleanStringArray(values: string[] | null | undefined) {
   return values?.map((value) => value.trim()).filter(Boolean) || [];
 }
 
-function mapProjectPreview(project: Project, index: number): ProjectPreview {
+export function mapProjectPreview(
+  project: Project,
+  index: number,
+  locale: Locale = "en",
+): ProjectPreview {
   const accents: ProjectPreview["accent"][] = ["violet", "stone", "slate"];
 
   return {
-    title: project.title || "Untitled project",
-    description:
-      project.shortDescription ||
-      project.category ||
-      "A project from the YusufDere.com CMS.",
+    title: localizedText(locale, {
+      en: project.titleEn,
+      tr: project.titleTr,
+      legacy: project.title,
+      fallback: "Untitled project",
+    }),
+    description: localizedText(locale, {
+      en: project.shortDescriptionEn,
+      tr: project.shortDescriptionTr,
+      legacy: project.shortDescription,
+      fallback: project.category || "A project from the YusufDere.com CMS.",
+    }),
     status: toTitleCase(project.status || "Featured"),
-    category: project.category || "Project",
+    category: localizedText(locale, {
+      en: project.categoryLabelEn,
+      tr: project.categoryLabelTr,
+      legacy: project.category,
+      fallback: "Project",
+    }),
     techStack: project.techStack || [],
     featured: project.featured === true,
     href: project.slug ? `/projects/${project.slug}` : "/projects",
@@ -384,16 +404,37 @@ function mapProjectPreview(project: Project, index: number): ProjectPreview {
   };
 }
 
-function mapProjectDetail(project: Project): ProjectDetail {
-  const body = portableTextToParagraphs(project.description);
+function mapProjectDetail(
+  project: Project,
+  locale: Locale,
+): ProjectDetail {
+  const body = localizedPortableText(locale, {
+    en: project.descriptionEn,
+    tr: project.descriptionTr,
+    legacy: project.description,
+  });
 
   return {
-    title: project.title || "Untitled project",
+    title: localizedText(locale, {
+      en: project.titleEn,
+      tr: project.titleTr,
+      legacy: project.title,
+      fallback: "Untitled project",
+    }),
     slug: project.slug || "",
-    shortDescription:
-      project.shortDescription || "A project from the YusufDere.com CMS.",
+    shortDescription: localizedText(locale, {
+      en: project.shortDescriptionEn,
+      tr: project.shortDescriptionTr,
+      legacy: project.shortDescription,
+      fallback: "A project from the YusufDere.com CMS.",
+    }),
     status: toTitleCase(project.status || "Featured"),
-    category: project.category || "Project",
+    category: localizedText(locale, {
+      en: project.categoryLabelEn,
+      tr: project.categoryLabelTr,
+      legacy: project.category,
+      fallback: "Project",
+    }),
     techStack: project.techStack || [],
     featured: project.featured === true,
     liveUrl: project.liveUrl || undefined,
@@ -402,27 +443,58 @@ function mapProjectDetail(project: Project): ProjectDetail {
   };
 }
 
-function mapJournalEntry(post: JournalPost): JournalEntry {
+export function mapJournalEntry(
+  post: JournalPost,
+  locale: Locale = "en",
+): JournalEntry {
   return {
-    title: post.title || "Untitled note",
-    excerpt: post.excerpt || "A short note from the journal.",
+    title: localizedText(locale, {
+      en: post.titleEn,
+      tr: post.titleTr,
+      legacy: post.title,
+      fallback: "Untitled note",
+    }),
+    excerpt: localizedText(locale, {
+      en: post.excerptEn,
+      tr: post.excerptTr,
+      legacy: post.excerpt,
+      fallback: "A short note from the journal.",
+    }),
     category: normalizeJournalCategory(post.category),
     date: formatDate(post.date),
     href: post.slug ? `/journal/${post.slug}` : "/journal",
   };
 }
 
-function mapJournalDetail(post: JournalPost): JournalDetail {
-  const body = portableTextToParagraphs(post.content);
+function mapJournalDetail(
+  post: JournalPost,
+  locale: Locale,
+): JournalDetail {
+  const body = localizedPortableText(locale, {
+    en: post.contentEn,
+    tr: post.contentTr,
+    legacy: post.content,
+  });
+  const excerpt = localizedText(locale, {
+    en: post.excerptEn,
+    tr: post.excerptTr,
+    legacy: post.excerpt,
+    fallback: "A short note from the journal.",
+  });
 
   return {
-    title: post.title || "Untitled note",
+    title: localizedText(locale, {
+      en: post.titleEn,
+      tr: post.titleTr,
+      legacy: post.title,
+      fallback: "Untitled note",
+    }),
     slug: post.slug || "",
-    excerpt: post.excerpt || "A short note from the journal.",
+    excerpt,
     category: post.category || "Thought",
     date: formatDate(post.date),
     body:
-      body.length > 0 ? body : [post.excerpt || "More details will be added soon."],
+      body.length > 0 ? body : [excerpt || "More details will be added soon."],
   };
 }
 

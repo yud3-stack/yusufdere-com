@@ -17,7 +17,7 @@ export async function generateMetadata({
   params,
 }: JournalDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getJournalPostBySlug(slug);
+  const post = await getJournalPostBySlug(slug, "en");
 
   if (!post) {
     return createMetadata({
@@ -43,7 +43,7 @@ export default async function JournalDetailPage({
   params,
 }: JournalDetailPageProps) {
   const { slug } = await params;
-  const post = await getJournalPostBySlug(slug);
+  const post = await getJournalPostBySlug(slug, "en");
 
   if (!post) {
     notFound();

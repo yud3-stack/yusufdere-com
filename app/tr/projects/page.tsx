@@ -19,7 +19,7 @@ export function generateMetadata() {
 }
 
 export default async function TurkishProjectsPage() {
-  const projects = await getAllProjects();
+  const projects = await getAllProjects(locale);
   const highlightedProject =
     projects.find((project) => project.featured) || projects[0];
   const remainingProjects = highlightedProject

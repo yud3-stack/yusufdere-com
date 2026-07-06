@@ -9,6 +9,8 @@ import { sanityFetch } from "@/lib/sanity/client";
 import {
   getAboutPage,
   getSiteSettings,
+  mapJournalEntry,
+  mapProjectPreview,
   type AboutPageContent,
 } from "@/lib/sanity/data";
 import type {
@@ -39,8 +41,6 @@ type HomePageData = {
   galleryItems: GalleryPreview[];
 };
 
-const projectAccents: ProjectPreview["accent"][] = ["violet", "stone", "slate"];
-
 export async function getHomepageData(locale: Locale = "en"): Promise<HomePageData> {
   const [
     siteSettings,
@@ -67,8 +67,8 @@ export async function getHomepageData(locale: Locale = "en"): Promise<HomePageDa
   return {
     siteSettings,
     aboutPage,
-    projects: mapProjects(projects),
-    journalPosts: mapJournalPosts(journalPosts),
+    projects: mapProjects(projects, locale),
+    journalPosts: mapJournalPosts(journalPosts, locale),
     nowItems: mapNowItems(activeNowItems),
     usesItems: mapUsesItems(featuredUsesItems),
     galleryItems: mapGalleryImages(featuredGalleryImages),
@@ -90,35 +90,19 @@ async function fetchOrFallback<T>(
   }
 }
 
-function mapProjects(projects: Project[]): ProjectPreview[] {
-  const mapped = projects
-    .filter((project) => Boolean(project.title))
-    .map((project, index) => ({
-      title: project.title || "Untitled project",
-      description:
-        project.shortDescription ||
-        project.category ||
-        "A project from the YusufDere.com CMS.",
-      status: toTitleCase(project.status || "Featured"),
-      category: project.category || "Project",
-      techStack: project.techStack || [],
-      featured: project.featured === true,
-      href: project.slug ? `/projects/${project.slug}` : project.liveUrl || "/projects",
-      accent: projectAccents[index % projectAccents.length],
-    }));
+function mapProjects(projects: Project[], locale: Locale): ProjectPreview[] {
+  const mapped = projects.map((project, index) =>
+    mapProjectPreview(project, index, locale),
+  );
 
   return mapped;
 }
 
-function mapJournalPosts(posts: JournalPost[]): JournalPreview[] {
-  const mapped = posts
-    .filter((post) => Boolean(post.title))
-    .map((post) => ({
-      title: post.title || "Untitled note",
-      excerpt: post.excerpt || post.category || "A short note from the journal.",
-      date: formatDate(post.date),
-      href: post.slug ? `/journal/${post.slug}` : "/journal",
-    }));
+function mapJournalPosts(
+  posts: JournalPost[],
+  locale: Locale,
+): JournalPreview[] {
+  const mapped = posts.map((post) => mapJournalEntry(post, locale));
 
   return mapped;
 }
@@ -156,30 +140,4 @@ function mapGalleryImages(images: GalleryImage[]): GalleryPreview[] {
     }));
 
   return mapped;
-}
-
-function toTitleCase(value: string) {
-  return value
-    .split(/[\s-]+/)
-    .filter(Boolean)
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-}
-
-function formatDate(date: string | null | undefined) {
-  if (!date) {
-    return "Undated";
-  }
-
-  const parsedDate = new Date(date);
-
-  if (Number.isNaN(parsedDate.getTime())) {
-    return "Undated";
-  }
-
-  return new Intl.DateTimeFormat("en", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(parsedDate);
 }

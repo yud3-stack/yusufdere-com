@@ -4,12 +4,36 @@ export const project = defineType({
   name: 'project',
   title: 'Project',
   type: 'document',
+  fieldsets: [
+    {
+      name: 'english',
+      title: 'English localized content',
+      options: {columns: 2},
+    },
+    {
+      name: 'turkish',
+      title: 'Turkish localized content',
+      options: {columns: 2},
+    },
+  ],
   fields: [
     defineField({
       name: 'title',
-      title: 'Title',
+      title: 'Title (legacy fallback)',
       type: 'string',
       validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: 'titleEn',
+      title: 'Title EN',
+      type: 'string',
+      fieldset: 'english',
+    }),
+    defineField({
+      name: 'titleTr',
+      title: 'Title TR',
+      type: 'string',
+      fieldset: 'turkish',
     }),
     defineField({
       name: 'slug',
@@ -23,15 +47,43 @@ export const project = defineType({
     }),
     defineField({
       name: 'shortDescription',
-      title: 'Short Description',
+      title: 'Short Description (legacy fallback)',
       type: 'text',
       rows: 3,
     }),
     defineField({
+      name: 'shortDescriptionEn',
+      title: 'Short Description EN',
+      type: 'text',
+      rows: 3,
+      fieldset: 'english',
+    }),
+    defineField({
+      name: 'shortDescriptionTr',
+      title: 'Short Description TR',
+      type: 'text',
+      rows: 3,
+      fieldset: 'turkish',
+    }),
+    defineField({
       name: 'description',
-      title: 'Description',
+      title: 'Description (legacy fallback)',
       type: 'array',
       of: [defineArrayMember({type: 'block'})],
+    }),
+    defineField({
+      name: 'descriptionEn',
+      title: 'Description EN',
+      type: 'array',
+      of: [defineArrayMember({type: 'block'})],
+      fieldset: 'english',
+    }),
+    defineField({
+      name: 'descriptionTr',
+      title: 'Description TR',
+      type: 'array',
+      of: [defineArrayMember({type: 'block'})],
+      fieldset: 'turkish',
     }),
     defineField({
       name: 'coverImage',
@@ -73,6 +125,20 @@ export const project = defineType({
       },
     }),
     defineField({
+      name: 'categoryLabelEn',
+      title: 'Category Label EN',
+      type: 'string',
+      fieldset: 'english',
+      description: 'Optional display label. Falls back to Category.',
+    }),
+    defineField({
+      name: 'categoryLabelTr',
+      title: 'Category Label TR',
+      type: 'string',
+      fieldset: 'turkish',
+      description: 'Optional display label. Falls back to Category.',
+    }),
+    defineField({
       name: 'techStack',
       title: 'Tech Stack',
       type: 'array',
@@ -109,8 +175,17 @@ export const project = defineType({
   preview: {
     select: {
       title: 'title',
+      titleEn: 'titleEn',
+      titleTr: 'titleTr',
       subtitle: 'status',
       media: 'coverImage',
+    },
+    prepare({title, titleEn, titleTr, subtitle, media}) {
+      return {
+        title: titleEn || titleTr || title || 'Project',
+        subtitle,
+        media,
+      }
     },
   },
 })

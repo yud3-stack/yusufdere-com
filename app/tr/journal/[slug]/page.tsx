@@ -22,7 +22,7 @@ export async function generateMetadata({
   params,
 }: JournalDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getJournalPostBySlug(slug);
+  const post = await getJournalPostBySlug(slug, locale);
 
   if (!post) {
     return createMetadata({
@@ -48,7 +48,7 @@ export default async function TurkishJournalDetailPage({
   params,
 }: JournalDetailPageProps) {
   const { slug } = await params;
-  const post = await getJournalPostBySlug(slug);
+  const post = await getJournalPostBySlug(slug, locale);
 
   if (!post) {
     notFound();
