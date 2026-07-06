@@ -7,16 +7,23 @@ import {
   type JournalPreview,
   type NowItem,
 } from "@/content/home";
+import { getDictionary, type Dictionary } from "@/dictionaries";
 import { resolveIcon } from "@/lib/icons";
+import type { Locale } from "@/lib/locale";
+import { withLocalePrefix } from "@/lib/locale";
 
 type NowJournalSectionProps = {
   nowItems?: NowItem[];
   journalPosts?: JournalPreview[];
+  locale?: Locale;
+  dictionary?: Dictionary;
 };
 
 export function NowJournalSection({
   nowItems = [],
   journalPosts = [],
+  locale = "en",
+  dictionary = getDictionary(locale),
 }: NowJournalSectionProps) {
   return (
     <section className="border-b border-border py-20 sm:py-24">
@@ -25,13 +32,13 @@ export function NowJournalSection({
           <div className="lg:border-r lg:border-border lg:pr-12">
             <div className="flex items-center justify-between gap-6">
               <h2 className="text-sm font-medium uppercase tracking-[0.24em] text-foreground">
-                Now
+                {dictionary.nav.now}
               </h2>
               <Link
-                href="/now"
+                href={withLocalePrefix("/now", locale)}
                 className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
               >
-                More updates
+                {dictionary.actions.moreUpdates}
                 <ArrowRight className="size-4" />
               </Link>
             </div>
@@ -60,8 +67,8 @@ export function NowJournalSection({
             ) : (
               <EmptyState
                 className="mt-8 py-10 text-left"
-                title="Now page will be updated soon."
-                description="Current focus, projects and priorities will be shared here."
+                title={dictionary.empty.now.title}
+                description={dictionary.empty.now.description}
               />
             )}
           </div>
@@ -69,13 +76,13 @@ export function NowJournalSection({
           <div className="lg:pl-12">
             <div className="flex items-center justify-between gap-6">
               <h2 className="text-sm font-medium uppercase tracking-[0.24em] text-foreground">
-                Journal
+                {dictionary.nav.journal}
               </h2>
               <Link
-                href="/journal"
+                href={withLocalePrefix("/journal", locale)}
                 className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
               >
-                View all posts
+                {dictionary.actions.viewAllPosts}
                 <ArrowRight className="size-4" />
               </Link>
             </div>
@@ -84,7 +91,7 @@ export function NowJournalSection({
                 {journalPosts.map((post) => (
                   <Link
                     key={post.title}
-                    href={post.href}
+                    href={withLocalePrefix(post.href, locale)}
                     className="grid gap-4 py-6 transition-opacity duration-200 hover:opacity-70 sm:grid-cols-[1fr_auto]"
                   >
                     <div>
@@ -104,8 +111,8 @@ export function NowJournalSection({
             ) : (
               <EmptyState
                 className="mt-8 py-10 text-left"
-                title="Notes will be published soon."
-                description="Short thoughts, development logs and behind-the-scenes notes will live here."
+                title={dictionary.empty.journal.title}
+                description={dictionary.empty.journal.description}
               />
             )}
           </div>

@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+import { stripLocalePrefix, withLocalePrefix } from "@/lib/locale";
+
 export const siteUrl = "https://yusufdere.com";
 export const ogImagePath = "/images/og/yusufdere-og.png";
 
@@ -32,6 +34,15 @@ export function formatSocialTitle(title?: string) {
   return title ? `${title} | ${defaultSeo.siteName}` : defaultSeo.title;
 }
 
+export function languageAlternates(path = "/") {
+  const basePath = stripLocalePrefix(path.startsWith("/") ? path : `/${path}`);
+
+  return {
+    en: absoluteUrl(withLocalePrefix(basePath, "en")),
+    tr: absoluteUrl(withLocalePrefix(basePath, "tr")),
+  };
+}
+
 export function createMetadata({
   title,
   description = defaultSeo.description,
@@ -54,6 +65,7 @@ export function createMetadata({
     description,
     alternates: {
       canonical,
+      languages: languageAlternates(path),
     },
     openGraph: {
       title: socialTitle,

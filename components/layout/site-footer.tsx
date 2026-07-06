@@ -2,12 +2,19 @@ import Link from "next/link";
 
 import { Container } from "@/components/ui/container";
 import { siteConfig } from "@/content/site";
+import { getDictionary, type Dictionary } from "@/dictionaries";
 
-export function SiteFooter() {
+type SiteFooterProps = {
+  dictionary?: Dictionary;
+};
+
+export function SiteFooter({ dictionary = getDictionary("en") }: SiteFooterProps) {
   return (
     <footer className="border-t border-border py-8">
       <Container className="flex flex-col gap-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-        <p>(c) 2026 {siteConfig.name}. All rights reserved.</p>
+        <p>
+          (c) 2026 {siteConfig.name}. {dictionary.footer.rights}
+        </p>
         <div className="flex flex-wrap gap-5">
           <Link
             href={siteConfig.instagramUrl}

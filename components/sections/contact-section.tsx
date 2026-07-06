@@ -3,13 +3,18 @@ import { ArrowUpRight, AtSign, Mail } from "lucide-react";
 
 import { Container } from "@/components/ui/container";
 import { siteConfig } from "@/content/site";
+import { getDictionary, type Dictionary } from "@/dictionaries";
 import type { SiteSettings } from "@/lib/sanity/types";
 
 type ContactSectionProps = {
   siteSettings?: SiteSettings;
+  dictionary?: Dictionary;
 };
 
-export function ContactSection({ siteSettings }: ContactSectionProps) {
+export function ContactSection({
+  siteSettings,
+  dictionary = getDictionary("en"),
+}: ContactSectionProps) {
   const instagramUrl = siteSettings?.instagramUrl || siteConfig.instagramUrl;
   const email = siteSettings?.email || siteConfig.email;
 
@@ -19,14 +24,13 @@ export function ContactSection({ siteSettings }: ContactSectionProps) {
         <div className="grid gap-12 lg:grid-cols-[1fr_1.15fr] lg:items-end">
           <div>
             <p className="text-xs font-medium uppercase tracking-[0.24em] text-muted-foreground">
-              Contact
+              {dictionary.nav.contact}
             </p>
             <h2 className="mt-5 text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
-              Let&apos;s connect.
+              {dictionary.pages.contact.homeTitle}
             </h2>
             <p className="mt-5 max-w-md text-base leading-7 text-muted-foreground">
-              For projects, ideas, collaborations, or quiet notes about what is
-              being built next.
+              {dictionary.pages.contact.homeDescription}
             </p>
           </div>
 
@@ -39,7 +43,7 @@ export function ContactSection({ siteSettings }: ContactSectionProps) {
             >
               <AtSign className="size-5 text-muted-foreground" />
               <p className="mt-5 text-sm font-medium text-foreground">
-                Instagram
+                {dictionary.labels.instagram}
               </p>
               <p className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
                 {siteConfig.instagramHandle}
@@ -51,7 +55,9 @@ export function ContactSection({ siteSettings }: ContactSectionProps) {
               className="group rounded-lg border border-border bg-surface p-5 transition-colors duration-200 hover:border-white/20"
             >
               <Mail className="size-5 text-muted-foreground" />
-              <p className="mt-5 text-sm font-medium text-foreground">Email</p>
+              <p className="mt-5 text-sm font-medium text-foreground">
+                {dictionary.labels.email}
+              </p>
               <p className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
                 {email}
                 <ArrowUpRight className="size-4 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
@@ -60,7 +66,7 @@ export function ContactSection({ siteSettings }: ContactSectionProps) {
           </div>
         </div>
         <div className="mt-16 border-t border-border pt-6 text-sm text-muted-foreground">
-          (c) 2026 Yusuf Dere. All rights reserved.
+          (c) 2026 Yusuf Dere. {dictionary.footer.rights}
         </div>
       </Container>
     </section>

@@ -5,17 +5,26 @@ import { ArrowUpRight } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { Badge } from "@/components/ui/badge";
 import { homeIntro } from "@/content/home";
+import { getDictionary, type Dictionary } from "@/dictionaries";
+import type { Locale } from "@/lib/locale";
+import { withLocalePrefix } from "@/lib/locale";
 import type { AboutPageContent } from "@/lib/sanity/data";
 
 type AboutPreviewSectionProps = {
   aboutPage?: AboutPageContent;
+  locale?: Locale;
+  dictionary?: Dictionary;
 };
 
-export function AboutPreviewSection({ aboutPage }: AboutPreviewSectionProps) {
+export function AboutPreviewSection({
+  aboutPage,
+  locale = "en",
+  dictionary = getDictionary(locale),
+}: AboutPreviewSectionProps) {
   const title = aboutPage?.title || homeIntro.title;
   const intro = aboutPage?.intro || homeIntro.body;
   const currentFocus = aboutPage?.currentFocus || homeIntro.body;
-  const eyebrow = aboutPage?.eyebrow || homeIntro.eyebrow;
+  const eyebrow = aboutPage?.eyebrow || dictionary.nav.about;
   const focusAreas = aboutPage?.focusAreas || [];
 
   return (
@@ -56,10 +65,10 @@ export function AboutPreviewSection({ aboutPage }: AboutPreviewSectionProps) {
                 </div>
               ) : null}
               <Link
-                href={homeIntro.href}
+                href={withLocalePrefix(homeIntro.href, locale)}
                 className="mt-8 inline-flex items-center gap-2 text-sm font-medium text-foreground transition-opacity duration-200 hover:opacity-70"
               >
-                About
+                {dictionary.home.aboutLink}
                 <ArrowUpRight className="size-4" />
               </Link>
             </div>

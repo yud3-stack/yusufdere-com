@@ -1,26 +1,38 @@
 import Link from "next/link";
 
 import { Container } from "@/components/ui/container";
+import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { siteConfig } from "@/content/site";
+import { getDictionary, type Dictionary } from "@/dictionaries";
+import type { Locale } from "@/lib/locale";
+import { withLocalePrefix } from "@/lib/locale";
 
-const navItems = [
-  { label: "About", href: "/about" },
-  { label: "Projects", href: "/projects" },
-  { label: "Journal", href: "/journal" },
-  { label: "Gallery", href: "/gallery" },
-  { label: "Uses", href: "/uses" },
-  { label: "Now", href: "/now" },
-  { label: "Contact", href: "/contact" },
-] as const;
+type SiteHeaderProps = {
+  locale?: Locale;
+  dictionary?: Dictionary;
+};
 
-export function SiteHeader() {
+export function SiteHeader({
+  locale = "en",
+  dictionary = getDictionary(locale),
+}: SiteHeaderProps) {
+  const navItems = [
+    { label: dictionary.nav.about, href: "/about" },
+    { label: dictionary.nav.projects, href: "/projects" },
+    { label: dictionary.nav.journal, href: "/journal" },
+    { label: dictionary.nav.gallery, href: "/gallery" },
+    { label: dictionary.nav.uses, href: "/uses" },
+    { label: dictionary.nav.now, href: "/now" },
+    { label: dictionary.nav.contact, href: "/contact" },
+  ] as const;
+
   return (
     <header className="border-b border-border">
       <Container className="py-4">
         <div className="flex min-h-12 items-center justify-between gap-6">
           <Link
-            href="/"
+            href={withLocalePrefix("/", locale)}
             aria-label="YusufDere.com home"
             className="text-lg font-semibold tracking-tight text-foreground"
           >
@@ -33,14 +45,17 @@ export function SiteHeader() {
             {navItems.map((item) => (
               <Link
                 key={item.href}
-                href={item.href}
+                href={withLocalePrefix(item.href, locale)}
                 className="transition-opacity duration-200 hover:opacity-60"
               >
                 {item.label}
               </Link>
             ))}
           </nav>
-          <ThemeToggle />
+          <div className="flex items-center gap-2">
+            <LanguageSwitcher />
+            <ThemeToggle />
+          </div>
         </div>
         <nav
           aria-label="Mobile navigation"
@@ -49,7 +64,7 @@ export function SiteHeader() {
           {navItems.map((item) => (
             <Link
               key={item.href}
-              href={item.href}
+              href={withLocalePrefix(item.href, locale)}
               className="shrink-0 transition-opacity duration-200 hover:opacity-60"
             >
               {item.label}

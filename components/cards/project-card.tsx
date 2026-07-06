@@ -3,6 +3,9 @@ import { ArrowUpRight } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import type { ProjectPreview } from "@/content/home";
+import { getDictionary, type Dictionary } from "@/dictionaries";
+import type { Locale } from "@/lib/locale";
+import { withLocalePrefix } from "@/lib/locale";
 import { cn } from "@/lib/utils/cn";
 
 const accentClasses: Record<ProjectPreview["accent"], string> = {
@@ -15,12 +18,16 @@ type ProjectCardProps = {
   project: ProjectPreview;
   variant?: "default" | "highlight";
   className?: string;
+  locale?: Locale;
+  dictionary?: Dictionary;
 };
 
 export function ProjectCard({
   project,
   variant = "default",
   className,
+  locale = "en",
+  dictionary = getDictionary(locale),
 }: ProjectCardProps) {
   const isHighlight = variant === "highlight";
   const techPreview = project.techStack.slice(0, isHighlight ? 5 : 3);
@@ -70,7 +77,7 @@ export function ProjectCard({
           ) : null}
           {project.featured ? (
             <span className="rounded-full border border-white/15 bg-white/[0.04] px-3 py-1 text-xs font-medium text-foreground">
-              Featured
+              {dictionary.labels.featured}
             </span>
           ) : null}
         </div>
@@ -105,10 +112,10 @@ export function ProjectCard({
           </div>
         ) : null}
         <Link
-          href={project.href}
+          href={withLocalePrefix(project.href, locale)}
           className="mt-7 inline-flex items-center gap-2 text-sm font-medium text-foreground transition-opacity duration-200 hover:opacity-70"
         >
-          View project
+          {dictionary.actions.viewProject}
           <ArrowUpRight className="size-4" />
         </Link>
       </div>

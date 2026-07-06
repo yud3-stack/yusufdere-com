@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/layout/theme-provider";
 import {
   absoluteUrl,
   defaultSeo,
+  languageAlternates,
   ogImagePath,
   siteUrl,
 } from "@/lib/seo";
@@ -28,6 +29,10 @@ export const metadata: Metadata = {
     template: `%s | ${defaultSeo.siteName}`,
   },
   description: defaultSeo.description,
+  alternates: {
+    canonical: siteUrl,
+    languages: languageAlternates("/"),
+  },
   openGraph: {
     title: defaultSeo.title,
     description: defaultSeo.description,

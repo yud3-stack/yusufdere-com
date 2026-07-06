@@ -4,28 +4,37 @@ import { MapPin } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
+import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { siteConfig } from "@/content/site";
+import { getDictionary, type Dictionary } from "@/dictionaries";
+import type { Locale } from "@/lib/locale";
+import { withLocalePrefix } from "@/lib/locale";
 import type { SiteSettings } from "@/lib/sanity/types";
-
-const navItems = [
-  { label: "About", href: "/about" },
-  { label: "Projects", href: "/projects" },
-  { label: "Journal", href: "/journal" },
-  { label: "Gallery", href: "/gallery" },
-  { label: "Uses", href: "/uses" },
-  { label: "Now", href: "/now" },
-  { label: "Contact", href: "/contact" },
-] as const;
 
 type HeroSectionProps = {
   siteSettings?: SiteSettings;
+  locale?: Locale;
+  dictionary?: Dictionary;
 };
 
-export function HeroSection({ siteSettings }: HeroSectionProps) {
+export function HeroSection({
+  siteSettings,
+  locale = "en",
+  dictionary = getDictionary(locale),
+}: HeroSectionProps) {
   const name = siteSettings?.name || siteConfig.name;
   const tagline = siteSettings?.bio || siteConfig.tagline;
   const location = siteSettings?.location || siteConfig.location;
+  const navItems = [
+    { label: dictionary.nav.about, href: "/about" },
+    { label: dictionary.nav.projects, href: "/projects" },
+    { label: dictionary.nav.journal, href: "/journal" },
+    { label: dictionary.nav.gallery, href: "/gallery" },
+    { label: dictionary.nav.uses, href: "/uses" },
+    { label: dictionary.nav.now, href: "/now" },
+    { label: dictionary.nav.contact, href: "/contact" },
+  ] as const;
 
   return (
     <section className="border-b border-border">
@@ -33,13 +42,14 @@ export function HeroSection({ siteSettings }: HeroSectionProps) {
         <div className="flex min-h-[620px] flex-col border-border py-8 lg:border-r lg:pr-12">
           <header className="flex items-center justify-between">
             <Link
-              href="/"
+              href={withLocalePrefix("/", locale)}
               aria-label="YusufDere.com home"
               className="text-lg font-semibold tracking-tight"
             >
               {siteConfig.initials}
             </Link>
-            <div className="lg:hidden">
+            <div className="flex items-center gap-2 lg:hidden">
+              <LanguageSwitcher />
               <ThemeToggle />
             </div>
           </header>
@@ -60,13 +70,14 @@ export function HeroSection({ siteSettings }: HeroSectionProps) {
                 {location}
               </p>
               <p className="mt-8 max-w-md text-base leading-7 text-muted-foreground">
-                A quiet digital home for projects, notes, photography, tools,
-                and the next things taking shape.
+                {dictionary.home.heroSupport}
               </p>
               <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-                <Button href="/projects">View Projects</Button>
-                <Button href="/about" variant="secondary">
-                  About Me
+                <Button href={withLocalePrefix("/projects", locale)}>
+                  {dictionary.actions.viewProjects}
+                </Button>
+                <Button href={withLocalePrefix("/about", locale)} variant="secondary">
+                  {dictionary.actions.aboutMe}
                 </Button>
               </div>
             </div>
@@ -79,14 +90,17 @@ export function HeroSection({ siteSettings }: HeroSectionProps) {
               {navItems.map((item) => (
                 <Link
                   key={item.href}
-                  href={item.href}
+                  href={withLocalePrefix(item.href, locale)}
                   className="transition-opacity duration-200 hover:opacity-60"
                 >
                   {item.label}
                 </Link>
               ))}
             </div>
-            <ThemeToggle />
+            <div className="flex items-center gap-2">
+              <LanguageSwitcher />
+              <ThemeToggle />
+            </div>
           </nav>
 
           <div className="relative flex flex-1 overflow-hidden rounded-t-lg border border-border bg-[#090909] lg:rounded-none lg:border-y-0 lg:border-r-0">

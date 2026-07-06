@@ -7,16 +7,23 @@ import {
   type GalleryPreview,
   type UsesItem,
 } from "@/content/home";
+import { getDictionary, type Dictionary } from "@/dictionaries";
 import { resolveIcon } from "@/lib/icons";
+import type { Locale } from "@/lib/locale";
+import { withLocalePrefix } from "@/lib/locale";
 
 type GalleryUsesSectionProps = {
   galleryItems?: GalleryPreview[];
   usesItems?: UsesItem[];
+  locale?: Locale;
+  dictionary?: Dictionary;
 };
 
 export function GalleryUsesSection({
   galleryItems = [],
   usesItems = [],
+  locale = "en",
+  dictionary = getDictionary(locale),
 }: GalleryUsesSectionProps) {
   return (
     <section className="border-b border-border py-20 sm:py-24">
@@ -25,13 +32,13 @@ export function GalleryUsesSection({
           <div>
             <div className="flex items-center justify-between gap-6">
               <h2 className="text-sm font-medium uppercase tracking-[0.24em] text-foreground">
-                Gallery
+                {dictionary.nav.gallery}
               </h2>
               <Link
-                href="/gallery"
+                href={withLocalePrefix("/gallery", locale)}
                 className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
               >
-                View all photos
+                {dictionary.actions.viewAllPhotos}
                 <ArrowRight className="size-4" />
               </Link>
             </div>
@@ -64,8 +71,8 @@ export function GalleryUsesSection({
             ) : (
               <EmptyState
                 className="mt-8 py-10"
-                title="Gallery is not live yet."
-                description="Lifestyle, travel, workspace and photography selections will be added soon."
+                title={dictionary.empty.gallery.title}
+                description={dictionary.empty.gallery.description}
               />
             )}
           </div>
@@ -73,13 +80,13 @@ export function GalleryUsesSection({
           <div className="lg:border-l lg:border-border lg:pl-12">
             <div className="flex items-center justify-between gap-6">
               <h2 className="text-sm font-medium uppercase tracking-[0.24em] text-foreground">
-                Uses
+                {dictionary.nav.uses}
               </h2>
               <Link
-                href="/uses"
+                href={withLocalePrefix("/uses", locale)}
                 className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
               >
-                View full list
+                {dictionary.actions.viewFullList}
                 <ArrowRight className="size-4" />
               </Link>
             </div>
@@ -104,8 +111,8 @@ export function GalleryUsesSection({
             ) : (
               <EmptyState
                 className="mt-8 py-10"
-                title="Setup is being curated."
-                description="Tools, devices and everyday workflow items will be listed here soon."
+                title={dictionary.empty.uses.title}
+                description={dictionary.empty.uses.description}
               />
             )}
           </div>
