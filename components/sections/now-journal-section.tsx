@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
+import { Reveal, Stagger, StaggerItem } from "@/components/motion/reveal";
 import { Container } from "@/components/ui/container";
 import { EmptyState } from "@/components/ui/empty-state";
 import {
@@ -28,7 +29,7 @@ export function NowJournalSection({
   return (
     <section className="border-b border-border py-20 sm:py-24">
       <Container>
-        <div className="grid gap-12 lg:grid-cols-2 lg:gap-0">
+        <Reveal className="grid gap-12 lg:grid-cols-2 lg:gap-0">
           <div className="lg:border-r lg:border-border lg:pr-12">
             <div className="flex items-center justify-between gap-6">
               <h2 className="text-sm font-medium uppercase tracking-[0.24em] text-foreground">
@@ -43,12 +44,13 @@ export function NowJournalSection({
               </Link>
             </div>
             {nowItems.length > 0 ? (
-              <div className="mt-8 space-y-6">
+              <Stagger className="mt-8 space-y-6">
                 {nowItems.map((item) => {
                   const Icon = resolveIcon(item.icon);
 
                   return (
-                    <article key={item.title} className="flex gap-4">
+                    <StaggerItem key={item.title} className="h-auto">
+                      <article className="flex gap-4 transition-opacity duration-200 hover:opacity-80">
                       <div className="flex size-10 shrink-0 items-center justify-center rounded-md border border-border bg-surface text-muted-foreground">
                         <Icon className="size-4" />
                       </div>
@@ -60,10 +62,11 @@ export function NowJournalSection({
                           {item.description}
                         </p>
                       </div>
-                    </article>
+                      </article>
+                    </StaggerItem>
                   );
                 })}
-              </div>
+              </Stagger>
             ) : (
               <EmptyState
                 className="mt-8 py-10 text-left"
@@ -87,27 +90,28 @@ export function NowJournalSection({
               </Link>
             </div>
             {journalPosts.length > 0 ? (
-              <div className="mt-6 divide-y divide-border">
+              <Stagger className="mt-6 divide-y divide-border">
                 {journalPosts.map((post) => (
-                  <Link
-                    key={post.title}
-                    href={withLocalePrefix(post.href, locale)}
-                    className="grid gap-4 py-6 transition-opacity duration-200 hover:opacity-70 sm:grid-cols-[1fr_auto]"
-                  >
-                    <div>
-                      <h3 className="text-base font-medium text-foreground">
-                        {post.title}
-                      </h3>
-                      <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                        {post.excerpt}
-                      </p>
-                    </div>
-                    <time className="text-sm text-muted-foreground">
-                      {post.date}
-                    </time>
-                  </Link>
+                  <StaggerItem key={post.title} className="h-auto">
+                    <Link
+                      href={withLocalePrefix(post.href, locale)}
+                      className="grid gap-4 py-6 transition-opacity duration-200 hover:opacity-70 sm:grid-cols-[1fr_auto]"
+                    >
+                      <div>
+                        <h3 className="text-base font-medium text-foreground">
+                          {post.title}
+                        </h3>
+                        <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                          {post.excerpt}
+                        </p>
+                      </div>
+                      <time className="text-sm text-muted-foreground">
+                        {post.date}
+                      </time>
+                    </Link>
+                  </StaggerItem>
                 ))}
-              </div>
+              </Stagger>
             ) : (
               <EmptyState
                 className="mt-8 py-10 text-left"
@@ -116,7 +120,7 @@ export function NowJournalSection({
               />
             )}
           </div>
-        </div>
+        </Reveal>
       </Container>
     </section>
   );

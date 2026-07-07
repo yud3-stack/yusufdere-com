@@ -1,3 +1,4 @@
+import { SiteHeader } from "@/components/layout/site-header";
 import { AboutPreviewSection } from "@/components/sections/about-preview-section";
 import { ContactSection } from "@/components/sections/contact-section";
 import { GalleryUsesSection } from "@/components/sections/gallery-uses-section";
@@ -7,7 +8,7 @@ import { ProjectsPreviewSection } from "@/components/sections/projects-preview-s
 import { getDictionary } from "@/dictionaries";
 import { getSiteSettings } from "@/lib/sanity/data";
 import { getHomepageData } from "@/lib/sanity/homepage";
-import { createMetadata } from "@/lib/seo";
+import { createMetadata, localizedSeo } from "@/lib/seo";
 
 const locale = "tr";
 const dictionary = getDictionary(locale);
@@ -17,8 +18,9 @@ export async function generateMetadata() {
 
   return createMetadata({
     title: siteSettings.seoTitle || siteSettings.name || undefined,
-    description: siteSettings.seoDescription || dictionary.home.siteDescription,
+    description: siteSettings.seoDescription || localizedSeo.tr.homeDescription,
     path: "/tr",
+    locale,
     absoluteTitle: true,
   });
 }
@@ -27,38 +29,41 @@ export default async function TurkishHome() {
   const homepageData = await getHomepageData(locale);
 
   return (
-    <main className="min-h-screen overflow-hidden">
-      <HeroSection
-        siteSettings={homepageData.siteSettings}
-        locale={locale}
-        dictionary={dictionary}
-      />
-      <AboutPreviewSection
-        aboutPage={homepageData.aboutPage}
-        locale={locale}
-        dictionary={dictionary}
-      />
-      <ProjectsPreviewSection
-        projects={homepageData.projects}
-        locale={locale}
-        dictionary={dictionary}
-      />
-      <NowJournalSection
-        nowItems={homepageData.nowItems}
-        journalPosts={homepageData.journalPosts}
-        locale={locale}
-        dictionary={dictionary}
-      />
-      <GalleryUsesSection
-        galleryItems={homepageData.galleryItems}
-        usesItems={homepageData.usesItems}
-        locale={locale}
-        dictionary={dictionary}
-      />
-      <ContactSection
-        siteSettings={homepageData.siteSettings}
-        dictionary={dictionary}
-      />
-    </main>
+    <>
+      <SiteHeader variant="home" locale={locale} dictionary={dictionary} />
+      <main className="min-h-screen overflow-hidden">
+        <HeroSection
+          siteSettings={homepageData.siteSettings}
+          locale={locale}
+          dictionary={dictionary}
+        />
+        <AboutPreviewSection
+          aboutPage={homepageData.aboutPage}
+          locale={locale}
+          dictionary={dictionary}
+        />
+        <ProjectsPreviewSection
+          projects={homepageData.projects}
+          locale={locale}
+          dictionary={dictionary}
+        />
+        <NowJournalSection
+          nowItems={homepageData.nowItems}
+          journalPosts={homepageData.journalPosts}
+          locale={locale}
+          dictionary={dictionary}
+        />
+        <GalleryUsesSection
+          galleryItems={homepageData.galleryItems}
+          usesItems={homepageData.usesItems}
+          locale={locale}
+          dictionary={dictionary}
+        />
+        <ContactSection
+          siteSettings={homepageData.siteSettings}
+          dictionary={dictionary}
+        />
+      </main>
+    </>
   );
 }

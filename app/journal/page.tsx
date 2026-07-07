@@ -7,13 +7,14 @@ import { Container } from "@/components/ui/container";
 import { EmptyState } from "@/components/ui/empty-state";
 import { journalPage } from "@/content/journal";
 import { getAllJournalPosts } from "@/lib/sanity/data";
-import { createMetadata } from "@/lib/seo";
+import { createMetadata, localizedSeo } from "@/lib/seo";
 
 export function generateMetadata() {
   return createMetadata({
-  title: "Journal",
-  description: journalPage.description,
+    title: "Journal",
+    description: localizedSeo.en.journalDescription,
     path: "/journal",
+    locale: "en",
   });
 }
 

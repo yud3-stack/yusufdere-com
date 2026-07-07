@@ -5,7 +5,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { getDictionary } from "@/dictionaries";
 import { resolveIcon } from "@/lib/icons";
 import { getAllNowItems } from "@/lib/sanity/data";
-import { createMetadata } from "@/lib/seo";
+import { createMetadata, localizedSeo } from "@/lib/seo";
 
 const locale = "tr";
 const dictionary = getDictionary(locale);
@@ -13,8 +13,9 @@ const dictionary = getDictionary(locale);
 export function generateMetadata() {
   return createMetadata({
     title: dictionary.nav.now,
-    description: dictionary.pages.now.description,
+    description: localizedSeo.tr.nowDescription,
     path: "/tr/now",
+    locale,
   });
 }
 

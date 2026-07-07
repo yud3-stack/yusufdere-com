@@ -16,7 +16,7 @@ export function InteriorPage({
 }: InteriorPageProps) {
   return (
     <>
-      <SiteHeader locale={locale} dictionary={dictionary} />
+      <SiteHeader locale={locale} dictionary={dictionary} variant="inner" />
       <main className="min-h-screen overflow-hidden">{children}</main>
       <SiteFooter dictionary={dictionary} />
     </>

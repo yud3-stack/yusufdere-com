@@ -11,7 +11,7 @@ import { Container } from "@/components/ui/container";
 import { getDictionary } from "@/dictionaries";
 import { withLocalePrefix } from "@/lib/locale";
 import { getProjectBySlug } from "@/lib/sanity/data";
-import { createMetadata } from "@/lib/seo";
+import { createMetadata, localizedSeo } from "@/lib/seo";
 
 const locale = "tr";
 const dictionary = getDictionary(locale);
@@ -29,8 +29,9 @@ export async function generateMetadata({
   if (!project) {
     return createMetadata({
       title: dictionary.nav.projects,
-      description: dictionary.pages.projects.description,
+      description: localizedSeo.tr.projectsDescription,
       path: `/tr/projects/${slug}`,
+      locale,
       robots: {
         index: false,
         follow: false,
@@ -42,6 +43,7 @@ export async function generateMetadata({
     title: project.title,
     description: project.shortDescription,
     path: `/tr/projects/${project.slug || slug}`,
+    locale,
     type: "article",
   });
 }

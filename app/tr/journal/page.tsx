@@ -8,7 +8,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { getDictionary } from "@/dictionaries";
 import { withLocalePrefix } from "@/lib/locale";
 import { getAllJournalPosts } from "@/lib/sanity/data";
-import { createMetadata } from "@/lib/seo";
+import { createMetadata, localizedSeo } from "@/lib/seo";
 
 const locale = "tr";
 const dictionary = getDictionary(locale);
@@ -16,8 +16,9 @@ const dictionary = getDictionary(locale);
 export function generateMetadata() {
   return createMetadata({
     title: dictionary.nav.journal,
-    description: dictionary.pages.journal.description,
+    description: localizedSeo.tr.journalDescription,
     path: "/tr/journal",
+    locale,
   });
 }
 

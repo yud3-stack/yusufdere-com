@@ -35,7 +35,7 @@ export function ProjectCard({
   return (
     <article
       className={cn(
-        "group overflow-hidden rounded-lg border border-border bg-surface transition-colors duration-200 hover:border-white/20",
+        "group h-full overflow-hidden rounded-lg border border-border bg-surface transition-[border-color,transform,background-color] duration-300 hover:-translate-y-1 hover:border-white/20 hover:bg-surface-muted/70",
         isHighlight && "grid lg:grid-cols-[0.95fr_1.05fr]",
         className,
       )}

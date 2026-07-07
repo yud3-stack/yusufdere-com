@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
+import { Reveal, Stagger, StaggerItem } from "@/components/motion/reveal";
 import { Container } from "@/components/ui/container";
 import { EmptyState } from "@/components/ui/empty-state";
 import {
@@ -28,7 +29,7 @@ export function GalleryUsesSection({
   return (
     <section className="border-b border-border py-20 sm:py-24">
       <Container>
-        <div className="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12">
+        <Reveal className="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12">
           <div>
             <div className="flex items-center justify-between gap-6">
               <h2 className="text-sm font-medium uppercase tracking-[0.24em] text-foreground">
@@ -43,31 +44,30 @@ export function GalleryUsesSection({
               </Link>
             </div>
             {galleryItems.length > 0 ? (
-              <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
+              <Stagger className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
                 {galleryItems.map((item, index) => (
-                  <article
-                    key={item.title}
-                    className="group overflow-hidden rounded-lg border border-border bg-surface"
-                  >
-                    <div className="aspect-[4/5] bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0)_34%),linear-gradient(145deg,#1c1c1f,#080808)]">
-                      <div className="flex h-full items-end p-4">
-                        <div
-                          className="h-px flex-1 bg-white/15"
-                          style={{ marginBottom: `${16 + index * 9}%` }}
-                        />
+                  <StaggerItem key={item.title}>
+                    <article className="group h-full overflow-hidden rounded-lg border border-border bg-surface transition-[border-color,transform,background-color] duration-300 hover:-translate-y-1 hover:border-white/20 hover:bg-surface-muted/70">
+                      <div className="aspect-[4/5] bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0)_34%),linear-gradient(145deg,#1c1c1f,#080808)]">
+                        <div className="flex h-full items-end p-4">
+                          <div
+                            className="h-px flex-1 bg-white/15 transition-transform duration-300 group-hover:scale-x-95"
+                            style={{ marginBottom: `${16 + index * 9}%` }}
+                          />
+                        </div>
                       </div>
-                    </div>
-                    <div className="p-4">
-                      <h3 className="text-sm font-medium text-foreground">
-                        {item.title}
-                      </h3>
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        {item.location}
-                      </p>
-                    </div>
-                  </article>
+                      <div className="p-4">
+                        <h3 className="text-sm font-medium text-foreground">
+                          {item.title}
+                        </h3>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          {item.location}
+                        </p>
+                      </div>
+                    </article>
+                  </StaggerItem>
                 ))}
-              </div>
+              </Stagger>
             ) : (
               <EmptyState
                 className="mt-8 py-10"
@@ -91,23 +91,25 @@ export function GalleryUsesSection({
               </Link>
             </div>
             {usesItems.length > 0 ? (
-              <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3">
+              <Stagger className="mt-8 grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3">
                 {usesItems.map((item) => {
                   const Icon = resolveIcon(item.icon);
 
                   return (
-                    <article key={item.title}>
-                      <Icon className="size-6 text-muted-foreground" />
-                      <h3 className="mt-4 text-sm font-medium text-foreground">
-                        {item.title}
-                      </h3>
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        {item.categoryLabel || item.category}
-                      </p>
-                    </article>
+                    <StaggerItem key={item.title} className="h-auto">
+                      <article className="transition-opacity duration-200 hover:opacity-80">
+                        <Icon className="size-6 text-muted-foreground" />
+                        <h3 className="mt-4 text-sm font-medium text-foreground">
+                          {item.title}
+                        </h3>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          {item.categoryLabel || item.category}
+                        </p>
+                      </article>
+                    </StaggerItem>
                   );
                 })}
-              </div>
+              </Stagger>
             ) : (
               <EmptyState
                 className="mt-8 py-10"
@@ -116,7 +118,7 @@ export function GalleryUsesSection({
               />
             )}
           </div>
-        </div>
+        </Reveal>
       </Container>
     </section>
   );

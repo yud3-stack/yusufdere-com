@@ -9,7 +9,7 @@ import { Container } from "@/components/ui/container";
 import { getDictionary } from "@/dictionaries";
 import { withLocalePrefix } from "@/lib/locale";
 import { getJournalPostBySlug } from "@/lib/sanity/data";
-import { createMetadata } from "@/lib/seo";
+import { createMetadata, localizedSeo } from "@/lib/seo";
 
 const locale = "tr";
 const dictionary = getDictionary(locale);
@@ -27,8 +27,9 @@ export async function generateMetadata({
   if (!post) {
     return createMetadata({
       title: dictionary.nav.journal,
-      description: dictionary.pages.journal.description,
+      description: localizedSeo.tr.journalDescription,
       path: `/tr/journal/${slug}`,
+      locale,
       robots: {
         index: false,
         follow: false,
@@ -40,6 +41,7 @@ export async function generateMetadata({
     title: post.title,
     description: post.excerpt,
     path: `/tr/journal/${post.slug || slug}`,
+    locale,
     type: "article",
   });
 }

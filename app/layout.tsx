@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import { ThemeProvider } from "@/components/layout/theme-provider";
+import { SplashScreen } from "@/components/layout/splash-screen";
+import { BackToTop } from "@/components/ui/back-to-top";
 import {
   absoluteUrl,
   defaultSeo,
@@ -83,7 +85,11 @@ export default function RootLayout({
         suppressHydrationWarning
         className="min-h-full bg-background text-foreground"
       >
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          {children}
+          <SplashScreen />
+          <BackToTop />
+        </ThemeProvider>
       </body>
     </html>
   );

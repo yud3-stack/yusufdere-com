@@ -28,7 +28,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
         title="Toggle theme"
         disabled
         className={cn(
-          "inline-flex size-10 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-default disabled:opacity-100",
+          "inline-flex size-9 items-center justify-center rounded-full border border-border bg-background/45 text-muted-foreground transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-default disabled:opacity-100",
           className,
         )}
       >
@@ -46,7 +46,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
       title={isDark ? "Switch to light theme" : "Switch to dark theme"}
       onClick={() => setTheme(isDark ? "light" : "dark")}
       className={cn(
-        "inline-flex size-10 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground transition-colors duration-200 hover:border-foreground/20 hover:bg-surface-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        "inline-flex size-9 items-center justify-center rounded-full border border-border bg-background/45 text-muted-foreground transition-[background-color,border-color,color,transform] duration-200 hover:-translate-y-0.5 hover:border-foreground/20 hover:bg-surface hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         className,
       )}
     >

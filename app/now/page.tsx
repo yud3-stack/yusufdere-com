@@ -4,14 +4,15 @@ import { Container } from "@/components/ui/container";
 import { EmptyState } from "@/components/ui/empty-state";
 import { nowPage } from "@/content/now";
 import { getAllNowItems } from "@/lib/sanity/data";
-import { createMetadata } from "@/lib/seo";
+import { createMetadata, localizedSeo } from "@/lib/seo";
 import { resolveIcon } from "@/lib/icons";
 
 export function generateMetadata() {
   return createMetadata({
-  title: "Now",
-  description: nowPage.description,
+    title: "Now",
+    description: localizedSeo.en.nowDescription,
     path: "/now",
+    locale: "en",
   });
 }
 

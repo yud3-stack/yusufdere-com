@@ -7,7 +7,7 @@ import { Container } from "@/components/ui/container";
 import { siteConfig } from "@/content/site";
 import { getDictionary } from "@/dictionaries";
 import { getSiteSettings } from "@/lib/sanity/data";
-import { createMetadata } from "@/lib/seo";
+import { createMetadata, localizedSeo } from "@/lib/seo";
 
 const locale = "tr";
 const dictionary = getDictionary(locale);
@@ -15,8 +15,9 @@ const dictionary = getDictionary(locale);
 export function generateMetadata() {
   return createMetadata({
     title: dictionary.nav.contact,
-    description: dictionary.pages.contact.description,
+    description: localizedSeo.tr.contactDescription,
     path: "/tr/contact",
+    locale,
   });
 }
 
@@ -39,7 +40,7 @@ export default async function TurkishContactPage() {
               href={instagramUrl}
               target="_blank"
               rel="noreferrer"
-              className="group rounded-lg border border-border bg-surface p-7 transition-colors duration-200 hover:border-white/20"
+              className="group rounded-lg border border-border bg-surface p-7 transition-[border-color,transform,background-color] duration-300 hover:-translate-y-1 hover:border-white/20 hover:bg-surface-muted/70"
             >
               <AtSign className="size-6 text-muted-foreground" />
               <h2 className="mt-8 text-2xl font-medium tracking-tight text-foreground">
@@ -52,7 +53,7 @@ export default async function TurkishContactPage() {
             </Link>
             <Link
               href={`mailto:${email}`}
-              className="group rounded-lg border border-border bg-surface p-7 transition-colors duration-200 hover:border-white/20"
+              className="group rounded-lg border border-border bg-surface p-7 transition-[border-color,transform,background-color] duration-300 hover:-translate-y-1 hover:border-white/20 hover:bg-surface-muted/70"
             >
               <Mail className="size-6 text-muted-foreground" />
               <h2 className="mt-8 text-2xl font-medium tracking-tight text-foreground">

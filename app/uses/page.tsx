@@ -7,14 +7,15 @@ import {
   type UsesCategory,
 } from "@/content/uses";
 import { getAllUsesItems } from "@/lib/sanity/data";
-import { createMetadata } from "@/lib/seo";
+import { createMetadata, localizedSeo } from "@/lib/seo";
 import { resolveIcon } from "@/lib/icons";
 
 export function generateMetadata() {
   return createMetadata({
-  title: "Uses",
-  description: usesPage.description,
+    title: "Uses",
+    description: localizedSeo.en.usesDescription,
     path: "/uses",
+    locale: "en",
   });
 }
 

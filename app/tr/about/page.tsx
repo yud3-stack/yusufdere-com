@@ -18,6 +18,7 @@ export async function generateMetadata() {
     title: aboutPage.title || dictionary.nav.about,
     description: aboutPage.intro,
     path: "/tr/about",
+    locale,
   });
 }
 

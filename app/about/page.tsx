@@ -14,6 +14,7 @@ export async function generateMetadata() {
     title: aboutPage.title || "About",
     description: aboutPage.intro,
     path: "/about",
+    locale: "en",
   });
 }
 

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 import { ProjectCard } from "@/components/cards/project-card";
+import { Reveal, Stagger, StaggerItem } from "@/components/motion/reveal";
 import { Container } from "@/components/ui/container";
 import { EmptyState } from "@/components/ui/empty-state";
 import { SectionHeader } from "@/components/ui/section-header";
@@ -24,39 +25,43 @@ export function ProjectsPreviewSection({
   return (
     <section className="border-b border-border py-20 sm:py-24">
       <Container>
-        <SectionHeader
-          eyebrow={dictionary.nav.projects}
-          title={dictionary.home.projectsTitle}
-          description={dictionary.home.projectsDescription}
-          action={
-            <Link
-              href={withLocalePrefix("/projects", locale)}
-              className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
-            >
-              {dictionary.actions.viewAllProjects}
-              <ArrowRight className="size-4" />
-            </Link>
-          }
-        />
-        {projects.length > 0 ? (
-          <div className="mt-10 grid gap-5 md:grid-cols-3">
-            {projects.map((project) => (
-              <ProjectCard
-                key={project.title}
-                project={project}
-                locale={locale}
-                dictionary={dictionary}
-              />
-            ))}
-          </div>
-        ) : (
-          <EmptyState
-            className="mt-10"
-            title={dictionary.empty.projects.title}
-            description={dictionary.empty.projects.description}
-            actionLabel={dictionary.nav.projects}
-            href={withLocalePrefix("/projects", locale)}
+        <Reveal>
+          <SectionHeader
+            eyebrow={dictionary.nav.projects}
+            title={dictionary.home.projectsTitle}
+            description={dictionary.home.projectsDescription}
+            action={
+              <Link
+                href={withLocalePrefix("/projects", locale)}
+                className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
+              >
+                {dictionary.actions.viewAllProjects}
+                <ArrowRight className="size-4" />
+              </Link>
+            }
           />
+        </Reveal>
+        {projects.length > 0 ? (
+          <Stagger className="mt-10 grid gap-5 md:grid-cols-3">
+            {projects.map((project) => (
+              <StaggerItem key={project.title}>
+                <ProjectCard
+                  project={project}
+                  locale={locale}
+                  dictionary={dictionary}
+                />
+              </StaggerItem>
+            ))}
+          </Stagger>
+        ) : (
+          <Reveal className="mt-10">
+            <EmptyState
+              title={dictionary.empty.projects.title}
+              description={dictionary.empty.projects.description}
+              actionLabel={dictionary.nav.projects}
+              href={withLocalePrefix("/projects", locale)}
+            />
+          </Reveal>
         )}
       </Container>
     </section>

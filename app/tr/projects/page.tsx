@@ -5,7 +5,7 @@ import { Container } from "@/components/ui/container";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getDictionary } from "@/dictionaries";
 import { getAllProjects } from "@/lib/sanity/data";
-import { createMetadata } from "@/lib/seo";
+import { createMetadata, localizedSeo } from "@/lib/seo";
 
 const locale = "tr";
 const dictionary = getDictionary(locale);
@@ -13,8 +13,9 @@ const dictionary = getDictionary(locale);
 export function generateMetadata() {
   return createMetadata({
     title: dictionary.nav.projects,
-    description: dictionary.pages.projects.description,
+    description: localizedSeo.tr.projectsDescription,
     path: "/tr/projects",
+    locale,
   });
 }
 

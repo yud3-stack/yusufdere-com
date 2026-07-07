@@ -5,7 +5,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { getDictionary } from "@/dictionaries";
 import { resolveIcon } from "@/lib/icons";
 import { getAllUsesItems } from "@/lib/sanity/data";
-import { createMetadata } from "@/lib/seo";
+import { createMetadata, localizedSeo } from "@/lib/seo";
 import type { UsesCategory } from "@/content/uses";
 
 const locale = "tr";
@@ -22,8 +22,9 @@ const categories: UsesCategory[] = [
 export function generateMetadata() {
   return createMetadata({
     title: dictionary.nav.uses,
-    description: dictionary.pages.uses.description,
+    description: localizedSeo.tr.usesDescription,
     path: "/tr/uses",
+    locale,
   });
 }
 

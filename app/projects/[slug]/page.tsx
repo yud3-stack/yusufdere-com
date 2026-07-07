@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { getProjectBySlug } from "@/lib/sanity/data";
-import { createMetadata } from "@/lib/seo";
+import { createMetadata, localizedSeo } from "@/lib/seo";
 
 type ProjectDetailPageProps = {
   params: Promise<{ slug: string }>;
@@ -24,8 +24,9 @@ export async function generateMetadata({
   if (!project) {
     return createMetadata({
       title: "Project",
-      description: "A project from Yusuf Dere.",
+      description: localizedSeo.en.projectsDescription,
       path: `/projects/${slug}`,
+      locale: "en",
       robots: {
         index: false,
         follow: false,
@@ -37,6 +38,7 @@ export async function generateMetadata({
     title: project.title,
     description: project.shortDescription,
     path: `/projects/${project.slug || slug}`,
+    locale: "en",
     type: "article",
   });
 }

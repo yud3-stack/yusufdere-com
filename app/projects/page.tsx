@@ -5,13 +5,14 @@ import { Container } from "@/components/ui/container";
 import { EmptyState } from "@/components/ui/empty-state";
 import { projectsPage } from "@/content/projects";
 import { getAllProjects } from "@/lib/sanity/data";
-import { createMetadata } from "@/lib/seo";
+import { createMetadata, localizedSeo } from "@/lib/seo";
 
 export function generateMetadata() {
   return createMetadata({
     title: "Projects",
-    description: projectsPage.description,
+    description: localizedSeo.en.projectsDescription,
     path: "/projects",
+    locale: "en",
   });
 }
 

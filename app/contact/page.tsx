@@ -6,14 +6,14 @@ import { PageIntro } from "@/components/layout/page-intro";
 import { Container } from "@/components/ui/container";
 import { siteConfig } from "@/content/site";
 import { getSiteSettings } from "@/lib/sanity/data";
-import { createMetadata } from "@/lib/seo";
+import { createMetadata, localizedSeo } from "@/lib/seo";
 
 export function generateMetadata() {
   return createMetadata({
-  title: "Contact",
-  description:
-    "Contact Yusuf Dere through Instagram or email for projects, ideas, and collaborations.",
+    title: "Contact",
+    description: localizedSeo.en.contactDescription,
     path: "/contact",
+    locale: "en",
   });
 }
 
@@ -36,7 +36,7 @@ export default async function ContactPage() {
               href={instagramUrl}
               target="_blank"
               rel="noreferrer"
-              className="group rounded-lg border border-border bg-surface p-7 transition-colors duration-200 hover:border-white/20"
+              className="group rounded-lg border border-border bg-surface p-7 transition-[border-color,transform,background-color] duration-300 hover:-translate-y-1 hover:border-white/20 hover:bg-surface-muted/70"
             >
               <AtSign className="size-6 text-muted-foreground" />
               <h2 className="mt-8 text-2xl font-medium tracking-tight text-foreground">
@@ -49,7 +49,7 @@ export default async function ContactPage() {
             </Link>
             <Link
               href={`mailto:${email}`}
-              className="group rounded-lg border border-border bg-surface p-7 transition-colors duration-200 hover:border-white/20"
+              className="group rounded-lg border border-border bg-surface p-7 transition-[border-color,transform,background-color] duration-300 hover:-translate-y-1 hover:border-white/20 hover:bg-surface-muted/70"
             >
               <Mail className="size-6 text-muted-foreground" />
               <h2 className="mt-8 text-2xl font-medium tracking-tight text-foreground">

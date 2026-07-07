@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 import { withLocalePrefix } from "@/lib/locale";
 import { getAllJournalPosts, getAllProjects } from "@/lib/sanity/data";
-import { absoluteUrl } from "@/lib/seo";
+import { absoluteUrl, languageAlternates } from "@/lib/seo";
 
 const staticRoutes = [
   "/",
@@ -49,5 +49,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: now,
     changeFrequency: route === "/" ? "weekly" : "monthly",
     priority: route === "/" ? 1 : route.includes("/", 1) ? 0.7 : 0.8,
+    alternates: {
+      languages: languageAlternates(route),
+    },
   }));
 }

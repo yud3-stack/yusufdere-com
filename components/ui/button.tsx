@@ -7,15 +7,15 @@ type ButtonVariant = "primary" | "secondary" | "ghost";
 
 const buttonVariants: Record<ButtonVariant, string> = {
   primary:
-    "border-transparent bg-foreground text-background hover:bg-white/85 dark:hover:bg-white/85",
+    "border-transparent bg-foreground text-background shadow-[0_10px_30px_rgb(0_0_0_/_0.12)] hover:-translate-y-0.5 hover:bg-white/85 dark:hover:bg-white/85",
   secondary:
-    "border-border bg-surface text-foreground hover:border-foreground/20 hover:bg-surface-muted",
+    "border-border bg-surface text-foreground hover:-translate-y-0.5 hover:border-foreground/20 hover:bg-surface-muted",
   ghost:
-    "border-transparent bg-transparent text-muted-foreground hover:bg-surface hover:text-foreground",
+    "border-transparent bg-transparent text-muted-foreground hover:-translate-y-0.5 hover:bg-surface hover:text-foreground",
 };
 
 const baseButtonClass =
-  "inline-flex h-11 items-center justify-center rounded-full border px-5 text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50";
+  "inline-flex h-11 items-center justify-center rounded-full border px-5 text-sm font-medium transition-[background-color,border-color,color,box-shadow,transform] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50";
 
 type SharedButtonProps = {
   children: ReactNode;

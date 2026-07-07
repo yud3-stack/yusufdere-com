@@ -6,13 +6,14 @@ import { Container } from "@/components/ui/container";
 import { EmptyState } from "@/components/ui/empty-state";
 import { galleryPage } from "@/content/gallery";
 import { getAllGalleryImages } from "@/lib/sanity/data";
-import { createMetadata } from "@/lib/seo";
+import { createMetadata, localizedSeo } from "@/lib/seo";
 
 export function generateMetadata() {
   return createMetadata({
-  title: "Gallery",
-  description: galleryPage.description,
+    title: "Gallery",
+    description: localizedSeo.en.galleryDescription,
     path: "/gallery",
+    locale: "en",
   });
 }
 
@@ -33,7 +34,7 @@ export default async function GalleryPage() {
               {galleryItems.map((item, index) => (
                 <article
                   key={`${item.title}-${item.location}`}
-                  className="overflow-hidden rounded-lg border border-border bg-surface"
+                  className="group overflow-hidden rounded-lg border border-border bg-surface transition-[border-color,transform,background-color] duration-300 hover:-translate-y-1 hover:border-white/20 hover:bg-surface-muted/70"
                 >
                   <div className="relative aspect-[4/5] bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0)_30%),linear-gradient(140deg,#1b1b1d,#080808)]">
                     {"imageUrl" in item && item.imageUrl ? (
@@ -50,7 +51,7 @@ export default async function GalleryPage() {
                     ) : (
                       <div className="flex h-full items-end p-5">
                         <div
-                          className="h-px flex-1 bg-white/15"
+                          className="h-px flex-1 bg-white/15 transition-transform duration-300 group-hover:scale-x-95"
                           style={{ marginBottom: `${12 + index * 5}%` }}
                         />
                       </div>
