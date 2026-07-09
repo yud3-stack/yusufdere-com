@@ -151,6 +151,31 @@ export const featuredGalleryImagesQuery = defineQuery(/* groq */ `
   }
 `);
 
+export const featuredActivityLogsQuery = defineQuery(/* groq */ `
+  *[_type == "activityLog" && featured == true]
+  | order(order asc, date desc, _createdAt desc) [0...5] {
+    _id,
+    title,
+    titleEn,
+    titleTr,
+    description,
+    descriptionEn,
+    descriptionTr,
+    date,
+    type,
+    intensity,
+    relatedProject->{
+      title,
+      titleEn,
+      titleTr,
+      "slug": slug.current
+    },
+    url,
+    featured,
+    order
+  }
+`);
+
 export const allProjectsQuery = defineQuery(/* groq */ `
   *[_type == "project" && defined(slug.current)]
   | order(order asc, _createdAt desc) {
@@ -294,6 +319,31 @@ export const allNowItemsQuery = defineQuery(/* groq */ `
     descriptionTr,
     icon,
     active,
+    order
+  }
+`);
+
+export const allActivityLogsQuery = defineQuery(/* groq */ `
+  *[_type == "activityLog"]
+  | order(order asc, date desc, _createdAt desc) {
+    _id,
+    title,
+    titleEn,
+    titleTr,
+    description,
+    descriptionEn,
+    descriptionTr,
+    date,
+    type,
+    intensity,
+    relatedProject->{
+      title,
+      titleEn,
+      titleTr,
+      "slug": slug.current
+    },
+    url,
+    featured,
     order
   }
 `);

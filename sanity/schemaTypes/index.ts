@@ -1,5 +1,6 @@
 import { type SchemaTypeDefinition } from 'sanity'
 
+import {activityLog} from './activityLog'
 import {aboutPage} from './aboutPage'
 import {galleryImage} from './galleryImage'
 import {journalPost} from './journalPost'
@@ -9,5 +10,14 @@ import {siteSettings} from './siteSettings'
 import {usesItem} from './usesItem'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
-  types: [siteSettings, aboutPage, project, journalPost, galleryImage, nowItem, usesItem],
+  types: [
+    siteSettings,
+    aboutPage,
+    project,
+    journalPost,
+    activityLog,
+    galleryImage,
+    nowItem,
+    usesItem,
+  ],
 }

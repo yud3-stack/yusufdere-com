@@ -1,6 +1,7 @@
 import type {StructureResolver} from 'sanity/structure'
 
 const singletonTypes = ['siteSettings', 'aboutPage']
+const manuallyListedTypes = [...singletonTypes, 'activityLog']
 
 // https://www.sanity.io/docs/structure-builder-cheat-sheet
 export const structure: StructureResolver = (S) =>
@@ -23,8 +24,12 @@ export const structure: StructureResolver = (S) =>
             .documentId('aboutPage')
             .title('About Page'),
         ),
+      S.listItem()
+        .title('Activity Log')
+        .schemaType('activityLog')
+        .child(S.documentTypeList('activityLog').title('Activity Log')),
       S.divider(),
       ...S.documentTypeListItems().filter(
-        (listItem) => !singletonTypes.includes(listItem.getId() || ''),
+        (listItem) => !manuallyListedTypes.includes(listItem.getId() || ''),
       ),
     ])

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-
+import { Analytics } from '@vercel/analytics/next';
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { SplashScreen } from "@/components/layout/splash-screen";
 import { BackToTop } from "@/components/ui/back-to-top";
@@ -90,6 +90,7 @@ export default function RootLayout({
           <SplashScreen />
           <BackToTop />
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
