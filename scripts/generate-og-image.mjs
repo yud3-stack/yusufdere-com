@@ -98,6 +98,7 @@ await mkdir(outputDir, { recursive: true });
 
 await sharp(Buffer.from(svg()))
   .resize(width, height, { fit: "cover" })
+  .flatten({ background: "#050505" })
   .png({ compressionLevel: 9, adaptiveFiltering: true })
   .toFile(outputPath);
 

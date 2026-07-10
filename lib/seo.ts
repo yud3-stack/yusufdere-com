@@ -77,7 +77,13 @@ export function formatMetadataTitle(title?: string) {
 }
 
 export function formatSocialTitle(title?: string) {
-  return title ? `${title} | ${defaultSeo.siteName}` : defaultSeo.title;
+  const normalizedTitle = title?.trim();
+
+  if (!normalizedTitle || normalizedTitle === defaultSeo.siteName) {
+    return defaultSeo.title;
+  }
+
+  return `${normalizedTitle} | ${defaultSeo.siteName}`;
 }
 
 export function languageAlternates(path = "/") {
