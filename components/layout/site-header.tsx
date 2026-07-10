@@ -3,8 +3,8 @@ import Link from "next/link";
 import { SiteHeaderShell } from "@/components/layout/site-header-shell";
 import { Container } from "@/components/ui/container";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
+import { Logo } from "@/components/ui/logo";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
-import { siteConfig } from "@/content/site";
 import { getDictionary, type Dictionary } from "@/dictionaries";
 import type { Locale } from "@/lib/locale";
 import { withLocalePrefix } from "@/lib/locale";
@@ -38,9 +38,9 @@ export function SiteHeader({
             <Link
               href={withLocalePrefix("/", locale)}
               aria-label="YusufDere.com home"
-              className="shrink-0 text-lg font-semibold tracking-tight text-foreground transition-opacity duration-200 hover:opacity-70"
+              className="inline-flex shrink-0 items-center transition-opacity duration-200 hover:opacity-70"
             >
-              {siteConfig.initials}
+              <Logo size="md" alt="Yusuf Dere" />
             </Link>
             <nav
               aria-label="Primary navigation"
@@ -73,9 +73,9 @@ export function SiteHeader({
           <Link
             href={withLocalePrefix("/", locale)}
             aria-label="YusufDere.com home"
-            className="inline-flex size-10 shrink-0 items-center justify-center rounded-full border border-border bg-background/35 text-sm font-semibold tracking-tight text-foreground transition-colors duration-200 hover:border-foreground/20 hover:bg-surface"
+            className="inline-flex size-10 shrink-0 items-center justify-center rounded-full border border-border bg-background/35 transition-colors duration-200 hover:border-foreground/20 hover:bg-surface"
           >
-            {siteConfig.initials}
+            <Logo size="sm" alt="Yusuf Dere" />
           </Link>
           <nav
             aria-label="Primary navigation"

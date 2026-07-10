@@ -4,6 +4,7 @@ import { MapPin } from "lucide-react";
 import { InitialReveal } from "@/components/motion/reveal";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
+import { Logo } from "@/components/ui/logo";
 import { siteConfig } from "@/content/site";
 import { getDictionary, type Dictionary } from "@/dictionaries";
 import type { Locale } from "@/lib/locale";
@@ -31,8 +32,8 @@ export function HeroSection({
         <div className="flex min-h-[620px] min-w-0 flex-col border-border py-8 lg:border-r lg:pr-12">
           <div className="flex flex-1 items-center py-16 sm:py-20">
             <InitialReveal className="max-w-xl">
-              <div className="mb-8 flex size-14 items-center justify-center rounded-full border border-border bg-surface text-base font-semibold">
-                {siteConfig.initials}
+              <div className="mb-8 flex size-14 items-center justify-center rounded-full border border-border bg-surface">
+                <Logo size="md" alt="Yusuf Dere" />
               </div>
               <h1 className="text-5xl font-semibold tracking-tight text-foreground sm:text-6xl xl:text-7xl">
                 {name}

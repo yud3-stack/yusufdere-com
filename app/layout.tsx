@@ -31,6 +31,11 @@ export const metadata: Metadata = {
     template: `%s | ${defaultSeo.siteName}`,
   },
   description: defaultSeo.description,
+  icons: {
+    icon: "/brand/yd-logo.svg",
+    shortcut: "/brand/yd-logo.svg",
+    apple: "/brand/yd-logo.svg",
+  },
   alternates: {
     canonical: siteUrl,
     languages: languageAlternates("/"),

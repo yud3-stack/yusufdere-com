@@ -3,6 +3,8 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { Logo } from "@/components/ui/logo";
+
 const splashStorageKey = "yusufdere:splash-seen";
 const showDurationMs = 920;
 const fadeDurationMs = 360;
@@ -63,8 +65,8 @@ export function SplashScreen() {
           leaving ? "scale-[0.98] opacity-0" : "scale-100 opacity-100"
         }`}
       >
-        <div className="flex size-16 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-lg font-semibold tracking-tight text-white shadow-[0_0_60px_rgb(255_255_255_/_0.06)]">
-          YD
+        <div className="flex size-16 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] shadow-[0_0_60px_rgb(255_255_255_/_0.06)]">
+          <Logo size="lg" tone="light" alt="Yusuf Dere" />
         </div>
         <p className="mt-5 text-sm font-medium tracking-[0.28em] text-white/55">
           Yusuf Dere
