@@ -8,7 +8,6 @@ import {
 import { sanityFetch } from "@/lib/sanity/client";
 import {
   getAboutPage,
-  getFeaturedActivityLogs,
   getSiteSettings,
   localizedText,
   mapGalleryItem,
@@ -16,7 +15,6 @@ import {
   mapProjectPreview,
   mapUsesItem,
   type AboutPageContent,
-  type ActivityEntry,
 } from "@/lib/sanity/data";
 import type {
   GalleryImage,
@@ -44,7 +42,6 @@ type HomePageData = {
   nowItems: NowItem[];
   usesItems: UsesItem[];
   galleryItems: GalleryPreview[];
-  activityLogs: ActivityEntry[];
 };
 
 export async function getHomepageData(locale: Locale = "en"): Promise<HomePageData> {
@@ -56,7 +53,6 @@ export async function getHomepageData(locale: Locale = "en"): Promise<HomePageDa
     activeNowItems,
     featuredUsesItems,
     featuredGalleryImages,
-    activityLogs,
   ] = await Promise.all([
     getSiteSettings(locale),
     getAboutPage(locale),
@@ -69,7 +65,6 @@ export async function getHomepageData(locale: Locale = "en"): Promise<HomePageDa
     fetchOrFallback<GalleryImage[]>(featuredGalleryImagesQuery, [], [
       "galleryImage",
     ]),
-    getFeaturedActivityLogs(locale),
   ]);
 
   return {
@@ -80,7 +75,6 @@ export async function getHomepageData(locale: Locale = "en"): Promise<HomePageDa
     nowItems: mapNowItems(activeNowItems, locale),
     usesItems: mapUsesItems(featuredUsesItems, locale),
     galleryItems: mapGalleryImages(featuredGalleryImages, locale),
-    activityLogs,
   };
 }
 

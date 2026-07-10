@@ -156,34 +156,3 @@ export type GalleryImage = {
   featured?: boolean | null;
   order?: number | null;
 };
-
-export type ActivityLogType =
-  | "project"
-  | "journal"
-  | "code"
-  | "design"
-  | "photo"
-  | "learning"
-  | "personal";
-
-export type ActivityLogItem = {
-  _id: string;
-  title?: string | null;
-  titleEn?: string | null;
-  titleTr?: string | null;
-  description?: string | null;
-  descriptionEn?: string | null;
-  descriptionTr?: string | null;
-  date?: string | null;
-  type?: ActivityLogType | string | null;
-  intensity?: number | null;
-  relatedProject?: {
-    title?: string | null;
-    titleEn?: string | null;
-    titleTr?: string | null;
-    slug?: string | null;
-  } | null;
-  url?: string | null;
-  featured?: boolean | null;
-  order?: number | null;
-};

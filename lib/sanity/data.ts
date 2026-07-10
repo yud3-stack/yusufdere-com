@@ -1,12 +1,10 @@
 import {
   aboutPageQuery,
-  allActivityLogsQuery,
   allGalleryImagesQuery,
   allJournalPostsQuery,
   allNowItemsQuery,
   allProjectsQuery,
   allUsesItemsQuery,
-  featuredActivityLogsQuery,
   journalPostBySlugQuery,
   projectBySlugQuery,
   siteSettingsQuery,
@@ -14,8 +12,6 @@ import {
 import { sanityFetch } from "@/lib/sanity/client";
 import { urlForImage } from "@/lib/sanity/image";
 import type {
-  ActivityLogItem as SanityActivityLogItem,
-  ActivityLogType,
   GalleryImage,
   JournalPost,
   NowItem as SanityNowItem,
@@ -76,19 +72,6 @@ export type GalleryPageItem = GalleryItem & {
 
 export type LocalizedUsesPageItem = UsesPageItem & {
   categoryLabel: string;
-};
-
-export type ActivityEntry = {
-  title: string;
-  description: string;
-  date: string;
-  type: ActivityLogType;
-  intensity: 1 | 2 | 3 | 4;
-  relatedProject?: {
-    title: string;
-    href: string;
-  };
-  url?: string;
 };
 
 export async function getAboutPage(
@@ -209,30 +192,6 @@ export async function getAllNowItems(locale: Locale = "en"): Promise<FocusItem[]
     }));
 
   return mapped;
-}
-
-export async function getFeaturedActivityLogs(
-  locale: Locale = "en",
-): Promise<ActivityEntry[]> {
-  const logs = await fetchOrFallback<SanityActivityLogItem[]>(
-    featuredActivityLogsQuery,
-    [],
-    ["activityLog"],
-  );
-
-  return logs.map((log) => mapActivityLog(log, locale));
-}
-
-export async function getAllActivityLogs(
-  locale: Locale = "en",
-): Promise<ActivityEntry[]> {
-  const logs = await fetchOrFallback<SanityActivityLogItem[]>(
-    allActivityLogsQuery,
-    [],
-    ["activityLog"],
-  );
-
-  return logs.map((log) => mapActivityLog(log, locale));
 }
 
 export async function getSiteSettings(locale: Locale = "en"): Promise<SiteSettings> {
@@ -606,46 +565,6 @@ export function mapUsesItem(
   };
 }
 
-export function mapActivityLog(
-  item: SanityActivityLogItem,
-  locale: Locale = "en",
-): ActivityEntry {
-  const relatedProjectTitle = item.relatedProject
-    ? localizedText(locale, {
-        en: item.relatedProject.titleEn,
-        tr: item.relatedProject.titleTr,
-        legacy: item.relatedProject.title,
-        fallback: "Related project",
-      })
-    : "";
-
-  return {
-    title: localizedText(locale, {
-      en: item.titleEn,
-      tr: item.titleTr,
-      legacy: item.title,
-      fallback: "Activity update",
-    }),
-    description: localizedText(locale, {
-      en: item.descriptionEn,
-      tr: item.descriptionTr,
-      legacy: item.description,
-      fallback: "A new update from YusufDere.com.",
-    }),
-    date: formatActivityDate(item.date, locale),
-    type: normalizeActivityType(item.type),
-    intensity: normalizeIntensity(item.intensity),
-    relatedProject:
-      item.relatedProject?.slug && relatedProjectTitle
-        ? {
-            title: relatedProjectTitle,
-            href: `/projects/${item.relatedProject.slug}`,
-          }
-        : undefined,
-    url: item.url || undefined,
-  };
-}
-
 function portableTextToParagraphs(blocks: PortableTextBlock[] | null | undefined) {
   const paragraphs =
     blocks
@@ -746,48 +665,4 @@ function normalizeUsesCategory(
   }
 
   return "Apps";
-}
-
-function normalizeActivityType(
-  type: string | null | undefined,
-): ActivityLogType {
-  if (
-    type === "project" ||
-    type === "journal" ||
-    type === "code" ||
-    type === "design" ||
-    type === "photo" ||
-    type === "learning" ||
-    type === "personal"
-  ) {
-    return type;
-  }
-
-  return "project";
-}
-
-function normalizeIntensity(value: number | null | undefined): 1 | 2 | 3 | 4 {
-  if (value === 1 || value === 2 || value === 3 || value === 4) {
-    return value;
-  }
-
-  return 2;
-}
-
-function formatActivityDate(date: string | null | undefined, locale: Locale) {
-  if (!date) {
-    return locale === "tr" ? "Tarihsiz" : "Undated";
-  }
-
-  const parsedDate = new Date(date);
-
-  if (Number.isNaN(parsedDate.getTime())) {
-    return locale === "tr" ? "Tarihsiz" : "Undated";
-  }
-
-  return new Intl.DateTimeFormat(locale === "tr" ? "tr-TR" : "en", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(parsedDate);
 }
