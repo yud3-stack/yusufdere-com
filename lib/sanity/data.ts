@@ -31,6 +31,35 @@ import type { ProjectPreview } from "@/content/home";
 import { normalizeIconKey } from "@/lib/icons";
 import type { Locale } from "@/lib/locale";
 
+const aboutFallbackByLocale = {
+  en: aboutFallback,
+  tr: {
+    eyebrow: "Hakkında",
+    title: "İnşa etmek, düşünmek ve dönüşmek için daha sakin bir alan.",
+    description:
+      "Yusuf Dere; yazılım, ürünler, fotoğraf ve niyetli bir hayat inşa etme disiplini etrafında kişisel bir merkez kuruyor.",
+    sections: [
+      {
+        title: "Yazılımı ivme kurmanın bir yolu olarak görmek",
+        body: "İş, faydalı ürünlerle başlıyor: küçük sistemler, AI araçları, web deneyimleri ve fikirleri dokunulabilir hale getiren denemeler.",
+      },
+      {
+        title: "Samsun'u görsel bir dayanak olarak taşımak",
+        body: "Samsun markaya kıyı ritmi veriyor: şehir ışıkları, uzun akşamlar, hareket ve sakin bir hırs.",
+      },
+      {
+        title: "Performansa dönüşmeyen kişisel marka",
+        body: "YusufDere.com merkezde duruyor; projeleri, notları, güncel odağı, araçları ve gelecek deneyleri aynı yerde topluyor.",
+      },
+    ],
+    stats: [
+      { label: "Merkez", value: "Samsun" },
+      { label: "Odak", value: "Ürünler" },
+      { label: "Mod", value: "İnşa" },
+    ],
+  },
+} as const;
+
 export type ProjectDetail = {
   title: string;
   slug: string;
@@ -179,15 +208,19 @@ export async function getAllNowItems(locale: Locale = "en"): Promise<FocusItem[]
         en: item.titleEn,
         tr: item.titleTr,
         legacy: item.title,
-        fallback: "Current focus",
+        fallback: localizedFallback(locale, "Current focus", "Güncel odak"),
       }),
       description: localizedText(locale, {
         en: item.descriptionEn,
         tr: item.descriptionTr,
         legacy: item.description,
-        fallback: "A current focus item from Sanity.",
+        fallback: localizedFallback(
+          locale,
+          "A current focus item from Sanity.",
+          "Sanity üzerinden gelen güncel bir odak.",
+        ),
       }),
-      status: item.active === false ? "Paused" : "Active",
+      status: localizeNowStatus(item.active, locale),
       icon: normalizeIconKey(item.icon),
     }));
 
@@ -207,15 +240,19 @@ export async function getSiteSettings(locale: Locale = "en"): Promise<SiteSettin
       en: settings?.bioEn,
       tr: settings?.bioTr,
       legacy: settings?.bio,
-      fallback: siteConfig.tagline,
+      fallback: localizedFallback(
+        locale,
+        siteConfig.tagline,
+        "Hayal ettiğim hayatı inşa ediyorum.",
+      ),
     }),
     location: localizedText(locale, {
       en: settings?.locationEn,
       tr: settings?.locationTr,
       legacy: settings?.location,
-      fallback: siteConfig.location,
+      fallback: localizedFallback(locale, siteConfig.location, "Samsun, Türkiye"),
     }),
-    email: settings?.email || siteConfig.email,
+    email: siteConfig.email,
     instagramUrl: settings?.instagramUrl || siteConfig.instagramUrl,
     githubUrl: settings?.githubUrl || null,
     linkedinUrl: settings?.linkedinUrl || null,
@@ -229,7 +266,11 @@ export async function getSiteSettings(locale: Locale = "en"): Promise<SiteSettin
       en: settings?.seoDescriptionEn,
       tr: settings?.seoDescriptionTr,
       legacy: settings?.seoDescription,
-      fallback: siteConfig.description,
+      fallback: localizedFallback(
+        locale,
+        siteConfig.description,
+        "Samsun'dan yazılım, ürünler, notlar ve fotoğraf.",
+      ),
     }),
     ogImage: settings?.ogImage || null,
   };
@@ -256,7 +297,8 @@ function mapAboutPage(
   page: SanityAboutPage | null,
   locale: Locale,
 ): AboutPageContent {
-  const fallbackBody = aboutFallback.sections.map((section) => section.body);
+  const staticFallback = aboutFallbackByLocale[locale];
+  const fallbackBody = staticFallback.sections.map((section) => section.body);
   const body = localizedPortableText(locale, {
     en: page?.bodyEn,
     tr: page?.bodyTr,
@@ -273,33 +315,39 @@ function mapAboutPage(
       en: page?.titleEn,
       tr: page?.titleTr,
       legacy: page?.title,
-      fallback: aboutFallback.title,
+      fallback: staticFallback.title,
     }),
     eyebrow: localizedText(locale, {
       en: page?.eyebrowEn,
       tr: page?.eyebrowTr,
       legacy: page?.eyebrow,
-      fallback: aboutFallback.eyebrow,
+      fallback: staticFallback.eyebrow,
     }),
     intro: localizedText(locale, {
       en: page?.introEn,
       tr: page?.introTr,
       legacy: page?.intro,
-      fallback: aboutFallback.description,
+      fallback: staticFallback.description,
     }),
     body: body.length > 0 ? body : fallbackBody,
-    location: page?.location || aboutFallback.stats[0]?.value || siteConfig.location,
+    location:
+      page?.location ||
+      staticFallback.stats[0]?.value ||
+      localizedFallback(locale, siteConfig.location, "Samsun, Türkiye"),
     focusAreas:
       focusAreas.length > 0
         ? focusAreas
-        : aboutFallback.stats.map((stat) => stat.value),
+        : staticFallback.stats.map((stat) => stat.value),
     currentFocus:
       localizedText(locale, {
         en: page?.currentFocusEn,
         tr: page?.currentFocusTr,
         legacy: page?.currentFocus,
-        fallback:
+        fallback: localizedFallback(
+          locale,
           "Connecting software, product work, journal notes, photography, and the current season of focus.",
+          "Yazılımı, ürün çalışmalarını, notları, fotoğrafı ve güncel odağı aynı sakin merkezde birleştirmek.",
+        ),
       }),
     imageUrl: page?.image ? safeImageUrl(page.image) : undefined,
     updatedAt: page?.updatedAt || undefined,
@@ -317,7 +365,7 @@ export function localizedText(
 ) {
   const preferred =
     locale === "tr"
-      ? [values.tr, values.legacy, values.en, values.fallback]
+      ? [values.tr, values.en, values.legacy, values.fallback]
       : [values.en, values.legacy, values.fallback];
 
   return preferred.map(cleanText).find(Boolean) || values.fallback;
@@ -333,7 +381,7 @@ export function localizedPortableText(
 ) {
   const preferred =
     locale === "tr"
-      ? [values.tr, values.legacy, values.en]
+      ? [values.tr, values.en, values.legacy]
       : [values.en, values.legacy];
 
   for (const blocks of preferred) {
@@ -357,7 +405,7 @@ function localizedStringArray(
 ) {
   const preferred =
     locale === "tr"
-      ? [values.tr, values.legacy, values.en]
+      ? [values.tr, values.en, values.legacy]
       : [values.en, values.legacy];
 
   for (const array of preferred) {
@@ -391,20 +439,24 @@ export function mapProjectPreview(
       en: project.titleEn,
       tr: project.titleTr,
       legacy: project.title,
-      fallback: "Untitled project",
+      fallback: localizedFallback(locale, "Untitled project", "Başlıksız proje"),
     }),
     description: localizedText(locale, {
       en: project.shortDescriptionEn,
       tr: project.shortDescriptionTr,
       legacy: project.shortDescription,
-      fallback: project.category || "A project from the YusufDere.com CMS.",
+      fallback: localizedFallback(
+        locale,
+        project.category || "A project from the YusufDere.com CMS.",
+        "YusufDere.com CMS içinden bir proje.",
+      ),
     }),
-    status: toTitleCase(project.status || "Featured"),
+    status: localizeProjectStatus(project.status, locale),
     category: localizedText(locale, {
       en: project.categoryLabelEn,
       tr: project.categoryLabelTr,
-      legacy: project.category,
-      fallback: "Project",
+      legacy: null,
+      fallback: localizeProjectCategory(project.category, locale),
     }),
     techStack: project.techStack || [],
     featured: project.featured === true,
@@ -428,21 +480,25 @@ function mapProjectDetail(
       en: project.titleEn,
       tr: project.titleTr,
       legacy: project.title,
-      fallback: "Untitled project",
+      fallback: localizedFallback(locale, "Untitled project", "Başlıksız proje"),
     }),
     slug: project.slug || "",
     shortDescription: localizedText(locale, {
       en: project.shortDescriptionEn,
       tr: project.shortDescriptionTr,
       legacy: project.shortDescription,
-      fallback: "A project from the YusufDere.com CMS.",
+      fallback: localizedFallback(
+        locale,
+        "A project from the YusufDere.com CMS.",
+        "YusufDere.com CMS içinden bir proje.",
+      ),
     }),
-    status: toTitleCase(project.status || "Featured"),
+    status: localizeProjectStatus(project.status, locale),
     category: localizedText(locale, {
       en: project.categoryLabelEn,
       tr: project.categoryLabelTr,
-      legacy: project.category,
-      fallback: "Project",
+      legacy: null,
+      fallback: localizeProjectCategory(project.category, locale),
     }),
     techStack: project.techStack || [],
     featured: project.featured === true,
@@ -461,16 +517,20 @@ export function mapJournalEntry(
       en: post.titleEn,
       tr: post.titleTr,
       legacy: post.title,
-      fallback: "Untitled note",
+      fallback: localizedFallback(locale, "Untitled note", "Başlıksız not"),
     }),
     excerpt: localizedText(locale, {
       en: post.excerptEn,
       tr: post.excerptTr,
       legacy: post.excerpt,
-      fallback: "A short note from the journal.",
+      fallback: localizedFallback(
+        locale,
+        "A short note from the journal.",
+        "Notlardan kısa bir kayıt.",
+      ),
     }),
-    category: normalizeJournalCategory(post.category),
-    date: formatDate(post.date),
+    category: localizeJournalCategory(post.category, locale),
+    date: formatDate(post.date, locale),
     href: post.slug ? `/journal/${post.slug}` : "/journal",
   };
 }
@@ -488,7 +548,11 @@ function mapJournalDetail(
     en: post.excerptEn,
     tr: post.excerptTr,
     legacy: post.excerpt,
-    fallback: "A short note from the journal.",
+    fallback: localizedFallback(
+      locale,
+      "A short note from the journal.",
+      "Notlardan kısa bir kayıt.",
+    ),
   });
 
   return {
@@ -496,14 +560,23 @@ function mapJournalDetail(
       en: post.titleEn,
       tr: post.titleTr,
       legacy: post.title,
-      fallback: "Untitled note",
+      fallback: localizedFallback(locale, "Untitled note", "Başlıksız not"),
     }),
     slug: post.slug || "",
     excerpt,
-    category: post.category || "Thought",
-    date: formatDate(post.date),
+    category: localizeJournalCategory(post.category, locale),
+    date: formatDate(post.date, locale),
     body:
-      body.length > 0 ? body : [excerpt || "More details will be added soon."],
+      body.length > 0
+        ? body
+        : [
+            excerpt ||
+              localizedFallback(
+                locale,
+                "More details will be added soon.",
+                "Daha fazla detay yakında eklenecek.",
+              ),
+          ],
   };
 }
 
@@ -516,14 +589,14 @@ export function mapGalleryItem(
       en: image.titleEn,
       tr: image.titleTr,
       legacy: image.title,
-      fallback: "Gallery image",
+      fallback: localizedFallback(locale, "Gallery image", "Galeri görseli"),
     }),
-    category: normalizeGalleryCategory(image.category),
+    category: localizeGalleryCategory(image.category, locale),
     location: localizedText(locale, {
       en: image.locationEn,
       tr: image.locationTr,
       legacy: image.location,
-      fallback: image.category || "Gallery",
+      fallback: localizeGalleryCategory(image.category, locale),
     }),
     description: localizedText(locale, {
       en: image.descriptionEn,
@@ -546,20 +619,24 @@ export function mapUsesItem(
       en: item.titleEn,
       tr: item.titleTr,
       legacy: item.title,
-      fallback: "Tool",
+      fallback: localizedFallback(locale, "Tool", "Araç"),
     }),
     category,
     categoryLabel: localizedText(locale, {
       en: item.categoryLabelEn,
       tr: item.categoryLabelTr,
-      legacy: item.category,
-      fallback: category,
+      legacy: null,
+      fallback: localizeUsesCategoryLabel(category, locale),
     }),
     description: localizedText(locale, {
       en: item.descriptionEn,
       tr: item.descriptionTr,
       legacy: item.description,
-      fallback: "A tool from the YusufDere.com setup.",
+      fallback: localizedFallback(
+        locale,
+        "A tool from the YusufDere.com setup.",
+        "YusufDere.com kurulumundan bir araç.",
+      ),
     }),
     icon: normalizeIconKey(item.icon),
   };
@@ -592,6 +669,10 @@ function safeImageUrl(image: GalleryImage["image"]) {
   }
 }
 
+function localizedFallback(locale: Locale, en: string, tr: string) {
+  return locale === "tr" ? tr : en;
+}
+
 function toTitleCase(value: string) {
   return value
     .split(/[\s-]+/)
@@ -600,55 +681,121 @@ function toTitleCase(value: string) {
     .join(" ");
 }
 
-function formatDate(date: string | null | undefined) {
+function formatDate(date: string | null | undefined, locale: Locale) {
   if (!date) {
-    return "Undated";
+    return localizedFallback(locale, "Undated", "Tarihsiz");
   }
 
   const parsedDate = new Date(date);
 
   if (Number.isNaN(parsedDate.getTime())) {
-    return "Undated";
+    return localizedFallback(locale, "Undated", "Tarihsiz");
   }
 
-  return new Intl.DateTimeFormat("en", {
+  return new Intl.DateTimeFormat(locale === "tr" ? "tr-TR" : "en", {
     month: "short",
     day: "numeric",
     year: "numeric",
   }).format(parsedDate);
 }
 
-function normalizeJournalCategory(
-  category: string | null | undefined,
-): JournalEntry["category"] {
-  if (
-    category === "Thought" ||
-    category === "Development Log" ||
-    category === "Behind the Scenes" ||
-    category === "Life Note"
-  ) {
-    return category;
-  }
-
-  return "Thought";
+function normalizeLookupKey(value: string | null | undefined) {
+  return value?.trim().toLowerCase().replace(/[\s_-]+/g, "-") || "";
 }
 
-function normalizeGalleryCategory(
+function localizeProjectStatus(status: string | null | undefined, locale: Locale) {
+  const key = normalizeLookupKey(status || "featured");
+
+  const trLabels: Record<string, string> = {
+    idea: "Fikir",
+    building: "İnşa ediliyor",
+    live: "Yayında",
+    paused: "Duraklatıldı",
+    archived: "Arşivlendi",
+    featured: "Öne çıkan",
+  };
+
+  if (locale === "tr") {
+    return trLabels[key] || trLabels.featured;
+  }
+
+  return toTitleCase(status || "Featured");
+}
+
+function localizeNowStatus(active: boolean | null | undefined, locale: Locale) {
+  if (active === false) {
+    return localizedFallback(locale, "Paused", "Duraklatıldı");
+  }
+
+  return localizedFallback(locale, "Active", "Aktif");
+}
+
+function localizeProjectCategory(
   category: string | null | undefined,
-): GalleryItem["category"] {
-  if (
-    category === "Lifestyle" ||
-    category === "Travel" ||
-    category === "Cars" ||
-    category === "Motorcycles" ||
-    category === "Coffee" ||
-    category === "Workspace" ||
-    category === "Photography"
-  ) {
+  locale: Locale,
+) {
+  const value = category || "Project";
+  const trLabels: Record<string, string> = {
+    AI: "AI",
+    SaaS: "SaaS",
+    Web: "Web",
+    Mobile: "Mobil",
+    Experiment: "Deney",
+    "Open Source": "Açık kaynak",
+    Project: "Proje",
+  };
+
+  return locale === "tr" ? trLabels[value] || value : value;
+}
+
+function localizeJournalCategory(
+  category: string | null | undefined,
+  locale: Locale,
+) {
+  const value = category || "Thought";
+  const trLabels: Record<string, string> = {
+    Thought: "Düşünce",
+    "Development Log": "Geliştirme günlüğü",
+    "Behind the Scenes": "Perde arkası",
+    "Life Note": "Hayat notu",
+  };
+
+  return locale === "tr" ? trLabels[value] || value : value;
+}
+
+function localizeGalleryCategory(
+  category: string | null | undefined,
+  locale: Locale,
+) {
+  const value = category || "Photography";
+  const trLabels: Record<string, string> = {
+    Lifestyle: "Yaşam",
+    Travel: "Seyahat",
+    Cars: "Arabalar",
+    Motorcycles: "Motosikletler",
+    Coffee: "Kahve",
+    Workspace: "Çalışma alanı",
+    Photography: "Fotoğraf",
+    Gallery: "Galeri",
+  };
+
+  return locale === "tr" ? trLabels[value] || value : value;
+}
+
+function localizeUsesCategoryLabel(category: UsesCategory, locale: Locale) {
+  if (locale !== "tr") {
     return category;
   }
 
-  return "Photography";
+  const labels: Record<UsesCategory, string> = {
+    Hardware: "Donanım",
+    Software: "Yazılım",
+    Desk: "Masa",
+    Apps: "Uygulamalar",
+    "Everyday Carry": "Günlük taşıma",
+  };
+
+  return labels[category];
 }
 
 function normalizeUsesCategory(

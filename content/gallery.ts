@@ -1,13 +1,6 @@
 export type GalleryItem = {
   title: string;
-  category:
-    | "Lifestyle"
-    | "Travel"
-    | "Cars"
-    | "Motorcycles"
-    | "Coffee"
-    | "Workspace"
-    | "Photography";
+  category: string;
   location: string;
 };
 

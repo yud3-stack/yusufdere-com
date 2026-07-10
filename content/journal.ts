@@ -1,7 +1,7 @@
 export type JournalEntry = {
   title: string;
   excerpt: string;
-  category: "Thought" | "Development Log" | "Behind the Scenes" | "Life Note";
+  category: string;
   date: string;
   href: string;
 };

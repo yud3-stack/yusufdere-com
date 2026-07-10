@@ -5,7 +5,7 @@ export const tr = {
   nav: {
     about: "Hakkında",
     projects: "Projeler",
-    journal: "Günlük",
+    journal: "Notlar",
     gallery: "Galeri",
     uses: "Kullandıklarım",
     now: "Şimdi",
@@ -22,7 +22,7 @@ export const tr = {
     moreUpdates: "Daha fazlası",
     readMore: "Devamını oku",
     backToHome: "Ana sayfaya dön",
-    backToJournal: "Günlüğe dön",
+    backToJournal: "Notlara dön",
     allProjects: "Tüm projeler",
     visit: "Ziyaret et",
     liveSite: "Canlı site",
@@ -85,7 +85,7 @@ export const tr = {
     projectIndex: "Proje indeksi",
     featured: "Öne çıkan",
     project: "Proje",
-    stack: "Stack",
+    stack: "Teknoloji",
     links: "Bağlantılar",
     overview: "Genel bakış",
     whyItExists: "Neden var",
@@ -110,7 +110,7 @@ export const tr = {
         "Notlardan ürüne doğru ilerleyen küçük denemeler, fikirler ve faydalı sistemler.",
     },
     journal: {
-      eyebrow: "Günlük",
+      eyebrow: "Notlar",
       title: "Sürecin içinden kısa notlar.",
       description:
         "Geliştirme günlükleri, perde arkası düşünceler ve kişisel notlar. Sakin, doğrudan ve klasik bir blogdan daha hafif.",

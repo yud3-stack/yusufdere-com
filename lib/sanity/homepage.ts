@@ -118,13 +118,16 @@ function mapNowItems(items: SanityNowItem[], locale: Locale): NowItem[] {
         en: item.titleEn,
         tr: item.titleTr,
         legacy: item.title,
-        fallback: "Current focus",
+        fallback: locale === "tr" ? "Güncel odak" : "Current focus",
       }),
       description: localizedText(locale, {
         en: item.descriptionEn,
         tr: item.descriptionTr,
         legacy: item.description,
-        fallback: "A current focus item from the CMS.",
+        fallback:
+          locale === "tr"
+            ? "CMS üzerinden gelen güncel bir odak."
+            : "A current focus item from the CMS.",
       }),
       icon: normalizeIconKey(item.icon),
     }));
