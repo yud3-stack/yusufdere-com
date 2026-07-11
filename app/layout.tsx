@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from '@vercel/analytics/next';
+import { CommandMenu } from "@/components/command/command-menu";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { SplashScreen } from "@/components/layout/splash-screen";
 import { BackToTop } from "@/components/ui/back-to-top";
@@ -92,6 +93,7 @@ export default function RootLayout({
       >
         <ThemeProvider>
           {children}
+          <CommandMenu />
           <SplashScreen />
           <BackToTop />
         </ThemeProvider>

@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { CommandMenuTrigger } from "@/components/command/command-menu-trigger";
 import { SiteHeaderShell } from "@/components/layout/site-header-shell";
 import { Container } from "@/components/ui/container";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
@@ -57,6 +58,10 @@ export function SiteHeader({
               ))}
             </nav>
             <div className="flex shrink-0 items-center justify-end gap-2">
+              <CommandMenuTrigger
+                label={dictionary.command.trigger}
+                shortcutLabel={dictionary.command.shortcut}
+              />
               <LanguageSwitcher />
               <ThemeToggle />
             </div>
@@ -92,6 +97,10 @@ export function SiteHeader({
             ))}
           </nav>
           <div className="flex shrink-0 items-center gap-2">
+            <CommandMenuTrigger
+              label={dictionary.command.trigger}
+              shortcutLabel={dictionary.command.shortcut}
+            />
             <LanguageSwitcher />
             <ThemeToggle />
           </div>
