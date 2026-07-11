@@ -5,6 +5,7 @@ import { ArrowUpRight } from "lucide-react";
 
 import { InteriorPage } from "@/components/layout/interior-page";
 import { PageIntro } from "@/components/layout/page-intro";
+import { ShareKit } from "@/components/share/share-kit";
 import { Container } from "@/components/ui/container";
 import { getDictionary } from "@/dictionaries";
 import { withLocalePrefix } from "@/lib/locale";
@@ -71,6 +72,15 @@ export default async function TurkishJournalDetailPage({
               {post.body.map((paragraph) => (
                 <p key={paragraph}>{paragraph}</p>
               ))}
+            </div>
+            <div className="mt-12">
+              <ShareKit
+                type="journal"
+                slug={post.slug || slug}
+                title={post.title}
+                description={post.excerpt}
+                locale={locale}
+              />
             </div>
             <Link
               href={withLocalePrefix("/journal", locale)}

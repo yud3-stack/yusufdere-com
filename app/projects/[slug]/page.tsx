@@ -5,6 +5,7 @@ import { ArrowUpRight } from "lucide-react";
 
 import { InteriorPage } from "@/components/layout/interior-page";
 import { PageIntro } from "@/components/layout/page-intro";
+import { ShareKit } from "@/components/share/share-kit";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
@@ -229,6 +230,14 @@ export default async function ProjectDetailPage({
                   </Link>
                 </div>
               </section>
+
+              <ShareKit
+                type="project"
+                slug={project.slug || slug}
+                title={project.title}
+                description={project.shortDescription}
+                locale="en"
+              />
             </div>
           </div>
         </Container>

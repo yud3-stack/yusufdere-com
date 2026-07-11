@@ -73,6 +73,18 @@ export const tr = {
   footer: {
     rights: "Tüm hakları saklıdır.",
   },
+  share: {
+    label: "Paylaş",
+    description:
+      "Bu sayfadan manuel paylaşım için sakin bir story kartı oluştur.",
+    downloadStoryCard: "Story Kartını İndir",
+    copyCaption: "Metni Kopyala",
+    copied: "Kopyalandı",
+    journal: "Notlar",
+    project: "Proje",
+    captionReadMore: "Devamını oku",
+    captionViewProject: "Projeyi gör",
+  },
   labels: {
     base: "Merkez",
     focus: "Odak",

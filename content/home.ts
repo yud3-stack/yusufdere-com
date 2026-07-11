@@ -129,9 +129,9 @@ export const galleryPreviews: GalleryPreview[] = [
 
 export const usesItems: UsesItem[] = [
   { title: "MacBook Pro", category: "Hardware", icon: "laptop" },
-  { title: "iPhone", category: "Everyday", icon: "phone" },
-  { title: "Sony Camera", category: "Photography", icon: "camera" },
-  { title: "AirPods Pro", category: "Audio", icon: "headphones" },
+  { title: "iPhone", category: "Hardware", icon: "phone" },
+  { title: "Sony Camera", category: "Hardware", icon: "camera" },
+  { title: "AirPods Pro", category: "Everyday Carry", icon: "headphones" },
   { title: "VS Code", category: "Software", icon: "code" },
   { title: "Notion", category: "Apps", icon: "app" },
 ];

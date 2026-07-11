@@ -71,6 +71,18 @@ export const en = {
   footer: {
     rights: "All rights reserved.",
   },
+  share: {
+    label: "Share",
+    description:
+      "Generate a quiet story card from this page for manual sharing.",
+    downloadStoryCard: "Download Story Card",
+    copyCaption: "Copy Caption",
+    copied: "Copied",
+    journal: "Journal",
+    project: "Project",
+    captionReadMore: "Read more",
+    captionViewProject: "View project",
+  },
   labels: {
     base: "Base",
     focus: "Focus",
