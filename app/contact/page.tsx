@@ -5,6 +5,7 @@ import { InteriorPage } from "@/components/layout/interior-page";
 import { PageIntro } from "@/components/layout/page-intro";
 import { Container } from "@/components/ui/container";
 import { siteConfig } from "@/content/site";
+import { getStudioContent, studioUrl } from "@/content/studio";
 import { getSiteSettings } from "@/lib/sanity/data";
 import { createMetadata, localizedSeo } from "@/lib/seo";
 
@@ -21,6 +22,7 @@ export default async function ContactPage() {
   const siteSettings = await getSiteSettings();
   const instagramUrl = siteSettings.instagramUrl || siteConfig.instagramUrl;
   const email = siteSettings.email || siteConfig.email;
+  const studio = getStudioContent("en");
 
   return (
     <InteriorPage>
@@ -59,6 +61,17 @@ export default async function ContactPage() {
                 {email}
                 <ArrowUpRight className="size-4 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
               </p>
+            </Link>
+          </div>
+          <div className="mt-8 border-t border-border pt-6 text-sm text-muted-foreground">
+            <Link
+              href={studioUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 transition-colors duration-200 hover:text-foreground"
+            >
+              {studio.action}
+              <ArrowUpRight className="size-4" />
             </Link>
           </div>
         </Container>

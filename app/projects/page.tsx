@@ -4,6 +4,7 @@ import { PageIntro } from "@/components/layout/page-intro";
 import { Container } from "@/components/ui/container";
 import { EmptyState } from "@/components/ui/empty-state";
 import { projectsPage } from "@/content/projects";
+import { getStudioProject } from "@/content/studio";
 import { getAllProjects } from "@/lib/sanity/data";
 import { createMetadata, localizedSeo } from "@/lib/seo";
 
@@ -23,6 +24,7 @@ export default async function ProjectsPage() {
   const remainingProjects = highlightedProject
     ? projects.filter((project) => project.href !== highlightedProject.href)
     : [];
+  const studioProject = getStudioProject("en");
 
   return (
     <InteriorPage>
@@ -47,35 +49,37 @@ export default async function ProjectsPage() {
                 <ProjectCard project={highlightedProject} variant="highlight" />
               </div>
 
-              {remainingProjects.length > 0 ? (
-                <div>
-                  <div className="mb-5 flex items-end justify-between gap-6 border-t border-border pt-8">
-                    <div>
-                      <p className="text-xs font-medium uppercase tracking-[0.22em] text-muted-foreground">
-                        Project Index
-                      </p>
-                      <h2 className="mt-3 text-2xl font-semibold tracking-tight text-foreground">
-                        More work in motion.
-                      </h2>
-                    </div>
-                    <p className="hidden max-w-xs text-right text-sm leading-6 text-muted-foreground md:block">
-                      Small bets, product ideas, and useful systems as they move
-                      from note to build.
+              <div>
+                <div className="mb-5 flex items-end justify-between gap-6 border-t border-border pt-8">
+                  <div>
+                    <p className="text-xs font-medium uppercase tracking-[0.22em] text-muted-foreground">
+                      Project Index
                     </p>
+                    <h2 className="mt-3 text-2xl font-semibold tracking-tight text-foreground">
+                      More work in motion.
+                    </h2>
                   </div>
-                  <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-                    {remainingProjects.map((project) => (
-                      <ProjectCard key={project.title} project={project} />
-                    ))}
-                  </div>
+                  <p className="hidden max-w-xs text-right text-sm leading-6 text-muted-foreground md:block">
+                    Small bets, product ideas, and useful systems as they move
+                    from note to build.
+                  </p>
                 </div>
-              ) : null}
+                <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+                  {remainingProjects.map((project) => (
+                    <ProjectCard key={project.title} project={project} />
+                  ))}
+                  <ProjectCard project={studioProject} />
+                </div>
+              </div>
             </div>
           ) : (
-            <EmptyState
-              title="Projects are being prepared."
-              description="New products, experiments and build logs will appear here soon."
-            />
+            <div className="grid gap-5 md:grid-cols-[1.1fr_0.9fr]">
+              <EmptyState
+                title="Projects are being prepared."
+                description="New products, experiments and build logs will appear here soon."
+              />
+              <ProjectCard project={studioProject} />
+            </div>
           )}
         </Container>
       </section>

@@ -31,6 +31,12 @@ export function ProjectCard({
 }: ProjectCardProps) {
   const isHighlight = variant === "highlight";
   const techPreview = project.techStack.slice(0, isHighlight ? 5 : 3);
+  const linkProps = project.external
+    ? {
+        target: "_blank",
+        rel: "noreferrer",
+      }
+    : {};
 
   return (
     <article
@@ -113,9 +119,10 @@ export function ProjectCard({
         ) : null}
         <Link
           href={withLocalePrefix(project.href, locale)}
+          {...linkProps}
           className="mt-7 inline-flex items-center gap-2 text-sm font-medium text-foreground transition-opacity duration-200 hover:opacity-70"
         >
-          {dictionary.actions.viewProject}
+          {project.actionLabel || dictionary.actions.viewProject}
           <ArrowUpRight className="size-4" />
         </Link>
       </div>

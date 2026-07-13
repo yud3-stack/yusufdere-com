@@ -3,6 +3,7 @@ import { InteriorPage } from "@/components/layout/interior-page";
 import { PageIntro } from "@/components/layout/page-intro";
 import { Container } from "@/components/ui/container";
 import { EmptyState } from "@/components/ui/empty-state";
+import { getStudioProject } from "@/content/studio";
 import { getDictionary } from "@/dictionaries";
 import { getAllProjects } from "@/lib/sanity/data";
 import { createMetadata, localizedSeo } from "@/lib/seo";
@@ -26,6 +27,7 @@ export default async function TurkishProjectsPage() {
   const remainingProjects = highlightedProject
     ? projects.filter((project) => project.href !== highlightedProject.href)
     : [];
+  const studioProject = getStudioProject(locale);
 
   return (
     <InteriorPage locale={locale} dictionary={dictionary}>
@@ -55,39 +57,49 @@ export default async function TurkishProjectsPage() {
                 />
               </div>
 
-              {remainingProjects.length > 0 ? (
-                <div>
-                  <div className="mb-5 flex items-end justify-between gap-6 border-t border-border pt-8">
-                    <div>
-                      <p className="text-xs font-medium uppercase tracking-[0.22em] text-muted-foreground">
-                        {dictionary.labels.projectIndex}
-                      </p>
-                      <h2 className="mt-3 text-2xl font-semibold tracking-tight text-foreground">
-                        {dictionary.pages.projects.indexTitle}
-                      </h2>
-                    </div>
-                    <p className="hidden max-w-xs text-right text-sm leading-6 text-muted-foreground md:block">
-                      {dictionary.pages.projects.indexDescription}
+              <div>
+                <div className="mb-5 flex items-end justify-between gap-6 border-t border-border pt-8">
+                  <div>
+                    <p className="text-xs font-medium uppercase tracking-[0.22em] text-muted-foreground">
+                      {dictionary.labels.projectIndex}
                     </p>
+                    <h2 className="mt-3 text-2xl font-semibold tracking-tight text-foreground">
+                      {dictionary.pages.projects.indexTitle}
+                    </h2>
                   </div>
-                  <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-                    {remainingProjects.map((project) => (
-                      <ProjectCard
-                        key={project.title}
-                        project={project}
-                        locale={locale}
-                        dictionary={dictionary}
-                      />
-                    ))}
-                  </div>
+                  <p className="hidden max-w-xs text-right text-sm leading-6 text-muted-foreground md:block">
+                    {dictionary.pages.projects.indexDescription}
+                  </p>
                 </div>
-              ) : null}
+                <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+                  {remainingProjects.map((project) => (
+                    <ProjectCard
+                      key={project.title}
+                      project={project}
+                      locale={locale}
+                      dictionary={dictionary}
+                    />
+                  ))}
+                  <ProjectCard
+                    project={studioProject}
+                    locale={locale}
+                    dictionary={dictionary}
+                  />
+                </div>
+              </div>
             </div>
           ) : (
-            <EmptyState
-              title={dictionary.empty.projects.title}
-              description={dictionary.empty.projects.description}
-            />
+            <div className="grid gap-5 md:grid-cols-[1.1fr_0.9fr]">
+              <EmptyState
+                title={dictionary.empty.projects.title}
+                description={dictionary.empty.projects.description}
+              />
+              <ProjectCard
+                project={studioProject}
+                locale={locale}
+                dictionary={dictionary}
+              />
+            </div>
           )}
         </Container>
       </section>

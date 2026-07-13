@@ -8,6 +8,8 @@ export type ProjectPreview = {
   techStack: string[];
   featured: boolean;
   href: string;
+  external?: boolean;
+  actionLabel?: string;
   accent: "violet" | "stone" | "slate";
 };
 

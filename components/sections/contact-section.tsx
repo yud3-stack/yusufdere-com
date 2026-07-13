@@ -4,6 +4,7 @@ import { ArrowUpRight, AtSign, Mail } from "lucide-react";
 import { Reveal, Stagger, StaggerItem } from "@/components/motion/reveal";
 import { Container } from "@/components/ui/container";
 import { siteConfig } from "@/content/site";
+import { getStudioContent, studioUrl } from "@/content/studio";
 import { getDictionary, type Dictionary } from "@/dictionaries";
 import type { SiteSettings } from "@/lib/sanity/types";
 
@@ -18,6 +19,7 @@ export function ContactSection({
 }: ContactSectionProps) {
   const instagramUrl = siteSettings?.instagramUrl || siteConfig.instagramUrl;
   const email = siteSettings?.email || siteConfig.email;
+  const studio = getStudioContent(dictionary.locale === "tr" ? "tr" : "en");
 
   return (
     <section className="py-20 sm:py-24">
@@ -70,8 +72,17 @@ export function ContactSection({
             </StaggerItem>
           </Stagger>
         </div>
-        <div className="mt-16 border-t border-border pt-6 text-sm text-muted-foreground">
-          (c) 2026 Yusuf Dere. {dictionary.footer.rights}
+        <div className="mt-16 flex flex-col gap-4 border-t border-border pt-6 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+          <p>(c) 2026 Yusuf Dere. {dictionary.footer.rights}</p>
+          <Link
+            href={studioUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-2 transition-colors duration-200 hover:text-foreground"
+          >
+            {studio.action}
+            <ArrowUpRight className="size-4" />
+          </Link>
         </div>
       </Container>
     </section>
