@@ -4,7 +4,6 @@ import {
   allJournalPostsQuery,
   allNowItemsQuery,
   allProjectsQuery,
-  allUsesItemsQuery,
   journalPostBySlugQuery,
   projectBySlugQuery,
   siteSettingsQuery,
@@ -19,12 +18,10 @@ import type {
   PortableTextBlock,
   Project,
   SiteSettings,
-  UsesItem as SanityUsesItem,
 } from "@/lib/sanity/types";
 import { type JournalEntry } from "@/content/journal";
 import { type FocusItem } from "@/content/now";
 import { type GalleryItem } from "@/content/gallery";
-import { type UsesCategory, type UsesPageItem } from "@/content/uses";
 import { siteConfig } from "@/content/site";
 import { aboutPage as aboutFallback } from "@/content/about";
 import type { ProjectPreview } from "@/content/home";
@@ -97,10 +94,6 @@ export type JournalDetail = {
 export type GalleryPageItem = GalleryItem & {
   imageUrl?: string;
   description?: string;
-};
-
-export type LocalizedUsesPageItem = UsesPageItem & {
-  categoryLabel: string;
 };
 
 export async function getAboutPage(
@@ -182,17 +175,6 @@ export async function getAllGalleryImages(
     "galleryImage",
   ]);
   const mapped = images.map((image) => mapGalleryItem(image, locale));
-
-  return mapped;
-}
-
-export async function getAllUsesItems(
-  locale: Locale = "en",
-): Promise<LocalizedUsesPageItem[]> {
-  const items = await fetchOrFallback<SanityUsesItem[]>(allUsesItemsQuery, [], [
-    "usesItem",
-  ]);
-  const mapped = items.map((item) => mapUsesItem(item, locale));
 
   return mapped;
 }
@@ -608,40 +590,6 @@ export function mapGalleryItem(
   };
 }
 
-export function mapUsesItem(
-  item: SanityUsesItem,
-  locale: Locale = "en",
-): LocalizedUsesPageItem {
-  const category = normalizeUsesCategory(item.category);
-
-  return {
-    title: localizedText(locale, {
-      en: item.titleEn,
-      tr: item.titleTr,
-      legacy: item.title,
-      fallback: localizedFallback(locale, "Tool", "Araç"),
-    }),
-    category,
-    categoryLabel: localizedText(locale, {
-      en: item.categoryLabelEn,
-      tr: item.categoryLabelTr,
-      legacy: null,
-      fallback: localizeUsesCategoryLabel(category, locale),
-    }),
-    description: localizedText(locale, {
-      en: item.descriptionEn,
-      tr: item.descriptionTr,
-      legacy: item.description,
-      fallback: localizedFallback(
-        locale,
-        "A tool from the YusufDere.com setup.",
-        "YusufDere.com kurulumundan bir araç.",
-      ),
-    }),
-    icon: normalizeIconKey(item.icon),
-  };
-}
-
 function portableTextToParagraphs(blocks: PortableTextBlock[] | null | undefined) {
   const paragraphs =
     blocks
@@ -780,36 +728,4 @@ function localizeGalleryCategory(
   };
 
   return locale === "tr" ? trLabels[value] || value : value;
-}
-
-function localizeUsesCategoryLabel(category: UsesCategory, locale: Locale) {
-  if (locale !== "tr") {
-    return category;
-  }
-
-  const labels: Record<UsesCategory, string> = {
-    Hardware: "Donanım",
-    Software: "Yazılım",
-    Desk: "Masa",
-    Apps: "Uygulamalar",
-    "Everyday Carry": "Günlük taşıma",
-  };
-
-  return labels[category];
-}
-
-function normalizeUsesCategory(
-  category: string | null | undefined,
-): UsesCategory {
-  if (
-    category === "Hardware" ||
-    category === "Software" ||
-    category === "Desk" ||
-    category === "Apps" ||
-    category === "Everyday Carry"
-  ) {
-    return category;
-  }
-
-  return "Apps";
 }

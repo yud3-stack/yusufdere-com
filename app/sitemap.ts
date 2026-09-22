@@ -10,7 +10,6 @@ const staticRoutes = [
   "/projects",
   "/journal",
   "/gallery",
-  "/uses",
   "/now",
   "/contact",
 ] as const;
@@ -21,7 +20,6 @@ const turkishStaticRoutes = [
   "/tr/projects",
   "/tr/journal",
   "/tr/gallery",
-  "/tr/uses",
   "/tr/now",
   "/tr/contact",
 ] as const;

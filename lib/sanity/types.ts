@@ -122,23 +122,6 @@ export type NowItem = {
   order?: number | null;
 };
 
-export type UsesItem = {
-  _id: string;
-  title?: string | null;
-  titleEn?: string | null;
-  titleTr?: string | null;
-  category?: string | null;
-  categoryLabelEn?: string | null;
-  categoryLabelTr?: string | null;
-  description?: string | null;
-  descriptionEn?: string | null;
-  descriptionTr?: string | null;
-  icon?: string | null;
-  url?: string | null;
-  order?: number | null;
-  featured?: boolean | null;
-};
-
 export type GalleryImage = {
   _id: string;
   image?: SanityImage | null;

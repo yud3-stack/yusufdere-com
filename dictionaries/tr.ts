@@ -7,7 +7,6 @@ export const tr = {
     projects: "Projeler",
     journal: "Notlar",
     gallery: "Galeri",
-    uses: "Kullandıklarım",
     now: "Şimdi",
     contact: "İletişim",
   },
@@ -18,7 +17,6 @@ export const tr = {
     viewAllProjects: "Tüm projeler",
     viewAllPosts: "Tüm notlar",
     viewAllPhotos: "Tüm fotoğraflar",
-    viewFullList: "Tüm liste",
     moreUpdates: "Daha fazlası",
     readMore: "Devamını oku",
     backToHome: "Ana sayfaya dön",
@@ -43,11 +41,6 @@ export const tr = {
       description:
         "Yaşam, seyahat, çalışma alanı ve fotoğraf seçkileri yakında eklenecek.",
     },
-    uses: {
-      title: "Kurulum özenle hazırlanıyor.",
-      description:
-        "Araçlar, cihazlar ve günlük iş akışı parçaları yakında listelenecek.",
-    },
     now: {
       title: "Şimdi sayfası yakında güncellenecek.",
       description:
@@ -56,7 +49,7 @@ export const tr = {
   },
   home: {
     heroSupport:
-      "Projeler, notlar, fotoğraf, araçlar ve şekillenen yeni işler için sakin bir dijital merkez.",
+      "Projeler, notlar, fotoğraf ve şekillenen yeni işler için sakin bir dijital merkez.",
     tagline: "Hayal ettiğim hayatı inşa ediyorum.",
     siteDescription:
       "Samsun'dan yazılım, ürünler, notlar ve fotoğraf.",
@@ -68,7 +61,6 @@ export const tr = {
       "Özen, fayda ve uzun vadeli bir bakışla şekillenen küçük bir seçki.",
     currentFocus: "Güncel odak",
     latestNotes: "Son notlar",
-    toolsAndSetup: "Araçlar ve kurulum",
   },
   footer: {
     rights: "Tüm hakları saklıdır.",
@@ -99,7 +91,6 @@ export const tr = {
       projects: "Ürünleri, deneyleri ve inşa süreçlerini keşfet.",
       journal: "Notları, geliştirme günlüklerini ve düşünceleri oku.",
       gallery: "Fotoğraf ve görsel notlara bak.",
-      uses: "Araçları, cihazları ve kurulumu keşfet.",
       now: "Güncel odağı ve öncelikleri gör.",
       contact: "Yusuf'a ulaşma yollarını bul.",
       pixelbuddy: "PixelBuddy AI projesini aç.",
@@ -154,12 +145,6 @@ export const tr = {
       title: "Bir akışa dönüşmeyen görsel notlar.",
       description:
         "Fotoğraf, seyahat, şehir anları, çalışma alanı detayları ve YusufDere.com'un görsel tarafı için gelecekteki alan.",
-    },
-    uses: {
-      eyebrow: "Kullandıklarım",
-      title: "İnşa etmek, yazmak ve düzenli kalmak için araçlar.",
-      description:
-        "İşin arkasındaki cihazlar, yazılımlar, uygulamalar ve günlük araçlar için kolayca güncellenebilir bir alan.",
     },
     now: {
       eyebrow: "Şimdi",

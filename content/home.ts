@@ -31,19 +31,12 @@ export type GalleryPreview = {
   location: string;
 };
 
-export type UsesItem = {
-  title: string;
-  category: string;
-  categoryLabel?: string;
-  icon: IconKey;
-};
-
 export const homeIntro = {
   eyebrow: "About",
   title:
     "A personal hub for what Yusuf is building, noticing, and becoming.",
   body:
-    "YusufDere.com is the center of the work: projects in progress, quiet notes, visual moments, tools, and the current season of focus. Calm on the surface, intentional underneath.",
+    "YusufDere.com is the center of the work: projects in progress, quiet notes, visual moments, and the current season of focus. Calm on the surface, intentional underneath.",
   href: "/about",
 } as const;
 
@@ -127,13 +120,4 @@ export const galleryPreviews: GalleryPreview[] = [
   { title: "City walk", location: "Night notes" },
   { title: "Open road", location: "Travel" },
   { title: "Coffee table", location: "Workspace" },
-];
-
-export const usesItems: UsesItem[] = [
-  { title: "MacBook Pro", category: "Hardware", icon: "laptop" },
-  { title: "iPhone", category: "Hardware", icon: "phone" },
-  { title: "Sony Camera", category: "Hardware", icon: "camera" },
-  { title: "AirPods Pro", category: "Everyday Carry", icon: "headphones" },
-  { title: "VS Code", category: "Software", icon: "code" },
-  { title: "Notion", category: "Apps", icon: "app" },
 ];

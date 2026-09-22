@@ -19,7 +19,6 @@ import {
   Search,
   Sparkles,
   User,
-  Wrench,
 } from "lucide-react";
 
 import { getDictionary } from "@/dictionaries";
@@ -357,15 +356,6 @@ function createCommandItems(locale: Locale, dictionary: ReturnType<typeof getDic
       group: pageGroup,
       keywords: ["gallery", "photos", "galeri"],
       icon: Camera,
-    },
-    {
-      id: "uses",
-      label: dictionary.nav.uses,
-      description: dictionary.command.descriptions.uses,
-      href: withLocalePrefix("/uses", locale),
-      group: pageGroup,
-      keywords: ["uses", "tools", "setup", "kullandıklarım"],
-      icon: Wrench,
     },
     {
       id: "now",

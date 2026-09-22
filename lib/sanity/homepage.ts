@@ -2,7 +2,6 @@ import {
   featuredGalleryImagesQuery,
   featuredJournalPostsQuery,
   featuredProjectsQuery,
-  featuredUsesItemsQuery,
   activeNowItemsQuery,
 } from "@/lib/sanity/queries";
 import { sanityFetch } from "@/lib/sanity/client";
@@ -13,7 +12,6 @@ import {
   mapGalleryItem,
   mapJournalEntry,
   mapProjectPreview,
-  mapUsesItem,
   type AboutPageContent,
 } from "@/lib/sanity/data";
 import type {
@@ -22,14 +20,12 @@ import type {
   NowItem as SanityNowItem,
   Project,
   SiteSettings,
-  UsesItem as SanityUsesItem,
 } from "@/lib/sanity/types";
 import {
   type GalleryPreview,
   type JournalPreview,
   type NowItem,
   type ProjectPreview,
-  type UsesItem,
 } from "@/content/home";
 import { normalizeIconKey } from "@/lib/icons";
 import type { Locale } from "@/lib/locale";
@@ -40,7 +36,6 @@ type HomePageData = {
   projects: ProjectPreview[];
   journalPosts: JournalPreview[];
   nowItems: NowItem[];
-  usesItems: UsesItem[];
   galleryItems: GalleryPreview[];
 };
 
@@ -51,7 +46,6 @@ export async function getHomepageData(locale: Locale = "en"): Promise<HomePageDa
     projects,
     journalPosts,
     activeNowItems,
-    featuredUsesItems,
     featuredGalleryImages,
   ] = await Promise.all([
     getSiteSettings(locale),
@@ -61,7 +55,6 @@ export async function getHomepageData(locale: Locale = "en"): Promise<HomePageDa
       "journalPost",
     ]),
     fetchOrFallback<SanityNowItem[]>(activeNowItemsQuery, [], ["nowItem"]),
-    fetchOrFallback<SanityUsesItem[]>(featuredUsesItemsQuery, [], ["usesItem"]),
     fetchOrFallback<GalleryImage[]>(featuredGalleryImagesQuery, [], [
       "galleryImage",
     ]),
@@ -73,7 +66,6 @@ export async function getHomepageData(locale: Locale = "en"): Promise<HomePageDa
     projects: mapProjects(projects, locale),
     journalPosts: mapJournalPosts(journalPosts, locale),
     nowItems: mapNowItems(activeNowItems, locale),
-    usesItems: mapUsesItems(featuredUsesItems, locale),
     galleryItems: mapGalleryImages(featuredGalleryImages, locale),
   };
 }
@@ -131,21 +123,6 @@ function mapNowItems(items: SanityNowItem[], locale: Locale): NowItem[] {
       }),
       icon: normalizeIconKey(item.icon),
     }));
-
-  return mapped;
-}
-
-function mapUsesItems(items: SanityUsesItem[], locale: Locale): UsesItem[] {
-  const mapped = items.map((item) => {
-    const mappedItem = mapUsesItem(item, locale);
-
-    return {
-      title: mappedItem.title,
-      category: mappedItem.category,
-      categoryLabel: mappedItem.categoryLabel,
-      icon: mappedItem.icon,
-    };
-  });
 
   return mapped;
 }

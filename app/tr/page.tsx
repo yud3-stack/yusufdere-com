@@ -1,7 +1,7 @@
 import { SiteHeader } from "@/components/layout/site-header";
 import { AboutPreviewSection } from "@/components/sections/about-preview-section";
 import { ContactSection } from "@/components/sections/contact-section";
-import { GalleryUsesSection } from "@/components/sections/gallery-uses-section";
+import { GallerySection } from "@/components/sections/gallery-section";
 import { HeroSection } from "@/components/sections/hero-section";
 import { NowJournalSection } from "@/components/sections/now-journal-section";
 import { ProjectsPreviewSection } from "@/components/sections/projects-preview-section";
@@ -53,9 +53,8 @@ export default async function TurkishHome() {
           locale={locale}
           dictionary={dictionary}
         />
-        <GalleryUsesSection
+        <GallerySection
           galleryItems={homepageData.galleryItems}
-          usesItems={homepageData.usesItems}
           locale={locale}
           dictionary={dictionary}
         />

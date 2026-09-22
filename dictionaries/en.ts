@@ -5,7 +5,6 @@ export const en = {
     projects: "Projects",
     journal: "Journal",
     gallery: "Gallery",
-    uses: "Uses",
     now: "Now",
     contact: "Contact",
   },
@@ -16,7 +15,6 @@ export const en = {
     viewAllProjects: "View all projects",
     viewAllPosts: "View all posts",
     viewAllPhotos: "View all photos",
-    viewFullList: "View full list",
     moreUpdates: "More updates",
     readMore: "Read more",
     backToHome: "Back to home",
@@ -41,11 +39,6 @@ export const en = {
       description:
         "Lifestyle, travel, workspace and photography selections will be added soon.",
     },
-    uses: {
-      title: "Setup is being curated.",
-      description:
-        "Tools, devices and everyday workflow items will be listed here soon.",
-    },
     now: {
       title: "Now page will be updated soon.",
       description:
@@ -54,7 +47,7 @@ export const en = {
   },
   home: {
     heroSupport:
-      "A quiet digital home for projects, notes, photography, tools, and the next things taking shape.",
+      "A quiet digital home for projects, notes, photography, and the next things taking shape.",
     tagline: "Building the life I imagined.",
     siteDescription:
       "Software, products, notes and photography from Samsun.",
@@ -66,7 +59,6 @@ export const en = {
       "A small selection of things being shaped with care, usefulness, and a long-term point of view.",
     currentFocus: "Current focus",
     latestNotes: "Latest notes",
-    toolsAndSetup: "Tools and setup",
   },
   footer: {
     rights: "All rights reserved.",
@@ -97,7 +89,6 @@ export const en = {
       projects: "Browse products, experiments, and builds.",
       journal: "Read notes, development logs, and thoughts.",
       gallery: "View photography and visual notes.",
-      uses: "Explore tools, devices, and setup.",
       now: "See the current focus and priorities.",
       contact: "Find ways to reach Yusuf.",
       pixelbuddy: "Open the PixelBuddy AI project.",
@@ -152,12 +143,6 @@ export const en = {
       title: "Visual notes without becoming a feed.",
       description:
         "A future home for photography, travel, city moments, workspace details, and the visual side of YusufDere.com.",
-    },
-    uses: {
-      eyebrow: "Uses",
-      title: "Tools for building, writing, and staying organized.",
-      description:
-        "A replaceable placeholder list for the devices, software, apps, and daily tools behind the work.",
     },
     now: {
       eyebrow: "Now",

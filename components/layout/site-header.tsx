@@ -26,7 +26,6 @@ export function SiteHeader({
     { label: dictionary.nav.projects, href: "/projects" },
     { label: dictionary.nav.journal, href: "/journal" },
     { label: dictionary.nav.gallery, href: "/gallery" },
-    { label: dictionary.nav.uses, href: "/uses" },
     { label: dictionary.nav.now, href: "/now" },
     { label: dictionary.nav.contact, href: "/contact" },
   ] as const;

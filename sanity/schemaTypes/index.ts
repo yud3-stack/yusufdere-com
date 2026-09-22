@@ -6,7 +6,6 @@ import {journalPost} from './journalPost'
 import {nowItem} from './nowItem'
 import {project} from './project'
 import {siteSettings} from './siteSettings'
-import {usesItem} from './usesItem'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
@@ -16,6 +15,5 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     journalPost,
     galleryImage,
     nowItem,
-    usesItem,
   ],
 }

@@ -110,26 +110,6 @@ export const activeNowItemsQuery = defineQuery(/* groq */ `
   }
 `);
 
-export const featuredUsesItemsQuery = defineQuery(/* groq */ `
-  *[_type == "usesItem" && featured == true]
-  | order(order asc, _createdAt desc) [0...6] {
-    _id,
-    title,
-    titleEn,
-    titleTr,
-    category,
-    categoryLabelEn,
-    categoryLabelTr,
-    description,
-    descriptionEn,
-    descriptionTr,
-    icon,
-    url,
-    order,
-    featured
-  }
-`);
-
 export const featuredGalleryImagesQuery = defineQuery(/* groq */ `
   *[_type == "galleryImage" && featured == true]
   | order(order asc, date desc, _createdAt desc) [0...4] {
@@ -259,26 +239,6 @@ export const allGalleryImagesQuery = defineQuery(/* groq */ `
     descriptionTr,
     featured,
     order
-  }
-`);
-
-export const allUsesItemsQuery = defineQuery(/* groq */ `
-  *[_type == "usesItem"]
-  | order(order asc, _createdAt desc) {
-    _id,
-    title,
-    titleEn,
-    titleTr,
-    category,
-    categoryLabelEn,
-    categoryLabelTr,
-    description,
-    descriptionEn,
-    descriptionTr,
-    icon,
-    url,
-    order,
-    featured
   }
 `);
 

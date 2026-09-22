@@ -14,7 +14,7 @@ export const aboutPage = {
     },
     {
       title: "A personal brand without the performance",
-      body: "YusufDere.com is the center. Instagram can show moments, but this space connects the deeper pieces: projects, journal notes, current focus, tools, experiments, and the direction of future startups.",
+      body: "YusufDere.com is the center. Instagram can show moments, but this space connects the deeper pieces: projects, journal notes, current focus, experiments, and the direction of future startups.",
     },
   ],
   stats: [

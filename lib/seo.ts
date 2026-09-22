@@ -27,8 +27,6 @@ export const localizedSeo = {
       "Short notes, development logs and behind-the-scenes thoughts from Yusuf Dere.",
     galleryDescription:
       "Selected lifestyle, travel, workspace and photography moments from Yusuf Dere.",
-    usesDescription:
-      "Devices, software and everyday workflow tools used by Yusuf Dere.",
     nowDescription:
       "Current projects, focus areas and priorities from Yusuf Dere.",
     contactDescription: "Contact Yusuf Dere through Instagram or email.",
@@ -43,8 +41,6 @@ export const localizedSeo = {
       "Kısa notlar, geliştirme günlükleri ve üretim sürecinden düşünceler.",
     galleryDescription:
       "Yaşam, seyahat, çalışma alanı ve fotoğraf karelerinden seçkiler.",
-    usesDescription:
-      "Yusuf Dere'nin kullandığı cihazlar, yazılımlar ve çalışma araçları.",
     nowDescription:
       "Yusuf Dere'nin şu anda odaklandığı projeler ve öncelikler.",
     contactDescription: "Yusuf Dere ile iletişime geçin.",
