@@ -4,6 +4,7 @@ import { Container } from "@/components/ui/container";
 import { siteConfig } from "@/content/site";
 import { getStudioContent, studioUrl } from "@/content/studio";
 import { getDictionary, type Dictionary } from "@/dictionaries";
+import { withLocalePrefix } from "@/lib/locale";
 
 type SiteFooterProps = {
   dictionary?: Dictionary;
@@ -11,6 +12,7 @@ type SiteFooterProps = {
 
 export function SiteFooter({ dictionary = getDictionary("en") }: SiteFooterProps) {
   const studio = getStudioContent(dictionary.locale === "tr" ? "tr" : "en");
+  const locale = dictionary.locale === "tr" ? "tr" : "en";
 
   return (
     <footer className="border-t border-border py-8">
@@ -19,6 +21,18 @@ export function SiteFooter({ dictionary = getDictionary("en") }: SiteFooterProps
           (c) 2026 {siteConfig.name}. {dictionary.footer.rights}
         </p>
         <div className="flex flex-wrap gap-5">
+          <Link
+            href={withLocalePrefix("/ads-manager/privacy", locale)}
+            className="transition-colors duration-200 hover:text-foreground"
+          >
+            {locale === "tr" ? "Gizlilik" : "Privacy"}
+          </Link>
+          <Link
+            href={withLocalePrefix("/ads-manager/data-deletion", locale)}
+            className="transition-colors duration-200 hover:text-foreground"
+          >
+            {locale === "tr" ? "Veri silme" : "Data deletion"}
+          </Link>
           <Link
             href={siteConfig.instagramUrl}
             target="_blank"

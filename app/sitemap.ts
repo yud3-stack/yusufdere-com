@@ -12,6 +12,8 @@ const staticRoutes = [
   "/gallery",
   "/now",
   "/contact",
+  "/ads-manager/privacy",
+  "/ads-manager/data-deletion",
 ] as const;
 
 const turkishStaticRoutes = [
@@ -22,6 +24,8 @@ const turkishStaticRoutes = [
   "/tr/gallery",
   "/tr/now",
   "/tr/contact",
+  "/tr/ads-manager/privacy",
+  "/tr/ads-manager/data-deletion",
 ] as const;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
