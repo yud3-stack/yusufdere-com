@@ -1,103 +1,41 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import { Analytics } from '@vercel/analytics/next';
-import { CommandMenu } from "@/components/command/command-menu";
-import { ThemeProvider } from "@/components/layout/theme-provider";
-import { SplashScreen } from "@/components/layout/splash-screen";
-import { BackToTop } from "@/components/ui/back-to-top";
-import {
-  absoluteUrl,
-  defaultSeo,
-  languageAlternates,
-  ogImagePath,
-  siteUrl,
-} from "@/lib/seo";
-
+import { Geist } from "next/font/google";
+import { Footer, PublicFooter } from "@/components/layout/Footer";
+import { PublicShell } from "@/components/layout/PublicShell";
+import { Header } from "@/components/layout/Header";
+import { PublicSearch } from "@/components/layout/PublicSearch";
+import { getSiteUrl } from "@/lib/site";
 import "./globals.css";
+import "./public-site.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const geist = Geist({
+  variable: "--font-sans",
+  subsets: ["latin", "latin-ext"],
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://yusufdere.com"),
+  metadataBase: new URL(getSiteUrl()),
   title: {
-    default: defaultSeo.title,
-    template: `%s | ${defaultSeo.siteName}`,
+    default: "Yusuf Dere",
+    template: "%s · Yusuf Dere",
   },
-  description: defaultSeo.description,
-  icons: {
-    icon: "/brand/yd-logo.svg",
-    shortcut: "/brand/yd-logo.svg",
-    apple: "/brand/yd-logo.svg",
-  },
-  alternates: {
-    canonical: siteUrl,
-    languages: languageAlternates("/"),
-  },
-  openGraph: {
-    title: defaultSeo.title,
-    description: defaultSeo.description,
-    url: siteUrl,
-    siteName: defaultSeo.siteName,
-    locale: defaultSeo.locale,
-    type: "website",
-    images: [
-      {
-        url: absoluteUrl(ogImagePath),
-        width: 1200,
-        height: 630,
-        alt: defaultSeo.siteName,
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: defaultSeo.title,
-    description: defaultSeo.description,
-    images: [absoluteUrl(ogImagePath)],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-      "max-video-preview": -1,
-    },
-  },
+  description:
+    "Yazılım ve teknoloji üzerine öğrendiklerimi, karşılaştığım problemleri ve geliştirdiğim projeleri paylaştığım kişisel alanım.",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html
-      lang="en"
-      suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body
-        suppressHydrationWarning
-        className="min-h-full bg-background text-foreground"
-      >
-        <ThemeProvider>
+    <html lang="tr" className={`${geist.variable} h-full antialiased`}>
+      <body className="min-h-full bg-[#FAFAF9] text-[#111827]">
+        <a
+          href="#icerik"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50 focus:rounded-full focus:bg-white focus:px-4 focus:py-2"
+        >
+          İçeriğe geç
+        </a>
+        <PublicShell header={<Header search={<PublicSearch />} />} footer={<Footer />} publicFooter={<PublicFooter />}>
           {children}
-          <CommandMenu />
-          <SplashScreen />
-          <BackToTop />
-        </ThemeProvider>
-        <Analytics />
+        </PublicShell>
       </body>
     </html>
   );

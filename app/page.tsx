@@ -1,43 +1,17 @@
-import { SiteHeader } from "@/components/layout/site-header";
-import { AboutPreviewSection } from "@/components/sections/about-preview-section";
-import { ContactSection } from "@/components/sections/contact-section";
-import { GallerySection } from "@/components/sections/gallery-section";
-import { HeroSection } from "@/components/sections/hero-section";
-import { NowJournalSection } from "@/components/sections/now-journal-section";
-import { ProjectsPreviewSection } from "@/components/sections/projects-preview-section";
-import { getSiteSettings } from "@/lib/sanity/data";
-import { getHomepageData } from "@/lib/sanity/homepage";
-import { createMetadata, localizedSeo } from "@/lib/seo";
+import { Hero } from "@/components/home/Hero";
+import { SectionNav } from "@/components/home/SectionNav";
+import { LatestPosts } from "@/components/home/LatestPosts";
+import { ProjectsSection } from "@/components/home/ProjectsSection";
+import { HomeCTA } from "@/components/home/HomeCTA";
 
-export async function generateMetadata() {
-  const siteSettings = await getSiteSettings();
-
-  return createMetadata({
-    title: siteSettings.seoTitle || siteSettings.name || undefined,
-    description: siteSettings.seoDescription || localizedSeo.en.homeDescription,
-    path: "/",
-    locale: "en",
-    absoluteTitle: true,
-  });
-}
-
-export default async function Home() {
-  const homepageData = await getHomepageData();
-
+export default function HomePage() {
   return (
     <>
-      <SiteHeader variant="home" />
-      <main className="min-h-screen overflow-hidden">
-        <HeroSection siteSettings={homepageData.siteSettings} />
-        <AboutPreviewSection aboutPage={homepageData.aboutPage} />
-        <ProjectsPreviewSection projects={homepageData.projects} />
-        <NowJournalSection
-          nowItems={homepageData.nowItems}
-          journalPosts={homepageData.journalPosts}
-        />
-        <GallerySection galleryItems={homepageData.galleryItems} />
-        <ContactSection siteSettings={homepageData.siteSettings} />
-      </main>
+      <Hero />
+      <SectionNav />
+      <LatestPosts />
+      <ProjectsSection />
+      <HomeCTA />
     </>
   );
 }

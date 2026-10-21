@@ -1,247 +1,123 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowUpRight } from "lucide-react";
+import { CoverImage } from "@/components/content/cover-image";
+import { Markdown } from "@/components/content/markdown";
+import { Container } from "@/components/layout/Container";
+import { BackLink } from "@/components/layout/PageIntro";
+import { TechnologyBadge } from "@/components/projects/TechnologyBadge";
+import { PostMeta } from "@/components/blog/PostMeta";
+import { getSiteUrl } from "@/lib/site";
+import { projectCoverImageUrl } from "@/lib/storage/project-covers";
+import { getProjectBySlug, getPublishedProjects } from "@/lib/supabase/queries";
 
-import { InteriorPage } from "@/components/layout/interior-page";
-import { PageIntro } from "@/components/layout/page-intro";
-import { ShareKit } from "@/components/share/share-kit";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Container } from "@/components/ui/container";
-import { getProjectBySlug } from "@/lib/sanity/data";
-import { createMetadata, localizedSeo } from "@/lib/seo";
-
-type ProjectDetailPageProps = {
+type PageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export async function generateMetadata({
-  params,
-}: ProjectDetailPageProps): Promise<Metadata> {
-  const { slug } = await params;
-  const project = await getProjectBySlug(slug, "en");
+export async function generateStaticParams() {
+  const result = await getPublishedProjects();
 
-  if (!project) {
-    return createMetadata({
-      title: "Project",
-      description: localizedSeo.en.projectsDescription,
-      path: `/projects/${slug}`,
-      locale: "en",
-      robots: {
-        index: false,
-        follow: false,
-      },
-    });
-  }
-
-  return createMetadata({
-    title: project.title,
-    description: project.shortDescription,
-    path: `/projects/${project.slug || slug}`,
-    locale: "en",
-    type: "article",
-  });
+  return (result.data ?? []).map((project) => ({ slug: project.slug }));
 }
 
-export default async function ProjectDetailPage({
-  params,
-}: ProjectDetailPageProps) {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const project = await getProjectBySlug(slug, "en");
+  const result = await getProjectBySlug(slug);
 
-  if (!project) {
+  if (result.error) {
+    return { title: "Projeler", robots: { index: false, follow: false } };
+  }
+
+  if (!result.data) {
     notFound();
   }
 
-  const hasLinks = Boolean(project.liveUrl || project.githubUrl);
-  const hasTechStack = project.techStack.length > 0;
+  const project = result.data;
+  const description = project.description.trim() || "Yusuf Dere tarafından paylaşılan bir proje.";
+  const url = `${getSiteUrl()}/projects/${project.slug}`;
+  const image = projectCoverImageUrl(project.cover_image);
+
+  return {
+    title: project.title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title: project.title,
+      description,
+      type: "website",
+      url,
+      images: image ? [{ url: image, alt: project.title }] : undefined,
+    },
+    twitter: {
+      card: image ? "summary_large_image" : "summary",
+      title: project.title,
+      description,
+      images: image ? [image] : undefined,
+    },
+  };
+}
+
+export default async function ProjectPage({ params }: PageProps) {
+  const { slug } = await params;
+  const result = await getProjectBySlug(slug);
+
+  if (result.error) {
+    return (
+      <Container className="py-16">
+        <p className="text-sm text-[#9CA3AF]">Proje şu an yüklenemedi.</p>
+      </Container>
+    );
+  }
+
+  if (!result.data) {
+    notFound();
+  }
+
+  const project = result.data;
+  const cover = projectCoverImageUrl(project.cover_image);
+  const pageUrl = `${getSiteUrl()}/projects/${project.slug}`;
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    name: project.title,
+    description: project.description || undefined,
+    url: pageUrl,
+    image: cover || undefined,
+    datePublished: project.published_at || undefined,
+    author: {
+      "@type": "Person",
+      name: "Yusuf Dere",
+      url: getSiteUrl(),
+    },
+  };
 
   return (
-    <InteriorPage>
-      <PageIntro
-        eyebrow="Project"
-        title={project.title}
-        description={project.shortDescription}
-      />
-      <section className="py-20 sm:py-24">
-        <Container>
-          <div className="grid gap-12 lg:grid-cols-[0.32fr_1fr]">
-            <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
-              <div className="rounded-lg border border-border bg-surface p-5">
-                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                  Project
-                </p>
-                <div className="mt-5 flex flex-wrap gap-2">
-                  <Badge>{project.status}</Badge>
-                  <span className="rounded-full border border-border px-3 py-1 text-xs font-medium text-muted-foreground">
-                    {project.category}
-                  </span>
-                  {project.featured ? (
-                    <span className="rounded-full border border-white/15 bg-white/[0.04] px-3 py-1 text-xs font-medium text-foreground">
-                      Featured
-                    </span>
-                  ) : null}
-                </div>
-              </div>
-              {hasTechStack ? (
-                <div className="rounded-lg border border-border bg-surface p-5">
-                  <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                    Stack
-                  </p>
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {project.techStack.slice(0, 6).map((tech) => (
-                      <span
-                        key={tech}
-                        className="rounded-full border border-border bg-background/30 px-3 py-1 text-xs text-muted-foreground"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              ) : null}
-              {hasLinks ? (
-                <div className="rounded-lg border border-border bg-surface p-5">
-                  <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                    Links
-                  </p>
-                  <div className="mt-4 flex flex-col gap-2">
-                    {project.liveUrl ? (
-                      <Link
-                        href={project.liveUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center gap-2 text-sm text-foreground transition-opacity duration-200 hover:opacity-70"
-                      >
-                        Live site
-                        <ArrowUpRight className="size-4" />
-                      </Link>
-                    ) : null}
-                    {project.githubUrl ? (
-                      <Link
-                        href={project.githubUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center gap-2 text-sm text-foreground transition-opacity duration-200 hover:opacity-70"
-                      >
-                        GitHub
-                        <ArrowUpRight className="size-4" />
-                      </Link>
-                    ) : null}
-                  </div>
-                </div>
-              ) : null}
-            </aside>
-
-            <div className="space-y-14">
-              <section className="border-t border-border pt-8">
-                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                  Overview
-                </p>
-                <div className="mt-6 space-y-6 text-base leading-8 text-muted-foreground">
-                  <p className="text-xl leading-9 text-foreground/90">
-                    {project.shortDescription}
-                  </p>
-                </div>
-              </section>
-
-              {project.body.length > 0 ? (
-                <section className="border-t border-border pt-8">
-                  <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                    Why it exists
-                  </p>
-                  <div className="mt-6 space-y-6 text-base leading-8 text-muted-foreground">
-                    {project.body.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </div>
-                </section>
-              ) : null}
-
-              <section className="border-t border-border pt-8">
-                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                  Current status
-                </p>
-                <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                  <div className="rounded-lg border border-border bg-surface p-5">
-                    <p className="text-sm text-muted-foreground">Status</p>
-                    <p className="mt-3 text-xl font-medium text-foreground">
-                      {project.status}
-                    </p>
-                  </div>
-                  <div className="rounded-lg border border-border bg-surface p-5">
-                    <p className="text-sm text-muted-foreground">Category</p>
-                    <p className="mt-3 text-xl font-medium text-foreground">
-                      {project.category}
-                    </p>
-                  </div>
-                </div>
-              </section>
-
-              {hasTechStack ? (
-                <section className="border-t border-border pt-8">
-                  <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                    Tech stack
-                  </p>
-                  <div className="mt-6 flex flex-wrap gap-2">
-                    {project.techStack.map((tech) => (
-                      <span
-                        key={tech}
-                        className="rounded-full border border-border bg-surface px-3 py-1 text-xs text-muted-foreground"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                </section>
-              ) : null}
-
-              <section className="border-t border-border pt-8">
-                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                  Links
-                </p>
-                <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                  {project.liveUrl ? (
-                    <Button
-                      href={project.liveUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      Visit
-                    </Button>
-                  ) : null}
-                  {project.githubUrl ? (
-                    <Button
-                      href={project.githubUrl}
-                      variant="secondary"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      GitHub
-                    </Button>
-                  ) : null}
-                  <Link
-                    href="/projects"
-                    className="inline-flex h-11 items-center gap-2 text-sm font-medium text-muted-foreground transition-colors duration-200 hover:text-foreground"
-                  >
-                    All projects
-                    <ArrowUpRight className="size-4" />
-                  </Link>
-                </div>
-              </section>
-
-              <ShareKit
-                type="project"
-                slug={project.slug || slug}
-                title={project.title}
-                description={project.shortDescription}
-                locale="en"
-              />
+    <Container className="detail-page">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+      <article className="detail-article project-article">
+        <BackLink href="/projects" label="Projeler" />
+        <header className="detail-heading">
+          <h1>{project.title}</h1>
+          {project.description ? <p className="detail-description">{project.description}</p> : null}
+          {project.technologies.length > 0 ? (
+            <ul className="technology-list">{project.technologies.map(name => <li key={name}><TechnologyBadge name={name} /></li>)}</ul>
+          ) : null}
+          <PostMeta date={project.published_at} />
+          {project.github_url || project.live_url ? (
+            <div className="button-row">
+              {project.github_url ? <a href={project.github_url} target="_blank" rel="noopener noreferrer" className="button button-accent">GitHub<ArrowUpRight size={16} aria-hidden="true" /></a> : null}
+              {project.live_url ? <a href={project.live_url} target="_blank" rel="noopener noreferrer" className="button button-secondary">Canlı Demo<ArrowUpRight size={16} aria-hidden="true" /></a> : null}
             </div>
+          ) : null}
+        </header>
+        <CoverImage src={cover} alt={project.title} className="detail-cover" sizes="(min-width: 1024px) 960px, 100vw" priority />
+        {project.content?.trim() ? (
+          <div className="article-body">
+            <Markdown markdown={project.content} variant="article" className="min-w-0 text-[17px] leading-[1.75] text-[#374151] sm:text-[18px]" />
           </div>
-        </Container>
-      </section>
-    </InteriorPage>
+        ) : null}
+      </article>
+    </Container>
   );
 }
