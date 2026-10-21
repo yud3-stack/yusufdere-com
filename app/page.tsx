@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { JsonLd } from "@/components/content/JsonLd";
 import { websiteSchema } from "@/lib/seo";
 import { getSiteUrl } from "@/lib/site";
+import { defaultSocialImage } from "@/lib/social";
 import { Hero } from "@/components/home/Hero";
 import { SectionNav } from "@/components/home/SectionNav";
 import { LatestPosts } from "@/components/home/LatestPosts";
@@ -17,6 +18,7 @@ export const metadata: Metadata = {
     siteName: "Yusuf Dere",
     locale: "tr_TR",
     type: "website",
+    images: [defaultSocialImage],
   },
 };
 

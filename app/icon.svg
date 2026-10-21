@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <title>Yusuf Dere</title>
+  <rect width="64" height="64" rx="14" fill="#111827"/>
+  <g transform="translate(8 16) scale(.054054)" fill="#FF9F1C">
+    <path d="M0 0H72L316 319V590H230V346L0 43Z"/>
+    <path d="M462 0H558L343 286L293 225Z"/>
+    <path d="M575 0H600C759 0 888 132 888 295C888 458 759 590 600 590H460V508H600C713.5 508 804 413 804 295C804 177 713.5 82 600 82H575Z"/>
+  </g>
+</svg>

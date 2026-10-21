@@ -5,6 +5,7 @@ import { PageIntro } from "@/components/layout/PageIntro";
 import { analyticsProviderLabel, getAnalyticsConfig } from "@/lib/cookies/analytics";
 import { site } from "@/data/site";
 import { getSiteUrl } from "@/lib/site";
+import { defaultSocialImage } from "@/lib/social";
 
 const title = "Gizlilik ve Çerezler";
 const description =
@@ -19,11 +20,13 @@ export const metadata: Metadata = {
     description,
     url: `${getSiteUrl()}/privacy`,
     type: "website",
+    images: [defaultSocialImage],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title,
     description,
+    images: [defaultSocialImage.url],
   },
 };
 

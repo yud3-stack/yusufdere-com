@@ -8,6 +8,7 @@ import { BackLink } from "@/components/layout/PageIntro";
 import { TechnologyBadge } from "@/components/projects/TechnologyBadge";
 import { PostMeta } from "@/components/blog/PostMeta";
 import { getSiteUrl } from "@/lib/site";
+import { defaultSocialImage } from "@/lib/social";
 import { JsonLd } from "@/components/content/JsonLd";
 import { breadcrumbSchema, projectSchema } from "@/lib/seo";
 import { projectCoverImageUrl } from "@/lib/storage/project-covers";
@@ -49,13 +50,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description,
       type: "website",
       url,
-      images: image ? [{ url: image, alt: project.title }] : undefined,
+      images: image ? [{ url: image, alt: project.title }] : [defaultSocialImage],
     },
     twitter: {
-      card: image ? "summary_large_image" : "summary",
+      card: "summary_large_image",
       title: project.title,
       description,
-      images: image ? [image] : undefined,
+      images: [image ?? defaultSocialImage.url],
     },
   };
 }

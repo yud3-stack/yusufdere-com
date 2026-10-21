@@ -7,6 +7,7 @@ import { FocusAreas } from "@/components/about/FocusAreas";
 import { TechStack } from "@/components/about/TechStack";
 import { WorkingStyle } from "@/components/about/WorkingStyle";
 import { getSiteUrl } from "@/lib/site";
+import { defaultSocialImage } from "@/lib/social";
 
 const title = "Hakkımda";
 const description =
@@ -21,11 +22,13 @@ export const metadata: Metadata = {
     description,
     url: `${getSiteUrl()}/about`,
     type: "website",
+    images: [defaultSocialImage],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title,
     description,
+    images: [defaultSocialImage.url],
   },
 };
 

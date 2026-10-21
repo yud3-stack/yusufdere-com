@@ -8,6 +8,7 @@ import { PostMeta } from "@/components/blog/PostMeta";
 import { TechnologyBadge } from "@/components/projects/TechnologyBadge";
 import { readingMinutes } from "@/lib/posts/reading";
 import { getSiteUrl } from "@/lib/site";
+import { defaultSocialImage } from "@/lib/social";
 import { JsonLd } from "@/components/content/JsonLd";
 import { blogPostingSchema, breadcrumbSchema } from "@/lib/seo";
 import { coverImageUrl } from "@/lib/storage/covers";
@@ -50,13 +51,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       type: "article",
       url,
       publishedTime: post.published_at ?? undefined,
-      images: image ? [{ url: image, alt: post.title }] : undefined,
+      images: image ? [{ url: image, alt: post.title }] : [defaultSocialImage],
     },
     twitter: {
-      card: image ? "summary_large_image" : "summary",
+      card: "summary_large_image",
       title: post.title,
       description,
-      images: image ? [image] : undefined,
+      images: [image ?? defaultSocialImage.url],
     },
   };
 }

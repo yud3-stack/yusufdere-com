@@ -5,6 +5,7 @@ import { PublicShell } from "@/components/layout/PublicShell";
 import { Header } from "@/components/layout/Header";
 import { PublicSearch } from "@/components/layout/PublicSearch";
 import { getSiteUrl } from "@/lib/site";
+import { defaultSocialImage } from "@/lib/social";
 import "./globals.css";
 import "./public-site.css";
 
@@ -21,6 +22,20 @@ export const metadata: Metadata = {
   },
   description:
     "Yazılım ve teknoloji üzerine öğrendiklerimi, karşılaştığım problemleri ve geliştirdiğim projeleri paylaştığım kişisel alanım.",
+  openGraph: {
+    title: "Yusuf Dere",
+    description: "Yazılım, projeler ve öğrendiklerim üzerine.",
+    siteName: "Yusuf Dere",
+    locale: "tr_TR",
+    type: "website",
+    images: [defaultSocialImage],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Yusuf Dere",
+    description: "Yazılım, projeler ve öğrendiklerim üzerine.",
+    images: [defaultSocialImage.url],
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

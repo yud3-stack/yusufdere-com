@@ -3,6 +3,7 @@ import { PostCard } from "@/components/blog/post-card";
 import { Container } from "@/components/layout/Container";
 import { PageIntro } from "@/components/layout/PageIntro";
 import { getSiteUrl } from "@/lib/site";
+import { defaultSocialImage } from "@/lib/social";
 import { getPublishedPosts } from "@/lib/supabase/queries";
 
 const title = "Blog";
@@ -17,6 +18,13 @@ export const metadata: Metadata = {
     description,
     url: `${getSiteUrl()}/blog`,
     type: "website",
+    images: [defaultSocialImage],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+    images: [defaultSocialImage.url],
   },
 };
 
