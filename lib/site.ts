@@ -1,11 +1,10 @@
-const fallbackSiteUrl = "https://yusufdere.com";
+const fallbackSiteUrl = "https://www.yusufdere.com";
 
 export function getSiteUrl() {
-  const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim();
-
-  if (!configured) {
+  const url = new URL(process.env.NEXT_PUBLIC_SITE_URL?.trim() || fallbackSiteUrl);
+  // Production redirects to www; metadata must point directly at that destination.
+  if (url.hostname === "yusufdere.com" || url.hostname === "www.yusufdere.com") {
     return fallbackSiteUrl;
   }
-
-  return configured.replace(/\/$/, "");
+  return url.origin;
 }

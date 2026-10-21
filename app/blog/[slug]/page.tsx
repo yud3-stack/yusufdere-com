@@ -8,6 +8,8 @@ import { PostMeta } from "@/components/blog/PostMeta";
 import { TechnologyBadge } from "@/components/projects/TechnologyBadge";
 import { readingMinutes } from "@/lib/posts/reading";
 import { getSiteUrl } from "@/lib/site";
+import { JsonLd } from "@/components/content/JsonLd";
+import { blogPostingSchema, breadcrumbSchema } from "@/lib/seo";
 import { coverImageUrl } from "@/lib/storage/covers";
 import { getPublishedPostBySlug, getPublishedPosts } from "@/lib/supabase/queries";
 
@@ -81,6 +83,12 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   return (
     <Container className="detail-page">
+      <JsonLd data={blogPostingSchema(getSiteUrl(), post, cover)} />
+      <JsonLd data={breadcrumbSchema(getSiteUrl(), [
+        { name: "Ana Sayfa", path: "/" },
+        { name: "Blog", path: "/blog" },
+        { name: post.title, path: `/blog/${encodeURIComponent(post.slug)}` },
+      ])} />
       <article className="detail-article blog-article">
         <BackLink href="/blog" label="Blog" />
         <header className="detail-heading">

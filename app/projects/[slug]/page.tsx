@@ -8,6 +8,8 @@ import { BackLink } from "@/components/layout/PageIntro";
 import { TechnologyBadge } from "@/components/projects/TechnologyBadge";
 import { PostMeta } from "@/components/blog/PostMeta";
 import { getSiteUrl } from "@/lib/site";
+import { JsonLd } from "@/components/content/JsonLd";
+import { breadcrumbSchema, projectSchema } from "@/lib/seo";
 import { projectCoverImageUrl } from "@/lib/storage/project-covers";
 import { getProjectBySlug, getPublishedProjects } from "@/lib/supabase/queries";
 
@@ -76,25 +78,15 @@ export default async function ProjectPage({ params }: PageProps) {
 
   const project = result.data;
   const cover = projectCoverImageUrl(project.cover_image);
-  const pageUrl = `${getSiteUrl()}/projects/${project.slug}`;
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "CreativeWork",
-    name: project.title,
-    description: project.description || undefined,
-    url: pageUrl,
-    image: cover || undefined,
-    datePublished: project.published_at || undefined,
-    author: {
-      "@type": "Person",
-      name: "Yusuf Dere",
-      url: getSiteUrl(),
-    },
-  };
 
   return (
     <Container className="detail-page">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+      <JsonLd data={projectSchema(getSiteUrl(), project, cover)} />
+      <JsonLd data={breadcrumbSchema(getSiteUrl(), [
+        { name: "Ana Sayfa", path: "/" },
+        { name: "Projeler", path: "/projects" },
+        { name: project.title, path: `/projects/${encodeURIComponent(project.slug)}` },
+      ])} />
       <article className="detail-article project-article">
         <BackLink href="/projects" label="Projeler" />
         <header className="detail-heading">
