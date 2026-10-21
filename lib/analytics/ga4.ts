@@ -45,6 +45,13 @@ export const getGa4Report = cache(async (period: AnalyticsPeriod): Promise<Analy
     // Never send Google's error payload, request headers or credentials to the browser.
     const status = typeof error === "object" && error && "response" in error
       ? (error.response as { status?: number } | undefined)?.status : undefined;
+    // Log only a classification; never log the error object or its request configuration.
+    const code = typeof error === "object" && error && "code" in error ? String(error.code) : "";
+    console.error("[GA4 report]", {
+      status: status ?? null,
+      code: /^[A-Z_0-9]+$/.test(code) ? code : null,
+      type: error instanceof Error && error.name === "ZodError" ? "invalid-response" : "request-failed",
+    });
     const message = status === 403 ? "GA4 erişimi reddedildi. Data API’nin açık olduğunu ve hizmet hesabının mülkte Görüntüleyici yetkisi bulunduğunu kontrol et."
       : status === 401 ? "GA4 kimlik doğrulaması başarısız. Hizmet hesabı bilgilerini kontrol et."
       : status === 429 ? "GA4 sorgu kotası şu an dolu. Biraz sonra tekrar dene."
