@@ -6,7 +6,6 @@ import { EditorView, keymap } from "@codemirror/view";
 import CodeMirror, { type ReactCodeMirrorRef } from "@uiw/react-codemirror";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { readingLabel } from "@/lib/posts/reading";
-import { uploadInlineImage } from "@/lib/storage/asset-actions";
 import { assetFileError, markdownImage } from "@/lib/storage/assets";
 
 type EnsureDraft = (markdown: string) => Promise<{ id: string } | { error: string }>;
@@ -267,9 +266,22 @@ export function MarkdownEditor({
       const formData = new FormData();
       formData.set("postId", id);
       formData.set("file", fileToUpload);
-      const uploaded = await uploadInlineImage(formData);
+      const response = await fetch("/api/admin/post-assets", {
+        method: "POST",
+        body: formData,
+        credentials: "same-origin",
+      });
+      if (response.status === 403) {
+        setError("Görsel yükleme isteği güvenlik kontrolü tarafından engellendi. Metnin korunuyor; lütfen tekrar dene.");
+        return;
+      }
+      if (response.status === 413) {
+        setError("Görsel yükleme sınırını aşıyor. Dosyayı küçültüp tekrar dene.");
+        return;
+      }
+      const uploaded: { url?: string; error?: string } = await response.json();
 
-      if ("error" in uploaded) {
+      if (!response.ok || !uploaded.url) {
         setError(uploaded.error ?? "Görsel yüklenirken bir hata oluştu.");
         return;
       }
@@ -299,6 +311,8 @@ export function MarkdownEditor({
       setFile(null);
       setAlt("");
       setCaption("");
+    } catch {
+      setError("Görsel yüklenemedi. Metnin korunuyor; bağlantını kontrol edip tekrar dene.");
     } finally {
       uploading.current = false;
       setMessage(null);
