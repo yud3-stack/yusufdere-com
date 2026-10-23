@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { Analytics } from "@/components/cookies/Analytics";
 import { CookieConsent } from "@/components/cookies/CookieConsent";
+import { AdminToolbar } from "@/components/layout/AdminToolbar";
 
 export function PublicShell({ children, header, publicFooter }: {
   children: ReactNode;
@@ -16,7 +17,10 @@ export function PublicShell({ children, header, publicFooter }: {
   if (admin) return <main id="icerik">{children}</main>;
   return (
     <div className="public-site">
-      {header}
+      <div className="public-navigation">
+        <AdminToolbar />
+        {header}
+      </div>
       <main id="icerik">{children}</main>
       {publicFooter}
       <CookieConsent />
