@@ -3,13 +3,20 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRef, useState } from "react";
-import { ArrowUpRight, ChartNoAxesCombined, CodeXml, FileText, FolderKanban, LayoutDashboard, LogOut, Menu, Plus, Search, X } from "lucide-react";
+import { ArrowUpRight, ChartNoAxesCombined, CodeXml, FileText, FolderKanban, LayoutDashboard, LogOut, Menu, Plus, Radar, Search, X, type LucideIcon } from "lucide-react";
 import { logout } from "@/lib/auth/actions";
+import { SocialIcon } from "@/components/layout/SocialIcon";
+
+function InstagramNavIcon({ size }: { size?: number }) {
+  return <SocialIcon kind="instagram" size={size ?? 19} />;
+}
 
 export type AdminSearchItem = { title: string; href: string; kind: string };
-const links = [
+const links: { href: string; label: string; icon: LucideIcon | typeof InstagramNavIcon }[] = [
   { href: "/admin", label: "Genel bakış", icon: LayoutDashboard },
+  { href: "/admin#radar", label: "Radar", icon: Radar },
   { href: "/admin/analytics", label: "İstatistikler", icon: ChartNoAxesCombined },
+  { href: "/admin/instagram", label: "Instagram", icon: InstagramNavIcon },
   { href: "/admin/posts", label: "Yazılar", icon: FileText },
   { href: "/admin/projects", label: "Projeler", icon: FolderKanban },
 ];
@@ -28,8 +35,15 @@ export function AdminShell({ children, email, items }: { children: React.ReactNo
       <p className="admin-studio-label">YÖNETİM STÜDYOSU</p>
       <p className="admin-nav-label">ÇALIŞMA ALANI</p>
       <nav aria-label="Yönetim navigasyonu">{links.map(({ href, label, icon: Icon }) => {
-        const active = href === "/admin" ? pathname === href : pathname.startsWith(href);
-        return <Link key={href} href={href} aria-current={active ? "page" : undefined} onClick={() => dialog.current?.close()}><Icon size={19} />{label}</Link>;
+        const pathOnly = href.split("#")[0] || href;
+        const active = href === "/admin"
+          ? pathname === "/admin"
+          : href.includes("#")
+            ? pathname === pathOnly
+            : pathname.startsWith(href);
+        // Radar lives on the overview; mark Genel bakış current there, not both.
+        const current = href === "/admin#radar" ? undefined : active ? "page" as const : undefined;
+        return <Link key={href} href={href} aria-current={current} onClick={() => dialog.current?.close()}><Icon size={19} />{label}</Link>;
       })}</nav>
       <p className="admin-nav-label">KISAYOLLAR</p>
       <nav aria-label="İçerik kısayolları"><Link href="/admin/posts/new" onClick={() => dialog.current?.close()}><Plus size={19} />Yeni yazı</Link><Link href="/admin/projects/new" onClick={() => dialog.current?.close()}><Plus size={19} />Yeni proje</Link></nav>

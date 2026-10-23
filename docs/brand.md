@@ -14,7 +14,7 @@ Samsun, Türkiye
 
 ## Social
 
-Instagram: @heyyud3
+Instagram: @yusufderecom
 
 ## Brand Goal
 

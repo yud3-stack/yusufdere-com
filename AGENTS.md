@@ -24,7 +24,7 @@ YusufDere.com is the main center.
 
 Name: Yusuf Dere  
 Location: Samsun, Türkiye  
-Instagram: @heyyud3  
+Instagram: @yusufderecom  
 Bio: Building the life I imagined.
 
 ## Tech Stack
