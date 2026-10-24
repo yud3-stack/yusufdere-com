@@ -1,5 +1,5 @@
 import type { NextConfig } from "next";
-import { developmentOrigins } from "./lib/dev-origins.ts";
+import { networkInterfaces } from "node:os";
 
 function coverImageRemotePatterns(): NonNullable<NextConfig["images"]>["remotePatterns"] {
   const raw = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -20,6 +20,15 @@ function coverImageRemotePatterns(): NonNullable<NextConfig["images"]>["remotePa
   } catch {
     return [];
   }
+}
+
+/** Keep this inline — next.config.ts cannot reliably import other .ts files on Vercel. */
+function developmentOrigins() {
+  const lan = Object.values(networkInterfaces())
+    .flatMap((entries) => entries ?? [])
+    .filter((entry) => entry.family === "IPv4" && !entry.internal)
+    .map((entry) => entry.address);
+  return [...new Set(["25.44.12.64", ...lan])];
 }
 
 const nextConfig: NextConfig = {
