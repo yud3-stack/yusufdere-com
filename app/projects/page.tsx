@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { ProjectGrid } from "@/components/projects/ProjectGrid";
-import { Container } from "@/components/layout/Container";
-import { PageIntro } from "@/components/layout/PageIntro";
+import { ProjectShowcase } from "@/components/projects/ProjectShowcase";
+import { projectPresentations } from "@/data/project-showcase";
+import { projectCoverImageUrl } from "@/lib/storage/project-covers";
 import { getSiteUrl } from "@/lib/site";
 import { defaultSocialImage } from "@/lib/social";
 import { getPublishedProjects } from "@/lib/supabase/queries";
@@ -33,13 +33,21 @@ export default async function ProjectsPage() {
   const projects = result.data ?? [];
 
   return (
-    <Container>
-      <PageIntro eyebrow="PROJELER" title="Geliştirdiklerim." description="Fikirden çalışan ürüne dönüştürdüğüm web, masaüstü ve diğer yazılım projeleri." />
-      <div className="archive-content">
-        {result.error ? <p className="content-state">Projeler şu an yüklenemedi.</p> : null}
-        {!result.error && !projects.length ? <p className="content-state">Henüz yayınlanmış bir proje yok.</p> : null}
-        {projects.length > 0 ? <ProjectGrid projects={projects} headingLevel={2} /> : null}
-      </div>
-    </Container>
+    <ProjectShowcase
+      error={!!result.error}
+      projects={projects.map((project) => ({
+        id: project.id,
+        title: project.title,
+        slug: project.slug,
+        description: project.description,
+        technologies: project.technologies,
+        githubUrl: project.github_url,
+        liveUrl: project.live_url,
+        cover: projectCoverImageUrl(project.cover_image),
+        kind: projectPresentations[project.slug]?.kind ?? "generic",
+        category:
+          projectPresentations[project.slug]?.category ?? "Yazılım / Deneyler",
+      }))}
+    />
   );
 }

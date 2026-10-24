@@ -3,12 +3,26 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowUpRight, Plus } from "lucide-react";
+import { ArrowUpRight, Clock3, Plus, Users } from "lucide-react";
 import { Container } from "@/components/layout/Container";
+
+type PostStats = {
+  readers: number | null;
+  averageDuration: string | null;
+  periodDays: number;
+  ready: boolean;
+};
+
+function blogPostPath(pathname: string) {
+  const match = pathname.match(/^\/blog\/([^/]+)\/?$/);
+  return match ? `/blog/${match[1]}` : null;
+}
 
 export function AdminToolbar() {
   const [isAdmin, setIsAdmin] = useState(false);
+  const [postStats, setPostStats] = useState<PostStats | null>(null);
   const pathname = usePathname();
+  const postPath = blogPostPath(pathname);
 
   useEffect(() => {
     let currentRequest: AbortController | undefined;
@@ -38,15 +52,75 @@ export function AdminToolbar() {
     };
   }, [pathname]);
 
+  useEffect(() => {
+    if (!isAdmin || !postPath) {
+      setPostStats(null);
+      return;
+    }
+
+    const request = new AbortController();
+    setPostStats(null);
+    fetch(`/api/admin/post-stats?path=${encodeURIComponent(postPath)}`, {
+      cache: "no-store",
+      credentials: "same-origin",
+      signal: request.signal,
+    })
+      .then(async response => {
+        const payload = await response.json().catch(() => null);
+        if (request.signal.aborted || !payload) return;
+        setPostStats({
+          ready: payload.ready === true,
+          readers: typeof payload.readers === "number" ? payload.readers : null,
+          averageDuration: typeof payload.averageDuration === "string" ? payload.averageDuration : null,
+          periodDays: typeof payload.periodDays === "number" ? payload.periodDays : 30,
+        });
+      })
+      .catch(() => {
+        if (!request.signal.aborted) {
+          setPostStats({ ready: false, readers: null, averageDuration: null, periodDays: 30 });
+        }
+      });
+
+    return () => request.abort();
+  }, [isAdmin, postPath]);
+
   if (!isAdmin) return null;
+
+  const readersLabel =
+    postStats?.readers === null || postStats?.readers === undefined
+      ? "—"
+      : postStats.readers.toLocaleString("tr-TR");
+  const durationLabel = postStats?.averageDuration || "—";
 
   return (
     <nav className="public-admin-bar" aria-label="Yönetici kısayolları">
       <Container className="public-admin-bar-inner">
         <span className="public-admin-label">Admin</span>
-        <Link href="/admin/posts/new" prefetch={false}><Plus size={14} aria-hidden="true" />Yeni Yazı</Link>
-        <Link href="/admin/projects/new" prefetch={false}><Plus size={14} aria-hidden="true" />Yeni Proje</Link>
-        <Link href="/admin" prefetch={false} className="public-admin-dashboard">Panele git<ArrowUpRight size={16} aria-hidden="true" /></Link>
+        {postPath ? (
+          <p className="public-admin-reading" aria-live="polite">
+            <span>
+              <Users size={13} aria-hidden="true" />
+              {readersLabel} okuyucu
+            </span>
+            <span>
+              <Clock3 size={13} aria-hidden="true" />
+              {durationLabel} ort.
+            </span>
+            <span className="public-admin-reading-period">Son {postStats?.periodDays ?? 30} gün</span>
+          </p>
+        ) : null}
+        <Link href="/admin/posts/new" prefetch={false}>
+          <Plus size={14} aria-hidden="true" />
+          Yeni Yazı
+        </Link>
+        <Link href="/admin/projects/new" prefetch={false}>
+          <Plus size={14} aria-hidden="true" />
+          Yeni Proje
+        </Link>
+        <Link href="/admin" prefetch={false} className="public-admin-dashboard">
+          Panele git
+          <ArrowUpRight size={16} aria-hidden="true" />
+        </Link>
       </Container>
     </nav>
   );

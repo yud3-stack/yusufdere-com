@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRef, useState } from "react";
-import { ArrowUpRight, ChartNoAxesCombined, CodeXml, FileText, FolderKanban, LayoutDashboard, LogOut, Menu, Plus, Radar, Search, X, type LucideIcon } from "lucide-react";
+import { ArrowUpRight, ChartNoAxesCombined, CodeXml, FileText, FolderKanban, LayoutDashboard, LogOut, Menu, Plus, Quote, Radar, Search, X, type LucideIcon } from "lucide-react";
 import { logout } from "@/lib/auth/actions";
 import { SocialIcon } from "@/components/layout/SocialIcon";
 
@@ -17,6 +17,7 @@ const links: { href: string; label: string; icon: LucideIcon | typeof InstagramN
   { href: "/admin#radar", label: "Radar", icon: Radar },
   { href: "/admin/analytics", label: "İstatistikler", icon: ChartNoAxesCombined },
   { href: "/admin/instagram", label: "Instagram", icon: InstagramNavIcon },
+  { href: "/admin/quotes", label: "Günün sözü", icon: Quote },
   { href: "/admin/posts", label: "Yazılar", icon: FileText },
   { href: "/admin/projects", label: "Projeler", icon: FolderKanban },
 ];

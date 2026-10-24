@@ -20,6 +20,7 @@ export function createPublicSupabaseClient(tags: string[] = ["posts"]) {
       fetch: (input, init) =>
         fetch(input, {
           ...init,
+          signal: init?.signal ? AbortSignal.any([init.signal, AbortSignal.timeout(5000)]) : AbortSignal.timeout(5000),
           next: { tags, revalidate: 3600 },
         }),
     },

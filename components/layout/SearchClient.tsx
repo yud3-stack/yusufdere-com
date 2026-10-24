@@ -35,7 +35,7 @@ export function SearchClient({ items, unavailable }: { items: SearchItem[]; unav
     event.preventDefault();
     if (!needle) {
       setOpen(true);
-      desktopInputRef.current?.focus();
+      mobileInputRef.current?.focus();
       return;
     }
     if (visible[0]) {
@@ -90,7 +90,7 @@ export function SearchClient({ items, unavailable }: { items: SearchItem[]; unav
         <form role="search" onSubmit={submit}>
           <label className="search-field">
             <Search size={18} aria-hidden="true" />
-            <span className="sr-only">Mobil yazı ve proje araması</span>
+            <span className="sr-only">Yazı ve proje araması</span>
             <input ref={mobileInputRef} type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="Yazı ve projelerde ara…" autoComplete="off" />
           </label>
         </form>

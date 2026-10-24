@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { ArrowUpRight, Menu, X } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { Brand } from "@/components/layout/Brand";
 import { publicNavigation } from "@/components/layout/navigation";
@@ -20,9 +20,11 @@ function isActive(pathname: string, href: string) {
 
 export function Header({ search }: { search?: ReactNode }) {
   const pathname = usePathname();
-  return pathname === "/admin" || pathname.startsWith("/admin/")
-    ? <HeaderBar key={pathname} pathname={pathname} />
-    : <PublicHeaderBar key={pathname} pathname={pathname} search={search} />;
+  return pathname === "/admin" || pathname.startsWith("/admin/") ? (
+    <HeaderBar key={pathname} pathname={pathname} />
+  ) : (
+    <PublicHeaderBar key={pathname} pathname={pathname} search={search} />
+  );
 }
 
 function HeaderBar({ pathname }: { pathname: string }) {
@@ -31,12 +33,18 @@ function HeaderBar({ pathname }: { pathname: string }) {
   return (
     <header className="sticky top-0 z-40 border-b border-[#E5E7EB] bg-white">
       <Container className="flex h-[72px] items-center justify-between gap-4">
-        <Link href="/" className="flex items-center gap-2 text-[15px] font-medium text-[#111827]">
+        <Link
+          href="/"
+          className="flex items-center gap-2 text-[15px] font-medium text-[#111827]"
+        >
           <span className="text-[#F59E0B]">&lt;/&gt;</span>
           Yusuf Dere.
         </Link>
 
-        <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-8 lg:flex" aria-label="Ana">
+        <nav
+          className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-8 lg:flex"
+          aria-label="Ana"
+        >
           {links.map((link) => {
             const active = isActive(pathname, link.href);
             return (
@@ -46,7 +54,9 @@ function HeaderBar({ pathname }: { pathname: string }) {
                 className="relative text-sm text-[#6B7280] transition-colors duration-200 hover:text-[#111827]"
                 aria-current={active ? "page" : undefined}
               >
-                <span className={active ? "text-[#111827]" : undefined}>{link.label}</span>
+                <span className={active ? "text-[#111827]" : undefined}>
+                  {link.label}
+                </span>
                 {active ? (
                   <span className="absolute -bottom-2 left-1/2 h-0.5 w-4 -translate-x-1/2 rounded-full bg-[#F59E0B]" />
                 ) : null}
@@ -67,7 +77,10 @@ function HeaderBar({ pathname }: { pathname: string }) {
       </Container>
 
       {menuOpen ? (
-        <nav className="border-t border-[#E5E7EB] bg-white lg:hidden" aria-label="Mobil">
+        <nav
+          className="border-t border-[#E5E7EB] bg-white lg:hidden"
+          aria-label="Mobil"
+        >
           <Container className="flex flex-col py-3">
             {links.map((link) => {
               const active = isActive(pathname, link.href);
@@ -79,7 +92,9 @@ function HeaderBar({ pathname }: { pathname: string }) {
                   aria-current={active ? "page" : undefined}
                 >
                   {link.label}
-                  {active ? <span className="h-1.5 w-1.5 rounded-full bg-[#F59E0B]" /> : null}
+                  {active ? (
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#F59E0B]" />
+                  ) : null}
                 </Link>
               );
             })}
@@ -90,39 +105,71 @@ function HeaderBar({ pathname }: { pathname: string }) {
   );
 }
 
-function PublicHeaderBar({ pathname, search }: { pathname: string; search?: ReactNode }) {
-  const [open, setOpen] = useState(false);
+function PublicHeaderBar({
+  pathname,
+  search,
+}: {
+  pathname: string;
+  search?: ReactNode;
+}) {
+  const menu = useRef<HTMLDetailsElement>(null);
 
   return (
-    <header className="public-header" onKeyDown={event => { if (event.key === "Escape") setOpen(false); }}>
+    <header
+      className="public-header"
+      onKeyDown={(event) => {
+        if (event.key === "Escape" && menu.current?.open) {
+          menu.current.open = false;
+          menu.current.querySelector("summary")?.focus();
+        }
+      }}
+    >
       <Container className="public-header-inner">
         <Brand />
         <nav className="desktop-nav" aria-label="Ana navigasyon">
-          {publicNavigation.map(link => (
-            <Link key={link.href} href={link.href} aria-current={isActive(pathname, link.href) ? "page" : undefined}>
+          {publicNavigation.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              aria-current={isActive(pathname, link.href) ? "page" : undefined}
+            >
               {link.label}
             </Link>
           ))}
         </nav>
-        {search}
-        <button
-          className="menu-button"
-          type="button"
-          aria-label={open ? "Menüyü kapat" : "Menüyü aç"}
-          aria-expanded={open}
-          aria-controls="public-mobile-nav"
-          onClick={() => setOpen(!open)}
+        <div className="header-actions">
+          {search}
+          <a href="mailto:hello@yusufdere.com" className="header-contact">
+            İletişime geç <ArrowUpRight size={15} aria-hidden="true" />
+          </a>
+        </div>
+        <details ref={menu} className="mobile-menu">
+          <summary className="menu-button" aria-label="Ana menü" aria-controls="public-mobile-nav">
+            <Menu className="menu-open-icon" size={21} aria-hidden="true" />
+            <X className="menu-close-icon" size={21} aria-hidden="true" />
+          </summary>
+        <nav
+          id="public-mobile-nav"
+          className="mobile-nav"
+          aria-label="Mobil navigasyon"
         >
-          {open ? <X size={21} aria-hidden="true" /> : <Menu size={21} aria-hidden="true" />}
-        </button>
-      </Container>
-      {open ? (
-        <nav id="public-mobile-nav" className="mobile-nav" aria-label="Mobil navigasyon">
           <Container>
-            {publicNavigation.map(link => <Link key={link.href} href={link.href} aria-current={isActive(pathname, link.href) ? "page" : undefined}>{link.label}</Link>)}
+            {publicNavigation.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                aria-current={
+                  isActive(pathname, link.href) ? "page" : undefined
+                }
+                onClick={() => { if (menu.current) menu.current.open = false; }}
+              >
+                {link.label}
+              </a>
+            ))}
           </Container>
         </nav>
-      ) : null}
+        </details>
+      </Container>
     </header>
   );
 }

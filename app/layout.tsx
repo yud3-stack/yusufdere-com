@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Geist, Cormorant_Garamond } from "next/font/google";
 import { Footer, PublicFooter } from "@/components/layout/Footer";
 import { PublicShell } from "@/components/layout/PublicShell";
 import { Header } from "@/components/layout/Header";
@@ -7,11 +7,22 @@ import { PublicSearch } from "@/components/layout/PublicSearch";
 import { getSiteUrl } from "@/lib/site";
 import { defaultSocialImage } from "@/lib/social";
 import "./globals.css";
-import "./public-site.css";
+import "./editorial.css";
+import "./hero-scene.css";
+import "./journal-showcase.css";
+import "./project-showcase.css";
 
 const geist = Geist({
   variable: "--font-sans",
   subsets: ["latin", "latin-ext"],
+});
+
+const editorial = Cormorant_Garamond({
+  variable: "--font-editorial",
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "500", "600"],
+  style: ["normal", "italic"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -38,9 +49,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="tr" className={`${geist.variable} h-full antialiased`}>
+    <html
+      lang="tr"
+      className={`${geist.variable} ${editorial.variable} h-full antialiased`}
+    >
       <body className="min-h-full bg-[#FAFAF9] text-[#111827]">
         <a
           href="#icerik"
@@ -48,7 +64,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         >
           İçeriğe geç
         </a>
-        <PublicShell header={<Header search={<PublicSearch />} />} footer={<Footer />} publicFooter={<PublicFooter />}>
+        <PublicShell
+          header={<Header search={<PublicSearch />} />}
+          footer={<Footer />}
+          publicFooter={<PublicFooter />}
+        >
           {children}
         </PublicShell>
       </body>

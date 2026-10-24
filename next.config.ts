@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { developmentOrigins } from "./lib/dev-origins.ts";
 
 function coverImageRemotePatterns(): NonNullable<NextConfig["images"]>["remotePatterns"] {
   const raw = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -22,6 +23,8 @@ function coverImageRemotePatterns(): NonNullable<NextConfig["images"]>["remotePa
 }
 
 const nextConfig: NextConfig = {
+  // LAN phone/tablet preview: npm run dev -- --hostname 0.0.0.0
+  allowedDevOrigins: developmentOrigins(),
   images: {
     remotePatterns: coverImageRemotePatterns(),
   },

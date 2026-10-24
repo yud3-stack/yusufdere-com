@@ -1,0 +1,7 @@
+.env*
+output/
+docs/
+tests/
+supabase/
+public/images/references/
+*.tsbuildinfo
