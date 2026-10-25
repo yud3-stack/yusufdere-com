@@ -5,7 +5,7 @@ import { getInstagramConnection, getInstagramOverview } from "@/lib/instagram/re
 import { formatCount } from "@/lib/instagram/metrics";
 
 export function InstagramMetricPending() {
-  return <Link href="/admin/instagram" className="admin-metric"><div><h2>Instagram</h2><ArrowUpRight size={17} /></div><strong>—</strong><p>Hesap özeti yükleniyor…</p></Link>;
+  return <Link href="/admin/instagram" className="admin-metric"><div><h2>Instagram</h2><span className="admin-metric-arrow"><ArrowUpRight size={16} /></span></div><strong>—</strong><p>Hesap özeti yükleniyor…</p></Link>;
 }
 
 export async function InstagramDashboardMetric() {

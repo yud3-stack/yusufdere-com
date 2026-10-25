@@ -21,8 +21,26 @@ export async function collectQuotesAction(_previous: QuoteActionState, _form: Fo
   try {
     const result = await collectQuoteCandidates(admin.supabase);
     revalidatePath("/admin/quotes");
-    return { ok: true, message: `${result.authors.length} yazar tarandı. ${result.found} yeni söz bulundu; ${result.translated} çeviri, ${result.photos} fotoğraf hazırlandı, ${result.approved} söz otomatik havuza alındı. ${result.pending} söz çeviri / inceleme bekliyor. ${result.unavailable} kaynak erişilemedi, ${result.unmatched} metin eşleşmedi. ${result.warnings.join(" ")}` };
-  } catch (error) { return { ok: false, message: error instanceof Error ? error.message : "Toplama yapılamadı." }; }
+    const emptyHint =
+      result.found === 0
+        ? result.known > 0
+          ? " Bilinen sözler atlandı; sonraki tıklamada tarama ilerlemeye devam eder."
+          : result.eligible === 0
+            ? " Bu turda izinli kaynaklı söz çıkmadı; katalogdaki diğer yazarlara geçildi / geçilecek."
+            : " Kaynaklar yanıt vermediyse tekrar dene; tarama kaldığı yerden devam eder."
+        : "";
+    return {
+      ok: true,
+      message:
+        `${result.authors.length} yazar tarandı. ${result.found} yeni söz bulundu; ` +
+        `${result.translated} çeviri, ${result.photos} fotoğraf hazırlandı, ` +
+        `${result.approved} söz otomatik havuza alındı. ${result.pending} söz çeviri / inceleme bekliyor. ` +
+        `${result.unavailable} kaynak erişilemedi, ${result.unmatched} metin eşleşmedi.` +
+        `${emptyHint} ${result.warnings.join(" ")}`.trim(),
+    };
+  } catch (error) {
+    return { ok: false, message: error instanceof Error ? error.message : "Toplama yapılamadı." };
+  }
 }
 
 export async function reviewQuoteAction(id: string, _previous: QuoteActionState, form: FormData): Promise<QuoteActionState> {

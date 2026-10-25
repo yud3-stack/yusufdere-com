@@ -24,7 +24,6 @@ export function createQuoteJobClient() {
 }
 
 export async function collectQuoteCandidates(client: SupabaseClient) {
-  const deadline = AbortSignal.timeout(50_000);
   const { data: known, error } = await client.from("quote_candidates").select("id,author,status");
   if (error) throw new Error(quoteSetupMessage);
   const { data: progress, error: progressError } = await client.from("quote_discovery_progress").select("author,next_index");
@@ -32,21 +31,43 @@ export async function collectQuoteCandidates(client: SupabaseClient) {
   const cursors = Object.fromEntries((progress ?? []).map((row) => [row.author, row.next_index]));
   const authorCounts: Record<string, number> = {};
   for (const row of known ?? []) authorCounts[row.author] = (authorCounts[row.author] ?? 0) + 1;
-  const result = await discoverQuotes(quoteDate(), new Set((known ?? []).map((row) => String(row.id))), deadline,
-    { cursors, authorOffset: cursors.__catalog__ ?? 0, authorCounts });
+  // Separate budgets: discovery used to share one 50s signal and abort source
+  // checks after ~20s, which made the collect button report 0 new quotes.
+  const result = await discoverQuotes(
+    quoteDate(),
+    new Set((known ?? []).map((row) => String(row.id))),
+    AbortSignal.timeout(40_000),
+    { cursors, authorOffset: cursors.__catalog__ ?? 0, authorCounts },
+  );
   let inserted = 0;
   if (result.candidates.length) {
-    const { data, error: saveError } = await client.from("quote_candidates").upsert(result.candidates, { onConflict: "id", ignoreDuplicates: true }).select("id");
+    const { data, error: saveError } = await client
+      .from("quote_candidates")
+      .upsert(result.candidates, { onConflict: "id", ignoreDuplicates: true })
+      .select("id");
     if (saveError) throw new Error("Bulunan sözler kaydedilemedi.");
     inserted = data?.length ?? 0;
   }
-  const automation = await automateQuoteCandidates(client, deadline);
-  const { count: pending } = await client.from("quote_candidates").select("id", { count: "exact", head: true }).eq("status", "pending");
-  const summary = { found: inserted, warnings: result.warnings, checks: result.checks, ...automation, pending: pending ?? 0, ...result.stats };
-  const checkpoints = Object.entries(result.cursors).filter(([author]) => author !== "__catalog__").map(([author, next_index]) => ({ author, next_index, details: {} }));
-  const { error: checkpointError } = await client.from("quote_discovery_progress").upsert([
-    ...checkpoints, { author: "__catalog__", next_index: result.authorOffset, details: summary },
-  ], { onConflict: "author" });
+  const automation = await automateQuoteCandidates(client, AbortSignal.timeout(25_000));
+  const { count: pending } = await client
+    .from("quote_candidates")
+    .select("id", { count: "exact", head: true })
+    .eq("status", "pending");
+  const summary = {
+    found: inserted,
+    warnings: result.warnings,
+    checks: result.checks,
+    ...automation,
+    pending: pending ?? 0,
+    ...result.stats,
+  };
+  const checkpoints = Object.entries(result.cursors)
+    .filter(([author]) => author !== "__catalog__")
+    .map(([author, next_index]) => ({ author, next_index, details: {} }));
+  const { error: checkpointError } = await client.from("quote_discovery_progress").upsert(
+    [...checkpoints, { author: "__catalog__", next_index: result.authorOffset, details: summary }],
+    { onConflict: "author" },
+  );
   if (checkpointError) throw new Error("Sözler kaydedildi ancak tarama ilerlemesi kaydedilemedi.");
   return summary;
 }

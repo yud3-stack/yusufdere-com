@@ -20,5 +20,7 @@ export const quoteSourceHosts = [
   "martinfowler.com", "www.martinfowler.com", "www.stroustrup.com", "stroustrup.com",
   "research.swtch.com", "9p.io", "www.cs.yale.edu", "web.mit.edu",
   "www.artima.com", "www.lysator.liu.se", "www.cs.bell-labs.com", "www.bell-labs.com",
-  "git.kernel.org", "www.kernel.org", "kernel.org", "www.cs.helsinki.fi",
+  "git.kernel.org", "www.kernel.org", "kernel.org", "lore.kernel.org",
+  "www.cs.helsinki.fi", "www.linuxfocus.org", "linuxfocus.org",
+  "research.att.com", "www.research.att.com", "www2.research.att.com",
 ] as const;

@@ -1,7 +1,8 @@
 export const heroContent = {
+  featuredProjectSlug: "standart-culture",
   title: "Hayal ettiğim hayatı",
   titleEmphasis: "inşa ediyorum.",
-  description: "Yazılım geliştiriyor, üretiyor ve öğrendiklerimi paylaşıyorum.",
+  description: "Web uygulamaları ve dijital ürünler geliştiriyorum; tasarımdan yayına kadar.",
   focusTitle: "Yeni fikirler, gerçek projeler.",
   focusDescription: "Daha iyi araçlar, daha özgür bir gelecek.",
 } as const;

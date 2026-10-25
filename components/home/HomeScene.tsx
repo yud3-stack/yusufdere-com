@@ -20,6 +20,7 @@ export async function HomeScene() {
     todayQuote(),
   ]);
   const project =
+    projects.data?.find((item) => item.slug === heroContent.featuredProjectSlug) ??
     projects.data?.find((item) => item.featured) ?? projects.data?.[0];
   const post = posts.data?.[0];
 

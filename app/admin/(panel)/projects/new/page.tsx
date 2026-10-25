@@ -10,14 +10,18 @@ export const metadata: Metadata = {
 export default function NewProjectPage() {
   return (
     <section className="admin-editor-page">
-      <Link href="/admin/projects" className="text-sm text-[#6B7280]">
-        Projeler
-      </Link>
-      <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[#111827]">Yeni proje</h1>
-      <div className="mt-8">
-        <ProjectForm />
+      <div className="admin-page-heading">
+        <div>
+          <Link href="/admin/projects" className="admin-field-hint">
+            ← Projeler
+          </Link>
+          <h1>Yeni proje</h1>
+          <p className="admin-list-description">
+            Taslak olarak kaydedebilir veya doğrudan yayınlayabilirsin.
+          </p>
+        </div>
       </div>
+      <ProjectForm />
     </section>
   );
 }
-

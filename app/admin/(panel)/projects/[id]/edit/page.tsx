@@ -29,7 +29,7 @@ export default async function EditProjectPage({
   if (result.error) {
     return (
       <section className="admin-editor-page">
-        <p role="alert" className="text-sm text-[#B45309]">
+        <p role="alert" className="admin-error">
           {result.error}
         </p>
       </section>
@@ -42,14 +42,19 @@ export default async function EditProjectPage({
 
   return (
     <section className="admin-editor-page">
-      <Link href="/admin/projects" className="text-sm text-[#6B7280]">
-        Projeler
-      </Link>
-      <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[#111827]">Projeyi düzenle</h1>
-      <div className="mt-8">
-        <ProjectForm project={result.project} initialMessage={saved === "1" ? "Proje kaydedildi." : null} />
+      <div className="admin-page-heading">
+        <div>
+          <Link href="/admin/projects" className="admin-field-hint">
+            ← Projeler
+          </Link>
+          <h1>Projeyi düzenle</h1>
+          <p className="admin-list-description">{result.project.title}</p>
+        </div>
       </div>
+      <ProjectForm
+        project={result.project}
+        initialMessage={saved === "1" ? "Proje kaydedildi." : null}
+      />
     </section>
   );
 }
-

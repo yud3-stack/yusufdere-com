@@ -8,6 +8,9 @@ export type QuoteCandidate = {
   portrait_src: string; portrait_credit: string;
 };
 
+const TOPICAL =
+  /program|software|comput|algorithm|debug|\bcode\b|complexity|simplicity|abstraction|language|unix|linux|kernel|refactor|compiler|engineer|programmer|programming|\bc\+\+\b|\bapi\b|\bbug\b|\bc\b/i;
+
 export function plainText(value: string): string {
   return value.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ")
     .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, " ")
@@ -26,9 +29,14 @@ export function plainText(value: string): string {
 export function safeSourceUrl(raw: string): string | null {
   try {
     const url = new URL(raw.replace(/^http:/, "https:"));
-    if (url.protocol !== "https:" || url.username || url.password || url.port ||
-      !(quoteSourceHosts as readonly string[]).includes(url.hostname)) return null;
+    if (url.protocol !== "https:" || url.username || url.password || url.port) return null;
     url.hash = "";
+    // Wayback snapshots unwrap to the original host when that host is allowlisted.
+    if (/^(web\.)?archive\.org$/.test(url.hostname)) {
+      const nested = url.pathname.match(/^\/web\/\d+[a-z_]*\/(https?:\/\/.+)$/i);
+      return nested ? safeSourceUrl(nested[1]) : null;
+    }
+    if (!(quoteSourceHosts as readonly string[]).includes(url.hostname)) return null;
     if (/^(www\.)?cs\.utexas\.edu$/.test(url.hostname)) {
       url.pathname = url.pathname.replace(/^\/users\/EWD\//, "/~EWD/")
         .replace(/^\/~EWD\/ewd(\d{2})xx\/(EWD\d+)\.PDF$/i, "/~EWD/transcriptions/EWD$1xx/$2.html");
@@ -45,6 +53,10 @@ function normalize(text: string) {
 }
 export function sourceContainsQuote(source: string, quote: string): boolean {
   return normalize(quote).length >= 25 && normalize(source).includes(normalize(quote));
+}
+
+export function isTopicalQuote(quote: string): boolean {
+  return TOPICAL.test(quote);
 }
 
 // Wikiquote quotations use top-level bullets; their citation is nested below.
@@ -65,7 +77,7 @@ export function extractSourcedQuotes(wikitext: string): { original: string; sour
     if (excludedLevel) continue;
     if (/^\*[^*:]/.test(line)) { quote = plainText(line.slice(1)); continue; }
     if (!quote || !/^\*\*/.test(line)) continue;
-    if (quote.length < 30 || quote.length > 320 || !/program|software|comput|algorithm|debug|\bcode\b|complexity|simplicity|abstraction/i.test(quote)) continue;
+    if (quote.length < 30 || quote.length > 320 || !isTopicalQuote(quote)) continue;
     for (const match of line.matchAll(/https?:\/\/[^\s\]<>{}|]+/g)) {
       const url = safeSourceUrl(match[0]);
       if (!url) continue;
@@ -104,6 +116,8 @@ async function readRemote(url: string, timeout = 7000, redirects = 0, deadline?:
 }
 
 export type DiscoveryProgress = { cursors?: Record<string, number>; authorOffset?: number; authorCounts?: Record<string, number> };
+type Author = (typeof quoteAuthors)[number];
+type Queue = { author: Author; entries: ReturnType<typeof extractSourcedQuotes>; revision: number; position: number; walked: number };
 
 export function selectDiscoveryAuthors(progress: DiscoveryProgress = {}) {
   const start = (progress.authorOffset ?? 0) % quoteAuthors.length;
@@ -115,62 +129,127 @@ export function selectDiscoveryAuthors(progress: DiscoveryProgress = {}) {
   return explorer ? [...priority, explorer] : priority;
 }
 
+/** Primary batch first; then remaining authors with the richest existing pools (usually productive pages). */
+export function discoveryAuthorPlan(progress: DiscoveryProgress = {}) {
+  const primary = selectDiscoveryAuthors(progress);
+  const fallback = quoteAuthors
+    .filter((author) => !primary.includes(author))
+    .sort((a, b) => (progress.authorCounts?.[b.name] ?? 0) - (progress.authorCounts?.[a.name] ?? 0));
+  return [...primary, ...fallback];
+}
+
 export async function discoverQuotes(_day: string, knownIds: ReadonlySet<string> = new Set(), signal?: AbortSignal, progress: DiscoveryProgress = {}) {
-  const deadline = signal ? AbortSignal.any([signal, AbortSignal.timeout(20_000)]) : AbortSignal.timeout(20_000);
+  // Use the caller's budget when provided. A nested 20s cap was aborting source
+  // checks after Wikiquote page fetches, so almost every run reported 0 finds.
+  const deadline = signal ?? AbortSignal.timeout(40_000);
   void _day;
-  const authors = selectDiscoveryAuthors(progress);
+  const plan = discoveryAuthorPlan(progress);
   const candidates: QuoteCandidate[] = [];
   const warnings: string[] = [];
   const cursors = { ...progress.cursors };
   const stats = { authors: [] as string[], eligible: 0, known: 0, unavailable: 0, unmatched: 0, sourceRequests: 0 };
-  const queues: { author: (typeof quoteAuthors)[number]; entries: ReturnType<typeof extractSourcedQuotes>; revision: number; position: number; walked: number }[] = [];
+  const queues: Queue[] = [];
   let checks = 0;
-  for (const author of authors) {
-    if (deadline.aborted) break;
+  let nextAuthor = 0;
+
+  async function loadAuthor(author: Author) {
+    if (deadline.aborted || stats.authors.includes(author.name)) return;
     stats.authors.push(author.name);
     try {
       const api = new URL("https://en.wikiquote.org/w/api.php");
       api.search = new URLSearchParams({ action: "parse", page: author.page, prop: "wikitext|revid", format: "json", formatversion: "2", redirects: "1" }).toString();
-      const body = JSON.parse(await readRemote(api.toString(), 7000, 0, deadline)) as { parse?: { wikitext?: string; revid?: number } };
+      const body = JSON.parse(await readRemote(api.toString(), 8000, 0, deadline)) as { parse?: { wikitext?: string; revid?: number } };
       if (!body.parse?.wikitext || !body.parse.revid) throw new Error("Kaynak sayfası okunamadı.");
       const entries = extractSourcedQuotes(body.parse.wikitext);
       stats.eligible += entries.length;
-      if (!entries.length) { warnings.push(`${author.name}: desteklenen özgün kaynak bağlantısı bulunamadı.`); continue; }
-      queues.push({ author, entries, revision: body.parse.revid, position: (cursors[author.name] ?? 0) % entries.length, walked: 0 });
-    } catch { warnings.push(`${author.name}: kaynak şu an okunamadı.`); }
+      if (!entries.length) {
+        warnings.push(`${author.name}: desteklenen özgün kaynak bağlantısı bulunamadı.`);
+        return;
+      }
+      queues.push({
+        author,
+        entries,
+        revision: body.parse.revid,
+        position: (cursors[author.name] ?? 0) % entries.length,
+        walked: 0,
+      });
+    } catch {
+      warnings.push(`${author.name}: kaynak şu an okunamadı.`);
+    }
   }
+
+  // First batch in parallel (same as before).
+  const primary = plan.slice(0, 4);
+  nextAuthor = primary.length;
+  await Promise.all(primary.map((author) => loadAuthor(author)));
+
   const sources = new Map<string, string | null>();
-  while (!deadline.aborted && checks < 8 && candidates.length < 4 && queues.some((queue) => queue.walked < queue.entries.length)) {
+
+  while (!deadline.aborted && checks < 8 && candidates.length < 4) {
+    const hasWork = queues.some((queue) => queue.walked < queue.entries.length);
+    if (!hasWork) {
+      // Empty or exhausted authors (Fowler-style pages with no allowlisted links):
+      // keep walking the catalog until a productive page appears.
+      if (nextAuthor >= plan.length) break;
+      await loadAuthor(plan[nextAuthor++]);
+      continue;
+    }
+
     for (const queue of queues) {
       if (deadline.aborted || checks >= 8 || candidates.length >= 4) break;
       const { author, entries } = queue;
-      // One attempt per author per round. Advance on failures and duplicates.
       while (queue.walked < entries.length) {
         const entry = entries[queue.position];
         queue.position = (queue.position + 1) % entries.length;
         queue.walked++;
         cursors[author.name] = queue.position;
         const id = quoteFingerprint(author.name, entry.original);
-        if (knownIds.has(id) || candidates.some((candidate) => candidate.id === id)) { stats.known++; continue; }
+        if (knownIds.has(id) || candidates.some((candidate) => candidate.id === id)) {
+          stats.known++;
+          continue;
+        }
+        if (sources.has(entry.sourceUrl) && sources.get(entry.sourceUrl) === null) {
+          stats.unavailable++;
+          continue;
+        }
         checks++;
         if (!sources.has(entry.sourceUrl)) {
           stats.sourceRequests++;
-          try { sources.set(entry.sourceUrl, await readRemote(entry.sourceUrl, 3500, 0, deadline)); }
-          catch { sources.set(entry.sourceUrl, null); }
+          try {
+            sources.set(entry.sourceUrl, await readRemote(entry.sourceUrl, 7000, 0, deadline));
+          } catch {
+            sources.set(entry.sourceUrl, null);
+          }
         }
         const source = sources.get(entry.sourceUrl);
         if (!source) stats.unavailable++;
         else if (!sourceContainsQuote(source, entry.original)) stats.unmatched++;
         else {
-          candidates.push({ id, original: entry.original, author: author.name, author_detail: author.detail,
-            source_url: entry.sourceUrl, source_title: entry.sourceTitle,
+          candidates.push({
+            id,
+            original: entry.original,
+            author: author.name,
+            author_detail: author.detail,
+            source_url: entry.sourceUrl,
+            source_title: entry.sourceTitle,
             discovery_url: `https://en.wikiquote.org/w/index.php?title=${encodeURIComponent(author.page)}&oldid=${queue.revision}`,
-            discovery_revision: queue.revision, source_matched: true,
-            portrait_src: author.portrait, portrait_credit: author.credit });
+            discovery_revision: queue.revision,
+            source_matched: true,
+            portrait_src: author.portrait,
+            portrait_credit: author.credit,
+          });
         }
         break;
       }
     }
   }
-  return { candidates, warnings, checks, stats, cursors, authorOffset: ((progress.authorOffset ?? 0) + 1) % quoteAuthors.length };
+
+  return {
+    candidates,
+    warnings,
+    checks,
+    stats,
+    cursors,
+    authorOffset: ((progress.authorOffset ?? 0) + 1) % quoteAuthors.length,
+  };
 }

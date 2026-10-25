@@ -5,7 +5,7 @@ export const projectsEditorial = {
   eyebrow: "FİKİRDEN ÜRÜNE / PROJELER",
   title: ["Düşündüm,", "geliştirdim,"],
   emphasis: "hayata geçirdim.",
-  description: "İhtiyaçtan doğan araçlar, kişisel ürünler ve küçük deneyler.",
+  description: "Gerçek ihtiyaçlardan yola çıkarak geliştirdiğim uygulamalar, araçlar ve ürünler.",
   signature: "Building the life I imagined.",
 } as const;
 
@@ -20,6 +20,12 @@ export const projectPresentations: Readonly<
     }
   >
 > = {
+  "standart-culture": {
+    kind: "generic",
+    category: "Web / Marka sitesi",
+    tagline: "İki dilli marka ve proje sitesi",
+    intro: "Marka kimliğini ve projelerini öne çıkaran, Türkçe ve İngilizce web sitesi.",
+  },
   winsoundmixer: {
     kind: "audio",
     category: "Masaüstü / Windows",

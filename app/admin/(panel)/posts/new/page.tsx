@@ -13,20 +13,24 @@ export default async function NewPostPage() {
 
   return (
     <section className="admin-editor-page">
-      <Link href="/admin/posts" className="text-sm text-[#6B7280]">
-        Yazılar
-      </Link>
-      <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[#111827]">Yeni yazı</h1>
+      <div className="admin-page-heading">
+        <div>
+          <Link href="/admin/posts" className="admin-field-hint">
+            ← Yazılar
+          </Link>
+          <h1>Yeni yazı</h1>
+          <p className="admin-list-description">
+            Taslak olarak kaydedebilir veya doğrudan yayınlayabilirsin.
+          </p>
+        </div>
+      </div>
       {editor.error ? (
-        <p role="alert" className="mt-6 text-sm text-[#B45309]">
+        <p role="alert" className="admin-error">
           {editor.error}
         </p>
       ) : (
-        <div className="mt-8">
-          <PostForm categories={editor.categories ?? []} />
-        </div>
+        <PostForm categories={editor.categories ?? []} />
       )}
     </section>
   );
 }
-

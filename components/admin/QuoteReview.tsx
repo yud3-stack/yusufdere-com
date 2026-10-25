@@ -6,38 +6,222 @@ import { collectQuotesAction, reviewQuoteAction } from "@/lib/quotes/actions";
 import type { QuoteReviewRow } from "@/lib/quotes/store";
 
 const initial = { ok: false, message: "" };
+
+const statusLabel = {
+  pending: "İnceleme bekliyor",
+  approved: "Onaylı",
+  rejected: "Reddedildi",
+} as const;
+
+function splitCollectMessage(message: string) {
+  const parts = message
+    .split(/(?<=\.)\s+/)
+    .map(part => part.trim())
+    .filter(Boolean);
+  const warnings = parts.filter(part => part.includes(":"));
+  const summary = parts.filter(part => !part.includes(":")).join(" ");
+  return { summary: summary || message, warnings };
+}
+
 export function QuoteCollectButton({ disabled }: { disabled: boolean }) {
   const [state, action, pending] = useActionState(collectQuotesAction, initial);
-  return <form action={action}>
-    <button className="admin-button primary" disabled={disabled || pending}>{pending ? "Otomatik hazırlanıyor…" : "Sözleri bul ve otomatik hazırla"}</button>
-    <p role="status" className="mt-3 text-sm">{state.message}</p>
-  </form>;
+  const result = state.message ? splitCollectMessage(state.message) : null;
+
+  return (
+    <form action={action} className="admin-card admin-quote-collect">
+      <div className="admin-card-heading">
+        <h2>Tarama</h2>
+        <span>Wikiquote · özgün kaynak</span>
+      </div>
+      <button className="admin-button primary" disabled={disabled || pending}>
+        {pending ? "Taranıyor… 30–40 sn sürebilir" : "Sözleri bul ve otomatik hazırla"}
+      </button>
+      {pending ? (
+        <p role="status" className="admin-field-hint">
+          Yazar sayfaları ve kaynaklar kontrol ediliyor…
+        </p>
+      ) : null}
+      {result && state.ok ? (
+        <div role="status" className="admin-quote-collect-result">
+          <p className="admin-quote-collect-ok">{result.summary}</p>
+          {result.warnings.length ? (
+            <ul className="admin-quote-collect-warnings">
+              {result.warnings.map(warning => (
+                <li key={warning}>{warning}</li>
+              ))}
+            </ul>
+          ) : null}
+        </div>
+      ) : null}
+      {state.message && !state.ok ? (
+        <p role="status" className="admin-error" style={{ marginTop: 12, marginBottom: 0 }}>
+          {state.message}
+        </p>
+      ) : null}
+    </form>
+  );
 }
 
 export function QuoteReview({ quote }: { quote: QuoteReviewRow }) {
-  const [state, action, pending] = useActionState(reviewQuoteAction.bind(null, quote.id), initial);
-  return <article className="rounded-2xl border border-[#e5e7eb] bg-white p-5 sm:p-7">
-    <div className="flex flex-wrap justify-between gap-3"><h2 className="text-xl font-semibold">{quote.author}</h2><span className="text-sm text-[#6b7280]">{quote.auto_approved ? "Otomatik hazırlandı" : ({ pending: "İnceleme bekliyor", approved: "Onaylı", rejected: "Reddedildi" })[quote.status]}</span></div>
-    <blockquote className="my-5 text-lg leading-relaxed" lang="en">{quote.original}</blockquote>
-    <p className="text-sm text-[#6b7280]">{quote.auto_approved ? "Kaynak ve otomatik çeviri kontrolleri geçti. İstersen metni düzenleyebilir veya havuzdan çıkarabilirsin." : "Kaynak metninde eşleşme bulundu. Atıf ve çeviri doğruluğunu buradan kontrol edebilirsin."}</p>
-    <a className="mt-3 block break-words text-sm underline" href={quote.source_url} target="_blank" rel="noopener noreferrer">Özgün kaynağı aç · {quote.source_title}</a>
-    {quote.discovery_url ? <a className="mt-2 block text-sm underline" href={quote.discovery_url} target="_blank" rel="noopener noreferrer">Keşif kaydı · Wikiquote sabit revizyonu</a> : null}
-    {quote.automation_note ? <p className="mt-4 rounded-lg bg-[#f5f6f3] p-3 text-xs leading-relaxed">{quote.automation_note}</p> : null}
-    <form action={action} className="mt-6 grid gap-4">
-      <label className="grid gap-2 text-sm">Türkçe çeviri<textarea className="rounded-lg border border-[#d1d5db] p-3" name="translation" rows={3} minLength={10} maxLength={320} required defaultValue={quote.translation ?? ""} /></label>
-      <label className="grid gap-2 text-sm">Görselde gösterilecek kaynak adı<input className="rounded-lg border border-[#d1d5db] p-3" name="sourceLabel" maxLength={150} required defaultValue={quote.source_label || new URL(quote.source_url).hostname} /></label>
-      <label className="grid gap-2 text-sm">Çeviri / alıntı notu<input className="rounded-lg border border-[#d1d5db] p-3" name="sourceNote" maxLength={120} required defaultValue={quote.source_note} /></label>
-      <details><summary className="cursor-pointer text-sm">Yazar portresi ve fotoğraf kredisi</summary>
-        {quote.portrait_src ? <Image src={quote.portrait_src} alt={`${quote.author} portresi`} width={120} height={120} unoptimized className="mt-4 h-30 w-30 object-cover grayscale" /> : null}
-        {quote.portrait_source_url ? <a className="mt-3 block text-xs underline" href={quote.portrait_source_url} target="_blank" rel="noopener noreferrer">Fotoğrafın Commons kaydı</a> : null}
-        {quote.portrait_license_url ? <a className="mt-2 block text-xs underline" href={quote.portrait_license_url} target="_blank" rel="noopener noreferrer">Fotoğraf lisansı</a> : null}
-        <p className="my-3 text-xs text-[#6b7280]">Portre boşsa yazarın baş harfleri kullanılır. İzinli yerel görsel veya upload.wikimedia.org bağlantısı ekleyebilirsin.</p>
-        <label className="mb-3 grid gap-2 text-sm">Portre adresi<input className="rounded-lg border border-[#d1d5db] p-3" name="portraitSrc" defaultValue={quote.portrait_src} /></label>
-        <label className="grid gap-2 text-sm">Fotoğrafçı ve lisans<input className="rounded-lg border border-[#d1d5db] p-3" name="portraitCredit" defaultValue={quote.portrait_credit} /></label>
-      </details>
-      <label className="flex items-start gap-3 text-sm leading-relaxed"><input className="mt-1" name="reviewed" value="yes" type="checkbox" />Kaynağı ve Türkçe çeviriyi, portre eklediysem fotoğraf kullanım bilgisini kontrol ettim.</label>
-      <div className="flex flex-wrap gap-3"><button name="decision" value="approve" className="admin-button primary" disabled={pending}>{quote.status === "approved" ? "Değişiklikleri kaydet" : "Onayla ve havuza al"}</button><button name="decision" value="reject" formNoValidate className="admin-button" disabled={pending}>Reddet / havuzdan çıkar</button></div>
-      <p role="status" className={`text-sm ${state.ok ? "text-green-800" : "text-red-700"}`}>{pending ? "Kaydediliyor…" : state.message}</p>
-    </form>
-  </article>;
+  const [state, action, pending] = useActionState(
+    reviewQuoteAction.bind(null, quote.id),
+    initial,
+  );
+  const badge = quote.auto_approved ? "Otomatik hazırlandı" : statusLabel[quote.status];
+
+  return (
+    <article className="admin-card admin-quote-review">
+      <div className="admin-card-heading">
+        <h2>{quote.author}</h2>
+        <span className={`admin-quote-badge ${quote.status}`}>{badge}</span>
+      </div>
+
+      <blockquote className="admin-quote-original" lang="en">
+        {quote.original}
+      </blockquote>
+
+      <p className="admin-field-hint">
+        {quote.auto_approved
+          ? "Kaynak ve otomatik çeviri kontrolleri geçti. İstersen metni düzenleyebilir veya havuzdan çıkarabilirsin."
+          : "Kaynak metninde eşleşme bulundu. Atıf ve çeviri doğruluğunu buradan kontrol edebilirsin."}
+      </p>
+
+      <div className="admin-quote-links">
+        <a href={quote.source_url} target="_blank" rel="noopener noreferrer">
+          Özgün kaynak · {quote.source_title || new URL(quote.source_url).hostname}
+        </a>
+        {quote.discovery_url ? (
+          <a href={quote.discovery_url} target="_blank" rel="noopener noreferrer">
+            Wikiquote sabit revizyonu
+          </a>
+        ) : null}
+      </div>
+
+      {quote.automation_note ? (
+        <p className="admin-quote-note">{quote.automation_note}</p>
+      ) : null}
+
+      <form action={action} className="admin-quote-form">
+        <label className="admin-field">
+          Türkçe çeviri
+          <textarea
+            name="translation"
+            rows={3}
+            minLength={10}
+            maxLength={320}
+            required
+            defaultValue={quote.translation ?? ""}
+          />
+        </label>
+        <label className="admin-field">
+          Görselde gösterilecek kaynak adı
+          <input
+            name="sourceLabel"
+            maxLength={150}
+            required
+            defaultValue={quote.source_label || new URL(quote.source_url).hostname}
+          />
+        </label>
+        <label className="admin-field">
+          Çeviri / alıntı notu
+          <input
+            name="sourceNote"
+            maxLength={120}
+            required
+            defaultValue={quote.source_note}
+          />
+        </label>
+
+        <details className="admin-quote-portrait">
+          <summary>Yazar portresi ve fotoğraf kredisi</summary>
+          {quote.portrait_src ? (
+            <Image
+              src={quote.portrait_src}
+              alt={`${quote.author} portresi`}
+              width={120}
+              height={120}
+              unoptimized
+              className="admin-quote-portrait-img"
+            />
+          ) : null}
+          {quote.portrait_source_url ? (
+            <a
+              className="admin-quote-link-quiet"
+              href={quote.portrait_source_url}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Fotoğrafın Commons kaydı
+            </a>
+          ) : null}
+          {quote.portrait_license_url ? (
+            <a
+              className="admin-quote-link-quiet"
+              href={quote.portrait_license_url}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Fotoğraf lisansı
+            </a>
+          ) : null}
+          <p className="admin-field-hint">
+            Portre boşsa yazarın baş harfleri kullanılır. İzinli yerel görsel veya
+            upload.wikimedia.org bağlantısı ekleyebilirsin.
+          </p>
+          <label className="admin-field">
+            Portre adresi
+            <input name="portraitSrc" defaultValue={quote.portrait_src} />
+          </label>
+          <label className="admin-field">
+            Fotoğrafçı ve lisans
+            <input name="portraitCredit" defaultValue={quote.portrait_credit} />
+          </label>
+        </details>
+
+        <label className="admin-quote-check">
+          <input name="reviewed" value="yes" type="checkbox" />
+          <span>
+            Kaynağı ve Türkçe çeviriyi, portre eklediysem fotoğraf kullanım bilgisini
+            kontrol ettim.
+          </span>
+        </label>
+
+        <div className="admin-actions">
+          <button
+            name="decision"
+            value="approve"
+            className="admin-button primary"
+            disabled={pending}
+          >
+            {quote.status === "approved" ? "Değişiklikleri kaydet" : "Onayla ve havuza al"}
+          </button>
+          <button
+            name="decision"
+            value="reject"
+            formNoValidate
+            className="admin-button"
+            disabled={pending}
+          >
+            Reddet / havuzdan çıkar
+          </button>
+        </div>
+
+        {pending || state.message ? (
+          <p
+            role="status"
+            className={state.ok || pending ? "admin-field-hint" : "admin-error"}
+            style={
+              state.ok
+                ? { margin: 0, color: "var(--admin-green)" }
+                : pending
+                  ? { margin: 0 }
+                  : { margin: 0 }
+            }
+          >
+            {pending ? "Kaydediliyor…" : state.message}
+          </p>
+        ) : null}
+      </form>
+    </article>
+  );
 }

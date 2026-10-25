@@ -3,7 +3,7 @@ export const about = {
   title: "Merakla başlar,",
   emphasis: "üreterek devam eder.",
   introduction: "Ben Yusuf. Samsun’da yaşayan, fikirlerini yazılımla hayata geçiren bir geliştiriciyim.",
-  story: "Ağırlıklı olarak web üzerinde çalışıyor; masaüstü, mobil ve yapay zekâ araçlarıyla da yeni şeyler deniyorum. Burada yaptıklarımı ve yol boyunca öğrendiklerimi paylaşıyorum.",
+  story: "Ağırlıklı olarak web teknolojileri üzerinde çalışıyorum; masaüstü uygulamalar, yapay zekâ araçları ve otomasyonlar da geliştirdiğim alanlar arasında.",
   location: "Samsun, Türkiye",
   signature: "Building the life I imagined.",
   areas: [

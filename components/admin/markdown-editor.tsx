@@ -10,28 +10,41 @@ import { assetFileError, markdownImage } from "@/lib/storage/assets";
 
 type EnsureDraft = (markdown: string) => Promise<{ id: string } | { error: string }>;
 
-const editorTheme = EditorView.theme({
-  "&": {
-    backgroundColor: "#ffffff",
-    color: "#111827",
-    fontSize: "14px",
+const editorTheme = EditorView.theme(
+  {
+    "&": {
+      backgroundColor: "#121212",
+      color: "#e4e4e7",
+      fontSize: "14px",
+    },
+    ".cm-content": {
+      fontFamily: "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace",
+      padding: "16px 0",
+      caretColor: "#8da9ff",
+    },
+    ".cm-gutters": {
+      backgroundColor: "#121212",
+      color: "#6b6b72",
+      borderRight: "1px solid #2a2a2a",
+    },
+    ".cm-activeLine": {
+      backgroundColor: "#1a1a1a",
+    },
+    ".cm-activeLineGutter": {
+      backgroundColor: "#1a1a1a",
+    },
+    ".cm-selectionBackground, &.cm-focused .cm-selectionBackground": {
+      backgroundColor: "#2a3558 !important",
+    },
+    ".cm-cursor": {
+      borderLeftColor: "#8da9ff",
+    },
+    "&.cm-focused": {
+      outline: "none",
+    },
   },
-  ".cm-content": {
-    fontFamily: "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace",
-    padding: "16px 0",
-  },
-  ".cm-gutters": {
-    backgroundColor: "#ffffff",
-    color: "#9CA3AF",
-    borderRight: "1px solid #E5E7EB",
-  },
-  ".cm-activeLine": {
-    backgroundColor: "#FAFAF9",
-  },
-  "&.cm-focused": {
-    outline: "none",
-  },
-});
+  { dark: true },
+);
 
 function selectedText(view: EditorView) {
   const range = view.state.selection.main;
@@ -360,7 +373,7 @@ export function MarkdownEditor({
                 applyFormat(view, kind);
               }
             }}
-            className="inline-flex h-9 items-center rounded-lg border border-[#E5E7EB] bg-white px-3 text-xs font-medium text-[#111827]"
+            className="admin-tool-btn"
           >
             {label}
           </button>
@@ -374,20 +387,20 @@ export function MarkdownEditor({
               setImageOpen((open) => !open);
               setError(null);
             }}
-            className="inline-flex h-9 items-center rounded-lg border border-[#E5E7EB] bg-white px-3 text-xs font-medium text-[#111827]"
+            className="admin-tool-btn"
           >
-            Image
+            Görsel
           </button>
         ) : null}
       </div>
       {allowImages && imageOpen ? (
-        <div className="mt-3 grid gap-3 rounded-xl border border-[#E5E7EB] bg-white p-3 sm:grid-cols-2">
-          <label className="text-sm text-[#111827] sm:col-span-2">
+        <div className="admin-card mt-3 grid gap-3 sm:grid-cols-2">
+          <label className="admin-field sm:col-span-2">
             Dosya
             <input
               type="file"
               accept="image/jpeg,image/png,image/webp,image/avif"
-              className="mt-1 block w-full text-sm"
+              className="mt-2 block w-full text-sm"
               onChange={(event) => {
                 const next = event.target.files?.[0] ?? null;
                 setFile(next);
@@ -398,23 +411,25 @@ export function MarkdownEditor({
               }}
             />
           </label>
-          <label className="text-sm text-[#111827]">
+          <label className="admin-field">
             Alt metin
             <input
               value={alt}
               onChange={(event) => setAlt(event.target.value)}
-              className="mt-1 h-10 w-full rounded-lg border border-[#E5E7EB] px-3 text-sm outline-none focus:border-[#FF9F1C]"
+              className="admin-input"
             />
           </label>
-          <label className="text-sm text-[#111827]">
+          <label className="admin-field">
             Açıklama
             <input
               value={caption}
               onChange={(event) => setCaption(event.target.value)}
-              className="mt-1 h-10 w-full rounded-lg border border-[#E5E7EB] px-3 text-sm outline-none focus:border-[#FF9F1C]"
+              className="admin-input"
             />
           </label>
-          <p className="text-xs text-[#6B7280] sm:col-span-2">Alt metin ekran okuyucular için faydalıdır.</p>
+          <p className="admin-field-hint sm:col-span-2">
+            Alt metin ekran okuyucular için faydalıdır.
+          </p>
           <div className="sm:col-span-2">
             <button
               type="button"
@@ -424,19 +439,19 @@ export function MarkdownEditor({
                   void uploadFile(file, undefined, alt, caption);
                 }
               }}
-              className="inline-flex h-10 items-center rounded-lg bg-[#FF9F1C] px-4 text-sm font-medium text-[#111827] disabled:opacity-70"
+              className="admin-tool-btn primary"
             >
               Ekle
             </button>
           </div>
         </div>
       ) : null}
-      <div className="mt-3 overflow-hidden rounded-2xl border border-[#E5E7EB] bg-white">
+      <div className="admin-md-shell">
         <CodeMirror
           ref={editorRef}
           value={value}
           height="680px"
-          theme="light"
+          theme="none"
           extensions={extensions}
           basicSetup={{ foldGutter: false }}
           onChange={onChange}
@@ -449,10 +464,10 @@ export function MarkdownEditor({
           }}
         />
       </div>
-      <p className="mt-2 text-xs text-[#9CA3AF]">{readingLabel(value)}</p>
-      {message ? <p className="mt-2 text-sm text-[#6B7280]">{message}</p> : null}
+      <p className="admin-field-hint">{readingLabel(value)}</p>
+      {message ? <p className="admin-field-hint">{message}</p> : null}
       {error ? (
-        <p role="alert" className="mt-2 text-sm text-[#B45309]">
+        <p role="alert" className="admin-error">
           {error}
         </p>
       ) : null}

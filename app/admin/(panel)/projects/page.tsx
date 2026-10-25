@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Plus } from "lucide-react";
 import { DeleteProjectButton } from "@/components/admin/delete-project-button";
 import { formatDate } from "@/lib/format";
 import { getAdminProjects } from "@/lib/projects/admin";
@@ -12,81 +13,137 @@ export const metadata: Metadata = {
 
 export default async function AdminProjectsPage() {
   const result = await getAdminProjects();
+  const projects = result.data ?? [];
+  const published = projects.filter(project => project.status === "published").length;
+  const drafts = projects.length - published;
+  const featured = projects.filter(project => project.featured).length;
 
   return (
     <section className="admin-list-page">
-      <div className="flex flex-wrap items-end justify-between gap-4">
+      <div className="admin-page-heading">
         <div>
-          <Link href="/admin" className="text-sm text-[#6B7280]">
-            Admin Paneli
-          </Link>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[#111827]">Projeler</h1>
+          <p className="admin-eyebrow">Portföy</p>
+          <h1>Projeler</h1>
+          <p className="admin-list-description">
+            Geliştirdiğin projeleri ve öne çıkan çalışmaları yönet.
+          </p>
         </div>
-        <Link
-          href="/admin/projects/new"
-          className="admin-button primary"
-        >
-          Yeni Proje
+        <Link href="/admin/projects/new" className="admin-button primary">
+          <Plus size={16} />
+          Yeni proje
         </Link>
       </div>
 
-      <p className="admin-list-description">Geliştirdiğin projeleri ve öne çıkan çalışmalarını yönet.{result.data ? ` Toplam ${result.data.length} proje.` : ""}</p>
+      <div className="admin-status-strip">
+        <div className="admin-status-card blue">
+          <p>Toplam proje</p>
+          <strong>{result.data ? projects.length : "—"}</strong>
+        </div>
+        <div className="admin-status-card green">
+          <p>Yayında</p>
+          <strong>{result.data ? published : "—"}</strong>
+        </div>
+        <div className="admin-status-card orange">
+          <p>Taslak</p>
+          <strong>{result.data ? drafts : "—"}</strong>
+        </div>
+        <div className="admin-status-card yellow">
+          <p>Öne çıkan</p>
+          <strong>{result.data ? featured : "—"}</strong>
+        </div>
+      </div>
 
       {result.error ? (
-        <p role="alert" className="mt-8 text-sm text-[#B45309]">
+        <p role="alert" className="admin-error">
           {result.error}
         </p>
       ) : null}
 
-      {result.data && result.data.length === 0 ? (
-        <p className="mt-10 rounded-2xl border border-dashed border-[#E5E7EB] bg-white px-5 py-10 text-sm text-[#6B7280]">
-          Henüz proje bulunmuyor.
+      <div className="admin-toolbar">
+        <p className="admin-toolbar-count">
+          {result.data ? `${projects.length} proje` : "Projeler yükleniyor"}
         </p>
+        <div className="admin-toolbar-actions">
+          <Link href="/admin/projects/new" className="admin-button primary">
+            <Plus size={15} />
+            Proje ekle
+          </Link>
+        </div>
+      </div>
+
+      {result.data && projects.length === 0 ? (
+        <div className="admin-table-card">
+          <p className="admin-empty">Henüz proje bulunmuyor.</p>
+        </div>
       ) : null}
 
-      {result.data && result.data.length > 0 ? (
-        <ul className="mt-8 divide-y divide-[#E5E7EB] overflow-hidden rounded-2xl border border-[#E5E7EB] bg-white">
-          {result.data.map((project) => {
-            const cover = projectCoverImageUrl(project.cover_image);
-
-            return (
-              <li key={project.id} className="flex flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex min-w-0 items-center gap-3">
-                  {cover ? (
-                    // Storage previews stay as plain images so a missing file does not break the list.
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={cover}
-                      alt=""
-                      className="h-12 w-20 shrink-0 rounded-lg border border-[#E5E7EB] object-cover"
-                    />
-                  ) : (
-                    <span className="inline-flex h-12 w-20 shrink-0 items-center justify-center rounded-lg border border-dashed border-[#E5E7EB] text-[10px] text-[#9CA3AF]">
-                      Kapak yok
-                    </span>
-                  )}
-                  <div className="min-w-0">
-                    <p className="truncate font-medium text-[#111827]">{project.title}</p>
-                    <p className="mt-1 text-sm text-[#6B7280]">
-                      {project.status === "published" ? "Yayında" : "Taslak"} ·{" "}
-                      {project.featured ? "Öne çıkan" : "Öne çıkan değil"} · Yayın:{" "}
-                      {project.published_at ? formatDate(project.published_at) : "—"} · Güncelleme:{" "}
-                      {formatDate(project.updated_at)}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <Link href={`/admin/projects/${project.id}/edit`} className="text-sm font-medium text-[#111827]">
-                    Düzenle
-                  </Link>
-                  <DeleteProjectButton id={project.id} title={project.title} />
-                </div>
-              </li>
-            );
-          })}
-        </ul>
+      {projects.length > 0 ? (
+        <div className="admin-table-card">
+          <div className="admin-table-scroll">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Proje</th>
+                  <th>Öne çıkan</th>
+                  <th>Yayın</th>
+                  <th>Güncelleme</th>
+                  <th>Durum</th>
+                  <th>İşlem</th>
+                </tr>
+              </thead>
+              <tbody>
+                {projects.map(project => {
+                  const cover = projectCoverImageUrl(project.cover_image);
+                  return (
+                    <tr key={project.id}>
+                      <td>
+                        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                          {cover ? (
+                            // Storage previews stay as plain images so a missing file does not break the list.
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={cover} alt="" className="admin-thumb" />
+                          ) : (
+                            <span className="admin-thumb placeholder">Kapak yok</span>
+                          )}
+                          <Link
+                            href={`/admin/projects/${project.id}/edit`}
+                            className="admin-table-title"
+                          >
+                            {project.title}
+                          </Link>
+                        </div>
+                      </td>
+                      <td>{project.featured ? "Evet" : "Hayır"}</td>
+                      <td>
+                        {project.published_at
+                          ? formatDate(project.published_at)
+                          : "—"}
+                      </td>
+                      <td>{formatDate(project.updated_at)}</td>
+                      <td>
+                        <span className={`admin-status ${project.status}`}>
+                          {project.status === "published" ? "Yayında" : "Taslak"}
+                        </span>
+                      </td>
+                      <td>
+                        <div className="admin-table-actions">
+                          <Link href={`/admin/projects/${project.id}/edit`}>
+                            Düzenle
+                          </Link>
+                          <DeleteProjectButton
+                            id={project.id}
+                            title={project.title}
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
       ) : null}
     </section>
   );
 }
-

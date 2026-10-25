@@ -29,7 +29,7 @@ export default async function EditPostPage({
   if (editor.error) {
     return (
       <section className="admin-editor-page">
-        <p role="alert" className="text-sm text-[#B45309]">
+        <p role="alert" className="admin-error">
           {editor.error}
         </p>
       </section>
@@ -42,18 +42,20 @@ export default async function EditPostPage({
 
   return (
     <section className="admin-editor-page">
-      <Link href="/admin/posts" className="text-sm text-[#6B7280]">
-        Yazılar
-      </Link>
-      <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[#111827]">Yazıyı düzenle</h1>
-      <div className="mt-8">
-        <PostForm
-          post={editor.post}
-          categories={editor.categories ?? []}
-          initialMessage={saved === "1" ? "Yazı kaydedildi." : null}
-        />
+      <div className="admin-page-heading">
+        <div>
+          <Link href="/admin/posts" className="admin-field-hint">
+            ← Yazılar
+          </Link>
+          <h1>Yazıyı düzenle</h1>
+          <p className="admin-list-description">{editor.post.title}</p>
+        </div>
       </div>
+      <PostForm
+        post={editor.post}
+        categories={editor.categories ?? []}
+        initialMessage={saved === "1" ? "Yazı kaydedildi." : null}
+      />
     </section>
   );
 }
-

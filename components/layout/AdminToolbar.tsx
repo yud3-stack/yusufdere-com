@@ -20,9 +20,10 @@ function blogPostPath(pathname: string) {
 
 export function AdminToolbar() {
   const [isAdmin, setIsAdmin] = useState(false);
-  const [postStats, setPostStats] = useState<PostStats | null>(null);
+  const [statsResult, setStatsResult] = useState<{ path: string; data: PostStats } | null>(null);
   const pathname = usePathname();
   const postPath = blogPostPath(pathname);
+  const postStats = isAdmin && statsResult?.path === postPath ? statsResult.data : null;
 
   useEffect(() => {
     let currentRequest: AbortController | undefined;
@@ -54,12 +55,10 @@ export function AdminToolbar() {
 
   useEffect(() => {
     if (!isAdmin || !postPath) {
-      setPostStats(null);
       return;
     }
 
     const request = new AbortController();
-    setPostStats(null);
     fetch(`/api/admin/post-stats?path=${encodeURIComponent(postPath)}`, {
       cache: "no-store",
       credentials: "same-origin",
@@ -68,16 +67,16 @@ export function AdminToolbar() {
       .then(async response => {
         const payload = await response.json().catch(() => null);
         if (request.signal.aborted || !payload) return;
-        setPostStats({
+        setStatsResult({ path: postPath, data: {
           ready: payload.ready === true,
           readers: typeof payload.readers === "number" ? payload.readers : null,
           averageDuration: typeof payload.averageDuration === "string" ? payload.averageDuration : null,
           periodDays: typeof payload.periodDays === "number" ? payload.periodDays : 30,
-        });
+        } });
       })
       .catch(() => {
         if (!request.signal.aborted) {
-          setPostStats({ ready: false, readers: null, averageDuration: null, periodDays: 30 });
+          setStatsResult({ path: postPath, data: { ready: false, readers: null, averageDuration: null, periodDays: 30 } });
         }
       });
 

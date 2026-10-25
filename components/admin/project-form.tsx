@@ -15,13 +15,13 @@ function SaveButtons({ currentStatus }: { currentStatus: ContentStatus }) {
   const submitting = String(data?.get("status") ?? "");
 
   return (
-    <div className="flex flex-wrap gap-3">
+    <div className="admin-actions">
       <button
         type="submit"
         name="status"
         value="draft"
         disabled={pending}
-        className="inline-flex h-11 items-center justify-center rounded-xl border border-[#E5E7EB] bg-white px-5 text-sm font-medium text-[#111827] disabled:cursor-wait disabled:opacity-70"
+        className="admin-button"
       >
         {pending && submitting === "draft"
           ? "Kaydediliyor..."
@@ -34,7 +34,7 @@ function SaveButtons({ currentStatus }: { currentStatus: ContentStatus }) {
         name="status"
         value="published"
         disabled={pending}
-        className="inline-flex h-11 items-center justify-center rounded-xl bg-[#FF9F1C] px-5 text-sm font-medium text-[#111827] disabled:cursor-wait disabled:opacity-70"
+        className="admin-button primary"
       >
         {pending && submitting === "published"
           ? "Kaydediliyor..."
@@ -71,13 +71,12 @@ export function ProjectForm({
 
   function addTechnology(value: string) {
     const next = value.trim();
+    if (!next) return;
 
-    if (!next) {
-      return;
-    }
-
-    setTechnologies((current) => {
-      const exists = current.some((item) => item.toLocaleLowerCase("tr-TR") === next.toLocaleLowerCase("tr-TR"));
+    setTechnologies(current => {
+      const exists = current.some(
+        item => item.toLocaleLowerCase("tr-TR") === next.toLocaleLowerCase("tr-TR"),
+      );
       return exists ? current : [...current, next];
     });
     setTechnologyDraft("");
@@ -91,61 +90,59 @@ export function ProjectForm({
       {featured ? <input type="hidden" name="featured" value="1" /> : null}
 
       <div className="grid gap-5">
-        <label className="block text-sm font-medium text-[#111827]">
+        <label className="admin-field">
           Başlık
           <input
             name="title"
             value={title}
-            onChange={(event) => {
+            onChange={event => {
               const value = event.target.value;
               setTitle(value);
-              if (!slugEdited) {
-                setSlug(slugify(value));
-              }
+              if (!slugEdited) setSlug(slugify(value));
             }}
             required
-            className="mt-2 h-11 w-full rounded-xl border border-[#E5E7EB] bg-white px-3 text-sm font-normal outline-none focus:border-[#FF9F1C]"
           />
         </label>
-        <label className="block text-sm font-medium text-[#111827]">
+        <label className="admin-field">
           Slug
           <input
             name="slug"
             value={slug}
-            onChange={(event) => {
+            onChange={event => {
               setSlugEdited(true);
               setSlug(event.target.value);
             }}
             required
-            className="mt-2 h-11 w-full rounded-xl border border-[#E5E7EB] bg-white px-3 font-mono text-sm font-normal outline-none focus:border-[#FF9F1C]"
+            className="font-mono"
           />
         </label>
-        <label className="block text-sm font-medium text-[#111827]">
+        <label className="admin-field">
           Kısa Açıklama
           <textarea
             name="description"
             value={description}
-            onChange={(event) => setDescription(event.target.value)}
+            onChange={event => setDescription(event.target.value)}
             rows={3}
-            className="mt-2 w-full rounded-xl border border-[#E5E7EB] bg-white px-3 py-2 text-sm font-normal outline-none focus:border-[#FF9F1C]"
           />
-          <span className="mt-2 block text-xs font-normal text-[#6B7280]">
-            {description.trim().length} karakter. Kartlarda kullanılacak kısa özet için 160–220 karakter civarı yeterlidir.
+          <span className="admin-field-hint">
+            {description.trim().length} karakter. Kartlarda kullanılacak kısa özet için 160–220
+            karakter civarı yeterlidir.
           </span>
         </label>
         <div>
-          <label htmlFor="technology-draft" className="block text-sm font-medium text-[#111827]">
+          <label htmlFor="technology-draft" className="admin-field">
             Teknolojiler
           </label>
-          <div className="mt-2 flex min-h-11 flex-wrap items-center gap-2 rounded-xl border border-[#E5E7EB] bg-white px-3 py-2">
-            {technologies.map((item) => (
-              <span key={item} className="inline-flex items-center gap-1 rounded-full bg-[#F3F4F6] px-2.5 py-1 text-xs">
+          <div className="admin-chip-field">
+            {technologies.map(item => (
+              <span key={item} className="admin-chip">
                 {item}
                 <button
                   type="button"
                   aria-label={`${item} teknolojisini sil`}
-                  onClick={() => setTechnologies((current) => current.filter((technology) => technology !== item))}
-                  className="text-[#6B7280]"
+                  onClick={() =>
+                    setTechnologies(current => current.filter(technology => technology !== item))
+                  }
                 >
                   ×
                 </button>
@@ -154,8 +151,8 @@ export function ProjectForm({
             <input
               id="technology-draft"
               value={technologyDraft}
-              onChange={(event) => setTechnologyDraft(event.target.value)}
-              onKeyDown={(event) => {
+              onChange={event => setTechnologyDraft(event.target.value)}
+              onKeyDown={event => {
                 if (event.key === "Enter" || event.key === ",") {
                   event.preventDefault();
                   addTechnology(technologyDraft.replace(/,/g, ""));
@@ -163,70 +160,75 @@ export function ProjectForm({
               }}
               onBlur={() => addTechnology(technologyDraft)}
               placeholder="Enter veya virgül"
-              className="h-8 min-w-32 flex-1 text-sm outline-none"
             />
           </div>
         </div>
-        <label className="block text-sm font-medium text-[#111827]">
+        <label className="admin-field">
           GitHub URL
           <input
             name="github_url"
             value={githubUrl}
-            onChange={(event) => setGithubUrl(event.target.value)}
+            onChange={event => setGithubUrl(event.target.value)}
             placeholder="https://"
-            className="mt-2 h-11 w-full rounded-xl border border-[#E5E7EB] bg-white px-3 text-sm font-normal outline-none focus:border-[#FF9F1C]"
           />
         </label>
-        <label className="block text-sm font-medium text-[#111827]">
+        <label className="admin-field">
           Canlı Demo URL
           <input
             name="live_url"
             value={liveUrl}
-            onChange={(event) => setLiveUrl(event.target.value)}
+            onChange={event => setLiveUrl(event.target.value)}
             placeholder="https://"
-            className="mt-2 h-11 w-full rounded-xl border border-[#E5E7EB] bg-white px-3 text-sm font-normal outline-none focus:border-[#FF9F1C]"
           />
         </label>
-        <CoverField initialPath={project?.cover_image ?? null} urlForPath={projectCoverImageUrl} />
-        <label className="flex items-center gap-3 text-sm font-medium text-[#111827]">
+        <CoverField
+          initialPath={project?.cover_image ?? null}
+          urlForPath={projectCoverImageUrl}
+        />
+        <label className="admin-field" style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <input
             type="checkbox"
             checked={featured}
-            onChange={(event) => setFeatured(event.target.checked)}
-            className="h-4 w-4 accent-[#FF9F1C]"
+            onChange={event => setFeatured(event.target.checked)}
+            style={{ width: 16, height: 16, margin: 0, minHeight: 0 }}
           />
           Öne çıkan projelerde göster
         </label>
       </div>
 
       <div>
-        <span className="block text-sm font-medium text-[#111827]">Detay İçeriği</span>
+        <span className="admin-field">Detay İçeriği</span>
         <div className="mt-2">
           <MarkdownEditor value={content} onChange={setContent} allowImages={false} />
         </div>
         <div className="mt-8">
-          <h2 className="text-sm font-medium text-[#111827]">Önizleme</h2>
-          <div className="mt-3 rounded-2xl border border-[#E5E7EB] bg-white px-4 py-3 sm:px-6">
+          <h2 className="admin-field">Önizleme</h2>
+          <div className="admin-md-preview">
             {content.trim() ? (
-              <Markdown markdown={content} />
+              <Markdown markdown={content} className="admin-md-preview-body" />
             ) : (
-              <p className="text-sm text-[#6B7280]">Önizleme için içerik yaz.</p>
+              <p className="admin-empty" style={{ padding: 0 }}>
+                Önizleme için içerik yaz.
+              </p>
             )}
           </div>
         </div>
       </div>
 
-      <p className="text-sm text-[#6B7280]">Durum: {state.status === "published" ? "Yayında" : "Taslak"}</p>
+      <p className="admin-field-hint">
+        Durum: {state.status === "published" ? "Yayında" : "Taslak"}
+      </p>
       {state.error ? (
-        <p role="alert" className="text-sm text-[#B45309]">
+        <p role="alert" className="admin-error">
           {state.error}
         </p>
       ) : null}
-      {state.message ? <p className="text-sm text-[#6B7280]">{state.message}</p> : null}
+      {state.message ? (
+        <p className="admin-field-hint" style={{ color: "var(--admin-green)" }}>
+          {state.message}
+        </p>
+      ) : null}
       <SaveButtons currentStatus={state.status} />
     </form>
   );
 }
-
-
-
