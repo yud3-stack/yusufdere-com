@@ -1,0 +1,50 @@
+.brand-intro {
+  position: fixed; inset: 0; z-index: 10000;
+  display: none; place-items: center; background: #faf9f6; color: #191b16;
+  pointer-events: none;
+  animation: brand-intro-dismiss 1.8s ease both;
+}
+html[data-brand-intro="playing"] .brand-intro { display: grid; }
+.brand-intro-signature {
+  --mark-width: clamp(78px, 18vw, 120px);
+  position: relative; width: min(460px, calc(100vw - 48px)); height: 140px;
+  font-family: var(--font-editorial), Georgia, serif;
+}
+.brand-intro-mark {
+  position: absolute; left: 50%; top: 50%; width: var(--mark-width);
+  font-size: clamp(74px, 18vw, 116px); font-weight: 500; line-height: 1;
+  letter-spacing: -.11em;
+  animation: brand-intro-monogram 1.35s cubic-bezier(.22,.7,.25,1) both;
+}
+.brand-intro-name {
+  position: absolute; left: calc(var(--mark-width) + 24px); right: 0; top: 50%;
+  transform: translateY(-50%); padding: 0 3px 4px; white-space: nowrap;
+  font-size: clamp(36px, 8vw, 65px); font-weight: 500; line-height: 1.08; letter-spacing: -.045em;
+  animation: brand-intro-wordmark .6s .55s cubic-bezier(.22,.7,.25,1) both;
+}
+.brand-intro-name::before {
+  content: ""; position: absolute; inset: 42% 0 6%; background: #e6edc3;
+  transform-origin: left; animation: brand-intro-accent .65s .65s cubic-bezier(.22,.7,.25,1) both;
+}
+.brand-intro-name > span { position: relative; }
+html[data-brand-intro="playing"] .public-site:has(> .brand-intro) :is(
+  .portrait-heading, .portrait-cutout, .floating-card, .orbit-panel, .orbit-glass,
+  .about-eyebrow, .about-editorial-copy h1, .about-biography, .about-focus-list,
+  .about-editorial-bottom, .about-portrait-caption, .projects-editorial-intro,
+  .projects-editorial-grid
+) { animation-play-state: paused; }
+@keyframes brand-intro-monogram {
+  0% { opacity: 0; transform: translate(-50%, calc(-50% + 8px)); }
+  26% { opacity: 1; left: 50%; transform: translate(-50%, -50%); }
+  78%, 100% { opacity: 1; left: 0; transform: translate(0, -50%); }
+}
+@keyframes brand-intro-wordmark {
+  from { clip-path: inset(0 100% 0 0); opacity: 0; }
+  to { clip-path: inset(0 0 0 0); opacity: 1; }
+}
+@keyframes brand-intro-accent { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes brand-intro-dismiss {
+  0%, 76% { opacity: 1; visibility: visible; }
+  100% { opacity: 0; visibility: hidden; }
+}
+@media (prefers-reduced-motion: reduce) { html[data-brand-intro="playing"] .brand-intro { display: none; } }

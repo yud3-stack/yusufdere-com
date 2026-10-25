@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useSyncExternalStore } from "react";
 import { getAnalyticsConfig } from "@/lib/cookies/analytics";
+import { useEntranceComplete } from "./useEntranceComplete";
 import {
   closeCookiePreferences,
   getConsentUiServerState,
@@ -16,10 +17,12 @@ import {
 export function CookieConsent() {
   const state = useSyncExternalStore(subscribeConsent, getConsentUiState, getConsentUiServerState);
   const analyticsConfigured = Boolean(getAnalyticsConfig());
+  const entranceComplete = useEntranceComplete();
 
   if (!state.open) return null;
 
   const settingsOpen = state.panel === "settings";
+  if (!settingsOpen && !entranceComplete) return null;
 
   return (
     <div

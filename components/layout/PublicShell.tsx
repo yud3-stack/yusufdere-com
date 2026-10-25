@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Analytics } from "@/components/cookies/Analytics";
 import { CookieConsent } from "@/components/cookies/CookieConsent";
 import { AdminToolbar } from "@/components/layout/AdminToolbar";
+import { BrandIntro } from "@/components/layout/BrandIntro";
 
 export function PublicShell({
   children,
@@ -28,6 +29,7 @@ export function PublicShell({
     <div
       className={`public-site${fullscreen ? " fullscreen-scene" : ""}${pathname === "/" ? " home-scene" : ""}${pathname === "/about" ? " about-scene-page" : ""}`}
     >
+      <BrandIntro />
       <div className="public-navigation">
         <AdminToolbar />
         {header}

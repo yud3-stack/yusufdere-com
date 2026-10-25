@@ -6,6 +6,7 @@ import { Header } from "@/components/layout/Header";
 import { PublicSearch } from "@/components/layout/PublicSearch";
 import { getSiteUrl } from "@/lib/site";
 import { defaultSocialImage } from "@/lib/social";
+import { brandIntroBootstrap } from "@/lib/brand-intro-bootstrap";
 import "./globals.css";
 import "./editorial.css";
 import "./hero-scene.css";
@@ -55,9 +56,11 @@ export default function RootLayout({
   return (
     <html
       lang="tr"
+      suppressHydrationWarning
       className={`${geist.variable} ${editorial.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-[#FAFAF9] text-[#111827]">
+        <script dangerouslySetInnerHTML={{ __html: brandIntroBootstrap }} />
         <a
           href="#icerik"
           className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50 focus:rounded-full focus:bg-white focus:px-4 focus:py-2"
