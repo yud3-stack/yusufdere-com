@@ -12,7 +12,7 @@ export async function renderQuoteShareImage(input: QuoteShareInput) {
   await document.fonts.ready;
   const sans = getComputedStyle(document.documentElement)
     .getPropertyValue("--font-sans").trim() || "sans-serif";
-  await Promise.all([document.fonts.load(`300 64px ${sans}`), document.fonts.load(`400 26px ${sans}`)]);
+  await Promise.all([document.fonts.load(`300 64px ${sans}`), document.fonts.load(`400 26px ${sans}`), document.fonts.load(`500 29px ${sans}`), document.fonts.load(`600 28px ${sans}`)]);
   const canvas = document.createElement("canvas");
   canvas.width = QUOTE_IMAGE_SIZE.width;
   canvas.height = QUOTE_IMAGE_SIZE.height;
@@ -21,6 +21,8 @@ export async function renderQuoteShareImage(input: QuoteShareInput) {
   ctx.fillStyle = PAPER;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = INK;
+  drawFacetedBackground(ctx);
+  drawEditionHeader(ctx, sans);
 
   // Independent paths preserve the narrow paper gutter in the reference.
   ctx.beginPath();
@@ -65,19 +67,73 @@ export async function renderQuoteShareImage(input: QuoteShareInput) {
   }
 
   drawText(ctx, input.text, sans, 420, 516, 560, 290, 64, 300);
-  drawText(ctx, input.author, sans, 639, 1110, 330, 70, 26, 300);
-  if (input.authorDetail) drawText(ctx, input.authorDetail, sans, 639, 1182, 330, 64, 23, 300);
-  ctx.fillStyle = "#66666b";
-  if (input.sourceLabel) drawText(ctx, `Kaynak: ${input.sourceLabel}`, sans, 115, 1570, 850, 80, 22, 400);
-  if (input.sourceNote) drawText(ctx, input.sourceNote, sans, 115, 1634, 850, 50, 18, 400);
-  if (portrait && input.portraitCredit) drawText(ctx, `Fotoğraf: ${input.portraitCredit} · SB / kırpılmış`, sans, 115, 1680, 850, 50, 17, 400);
-  ctx.fillStyle = INK;
-  drawText(ctx, "yusufdere.com / günün sözü", sans, 115, 1750, 850, 50, 23, 400);
+  const authorHeight = drawText(ctx, input.author, sans, 639, 1110, 330, 70, 26, 300);
+  if (input.authorDetail) drawText(ctx, input.authorDetail, sans, 639, 1110 + authorHeight + 12, 330, 64, 23, 300);
+  drawEditionFooter(ctx, sans, input, Boolean(portrait));
 
   const blob = await new Promise<Blob>((resolve, reject) => canvas.toBlob(
     (value) => value ? resolve(value) : reject(new Error("Görsel oluşturulamadı.")), "image/png",
   ));
   return new File([blob], `yusufdere-gunun-sozu${input.date ? `-${input.date}` : ""}.png`, { type: "image/png" });
+}
+
+// Fixed geometry keeps every daily edition consistent; no image request is needed.
+function drawFacetedBackground(ctx: CanvasRenderingContext2D) {
+  const rows = [
+    [[-80, -70], [345, -45], [725, -65], [1150, -30]],
+    [[-45, 420], [405, 235], [850, 490], [1140, 330]],
+    [[-90, 850], [260, 720], [720, 825], [1160, 960]],
+    [[-65, 1300], [435, 1395], [885, 1230], [1140, 1450]],
+    [[-80, 1705], [310, 1635], [695, 1700], [1150, 1640]],
+    [[-55, 2000], [390, 1990], [810, 2005], [1150, 1990]],
+  ];
+  const shades = ["#f8f8f8", "#ededee", "#e3e3e4", "#f4f4f5", "#fafafa", "#e9e9ea"];
+  let face = 0;
+  function triangle(points: number[][]) {
+    const gradient = ctx.createLinearGradient(points[0][0], points[0][1], points[2][0], points[2][1]);
+    gradient.addColorStop(0, shades[face % shades.length]);
+    gradient.addColorStop(1, shades[(face + 2) % shades.length]);
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    points.forEach(([x, y], index) => index ? ctx.lineTo(x, y) : ctx.moveTo(x, y));
+    ctx.closePath(); ctx.fill(); face++;
+  }
+  for (let row = 0; row < rows.length - 1; row++) {
+    for (let column = 0; column < 3; column++) {
+      const a = rows[row][column], b = rows[row][column + 1];
+      const c = rows[row + 1][column], d = rows[row + 1][column + 1];
+      if ((row + column) % 2) { triangle([a, b, c]); triangle([b, d, c]); }
+      else { triangle([a, b, d]); triangle([a, d, c]); }
+    }
+  }
+  // Soften the texture around the unchanged central composition for legibility.
+  const veil = ctx.createRadialGradient(610, 920, 170, 610, 920, 780);
+  veil.addColorStop(0, "rgba(244,244,246,0.9)");
+  veil.addColorStop(1, "rgba(244,244,246,0)");
+  ctx.fillStyle = veil;
+  ctx.fillRect(0, 0, 1080, 1920);
+}
+
+function drawEditionHeader(ctx: CanvasRenderingContext2D, family: string) {
+  ctx.fillStyle = INK;
+  drawText(ctx, "YUSUF DERE", family, 115, 169, 240, 42, 29, 500);
+  drawText(ctx, "/", family, 365, 169, 36, 42, 29, 400);
+  ctx.fillStyle = "#E6EDC3";
+  ctx.beginPath(); ctx.roundRect(416, 156, 245, 55, 7); ctx.fill();
+  ctx.fillStyle = INK;
+  drawText(ctx, "GÜNÜN SÖZÜ", family, 435, 169, 210, 40, 28, 600);
+  ctx.fillStyle = INK;
+}
+
+function drawEditionFooter(ctx: CanvasRenderingContext2D, family: string, input: QuoteShareInput, hasPortrait: boolean) {
+  const signature = "yusufdere.com";
+  const x = 115;
+  ctx.fillStyle = "#087c4b";
+  ctx.fillRect(x, 1624, 62, 5);
+  ctx.fillStyle = INK;
+  drawText(ctx, signature, family, x, 1650, 400, 45, 29, 400);
+  ctx.fillStyle = "#66666b";
+  if (hasPortrait && input.portraitCredit) drawText(ctx, `Fotoğraf: ${input.portraitCredit} · SB / kırpılmış`, family, x, 1701, 850, 38, 16, 400);
 }
 
 function loadImage(src: string) {
@@ -109,7 +165,7 @@ function drawText(ctx: CanvasRenderingContext2D, text: string, family: string,
     if (lines.length * lineHeight > height || lines.some((line) => ctx.measureText(line).width > width)) continue;
     ctx.textBaseline = "top";
     lines.forEach((line, index) => ctx.fillText(line, x, y + index * lineHeight));
-    return;
+    return lines.length * lineHeight;
   }
   throw new Error("Metin paylaşım şablonuna sığmıyor.");
 }
