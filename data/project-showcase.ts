@@ -1,6 +1,14 @@
 export type ProjectVisualKind =
   "audio" | "api" | "planner" | "voice" | "generic";
 
+export const projectsEditorial = {
+  eyebrow: "FİKİRDEN ÜRÜNE / PROJELER",
+  title: ["Düşündüm,", "geliştirdim,"],
+  emphasis: "hayata geçirdim.",
+  description: "İhtiyaçtan doğan araçlar, kişisel ürünler ve küçük deneyler.",
+  signature: "Building the life I imagined.",
+} as const;
+
 export const projectPresentations: Readonly<
   Record<
     string,

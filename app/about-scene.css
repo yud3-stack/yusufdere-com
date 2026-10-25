@@ -1,0 +1,73 @@
+/* An editorial composition using the existing shared portrait transition. */
+.public-site .about-editorial {
+  display: grid; grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
+  gap: clamp(30px, 4vw, 76px); padding: 28px clamp(28px, 4vw, 64px) 0;
+  min-height: 640px; isolation: isolate;
+}
+.public-site .about-portrait-column { position: relative; min-width: 0; }
+.public-site .about-eyebrow {
+  position: relative; z-index: 5; display: flex; align-items: center; gap: 18px;
+  margin: 12px 0 0; color: #6a6c63; font-size: 10px; letter-spacing: .19em;
+}
+.public-site .about-eyebrow::after { content: ""; width: 48px; height: 1px; background: #d8d8d0; }
+.public-site .about-portrait-backdrop { position: absolute; inset: auto 0 15% 0; height: 29%; background: #eeece5; }
+.public-site .about-editorial .portrait-stage { inset: 0 -5% 0 4%; height: auto; max-width: none; margin: 0; perspective: none; z-index: 2; }
+.public-site .about-editorial .portrait-cutout { inset: 0 0 auto; width: 100%; height: 110%; margin: 0; }
+.public-site .about-editorial .portrait-cutout img { object-fit: contain; object-position: center top; }
+.public-site .about-portrait-caption { position: absolute; z-index: 3; bottom: 7%; left: 0; display: grid; gap: 3px; font-size: 12px; line-height: 1.5; }
+.public-site .about-portrait-caption > span:last-child { color: #77796f; }
+.public-site .about-caption-rule { display: block; width: 26px; height: 1px; margin-bottom: 10px; background: #b6b8ae; }
+.public-site .about-editorial-copy { align-self: center; min-width: 0; padding-bottom: 36px; }
+.public-site .about-editorial-copy h1 { margin: 0; font-family: var(--font-editorial), Georgia, serif; font-size: clamp(46px, 4.5vw, 72px); font-weight: 500; line-height: .98; letter-spacing: -.045em; }
+.public-site .about-editorial-copy h1 em { background: #e6edc3; padding: 0 .055em; font-weight: 400; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.public-site .about-biography { margin-top: clamp(20px, 2.4vh, 32px); max-width: 62ch; }
+.public-site .about-biography p { margin: 0; color: #55594f; font-size: clamp(14px, 1.06vw, 17px); line-height: 1.65; }
+.public-site .about-biography p + p { margin-top: 14px; }
+.public-site .about-focus-list { margin: 28px 0 0; padding: 0; list-style: none; }
+.public-site .about-focus-list li { display: grid; grid-template-columns: 62px minmax(0, 1fr); gap: 18px; align-items: center; padding: 13px 0; border-top: 1px solid #d8d8d0; }
+.public-site .about-focus-index { color: #b0b88d; font-family: var(--font-editorial), Georgia, serif; font-size: 42px; line-height: 1; }
+.public-site .about-focus-list h2 { margin: 0; font-family: var(--font-editorial), Georgia, serif; font-size: 25px; font-weight: 500; line-height: 1.1; letter-spacing: -.025em; }
+.public-site .about-focus-list p { margin: 5px 0 0; color: #77796f; font-size: 12px; line-height: 1.4; }
+.public-site .about-editorial-bottom { display: flex; flex-wrap: wrap; gap: 18px 24px; align-items: center; justify-content: space-between; margin-top: 25px; }
+.public-site .about-editorial-links { display: flex; flex-wrap: wrap; gap: 12px 30px; }
+.public-site .about-editorial-links a { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; color: var(--ink); font-size: 13px; text-decoration: underline; text-underline-offset: 7px; text-decoration-color: #a9aca0; transition: color 180ms ease; }
+.public-site .about-editorial-links a:hover { color: #687447; }
+.public-site .about-editorial-links a:focus-visible { outline: 2px solid #687447; outline-offset: 5px; }
+.public-site .about-signature { margin: 0; color: #888b80; font-family: var(--font-editorial), Georgia, serif; font-style: italic; font-size: 16px; }
+@media (prefers-reduced-motion: no-preference) {
+  .public-site .about-editorial-copy h1, .public-site .about-eyebrow { animation: scene-copy-in .9s cubic-bezier(.2,.7,.3,1) both; }
+  .public-site .about-biography { animation: scene-copy-in .9s .1s cubic-bezier(.2,.7,.3,1) both; }
+  .public-site .about-focus-list { animation: scene-copy-in .9s .2s cubic-bezier(.2,.7,.3,1) both; }
+  .public-site .about-editorial-bottom, .public-site .about-portrait-caption { animation: scene-copy-in .9s .3s cubic-bezier(.2,.7,.3,1) both; }
+}
+@media (min-width: 851px) and (max-height: 800px) {
+  .public-site .about-editorial { min-height: 590px; padding-top: 16px; }
+  .public-site .about-editorial-copy { padding-bottom: 18px; }
+  .public-site .about-editorial-copy h1 { font-size: clamp(44px, 4.2vw, 64px); }
+  .public-site .about-biography { margin-top: 18px; }
+  .public-site .about-biography p { font-size: 14px; line-height: 1.55; }
+  .public-site .about-focus-list { margin-top: 18px; }
+  .public-site .about-focus-list li { padding-block: 10px; }
+  .public-site .about-editorial-bottom { margin-top: 14px; }
+}
+@media (max-width: 1100px) and (min-width: 851px) {
+  .public-site .about-editorial { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 28px; }
+  .public-site .about-editorial .portrait-stage { inset-inline: -15% -8%; }
+  .public-site .about-portrait-caption { bottom: 5%; }
+}
+@media (max-width: 850px) {
+  .public-site .about-editorial { display: flex; flex-direction: column; height: auto; min-height: 0; gap: 0; padding: 24px 24px 36px; overflow: visible; }
+  .public-site .about-portrait-column { display: contents; }
+  .public-site .about-eyebrow { order: 0; margin: 0 0 20px; }
+  .public-site .about-editorial-copy { display: contents; }
+  .public-site .about-editorial-copy h1 { order: 1; font-size: clamp(42px, 7.5vw, 64px); line-height: 1.02; }
+  .public-site .about-biography { order: 2; margin-top: 24px; }
+  .public-site .about-biography p { font-size: 15px; }
+  .public-site .about-editorial .portrait-stage { order: 3; position: relative; inset: auto; width: 100%; height: clamp(310px, 65vw, 460px); margin: 28px 0 0; overflow: hidden; background: linear-gradient(transparent 45%, #eeece5 45%, #eeece5 89%, transparent 89%); }
+  .public-site .about-editorial .portrait-cutout { inset: 0 0 auto; width: 100%; height: 145%; margin: 0; }
+  .public-site .about-portrait-backdrop { display: none; }
+  .public-site .about-portrait-caption { order: 4; position: static; margin-top: 16px; }
+  .public-site .about-focus-list { order: 5; margin-top: 26px; }
+  .public-site .about-editorial-bottom { order: 6; margin-top: 24px; }
+  .public-site .about-signature { width: 100%; }
+}
