@@ -7,6 +7,7 @@ import { ArrowUpRight, Menu, X } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { Brand } from "@/components/layout/Brand";
 import { publicNavigation } from "@/components/layout/navigation";
+import { site } from "@/data/site";
 
 const links = [
   { href: "/blog", label: "Blog" },
@@ -139,7 +140,7 @@ function PublicHeaderBar({
         </nav>
         <div className="header-actions">
           {search}
-          <a href="mailto:hello@yusufdere.com" className="header-contact">
+          <a href={site.whatsappUrl} className="header-contact" target="_blank" rel="noopener noreferrer">
             İletişime geç <ArrowUpRight size={15} aria-hidden="true" />
           </a>
         </div>

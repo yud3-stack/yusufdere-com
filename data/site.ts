@@ -12,6 +12,7 @@ export const site = {
     "Web geliştirme ağırlıklı çalışan bir software developer'ım. Bunun yanında masaüstü, mobil ve yapay zekâ tabanlı projeler geliştiriyorum. Burada yaptığım işleri, yaşadığım teknik problemleri ve öğrendiklerimi paylaşıyorum.",
   shortBio: "Web geliştirme, kendi projelerim ve yol boyunca karşılaştığım problemler üzerine yazıyorum.",
   email: "hello@yusufdere.com",
+  whatsappUrl: "https://wa.me/905415194803",
   instagramUrl: "https://www.instagram.com/yusufderecom",
   githubUrl: undefined as string | undefined,
   linkedinUrl: undefined as string | undefined,
